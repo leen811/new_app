@@ -54,7 +54,21 @@ class MockApiAdapter {
     // Bottom nav endpoints
     adapter.onGet(
       'chat/messages',
-      (server) => server.reply(200, ChatFixture.messages, delay: delay),
+      (server) => server.reply(200, ChatFixture.conversations, delay: delay),
+    );
+    adapter.onGet(
+      'chat/conversations',
+      (server) => server.reply(200, ChatFixture.conversations, delay: delay),
+    );
+    adapter.onPost(
+      'chat/pin',
+      (server) => server.reply(200, {'ok': true}, delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onPost(
+      'chat/mark-read',
+      (server) => server.reply(200, {'ok': true}, delay: delay),
+      data: Matchers.any,
     );
     adapter.onGet(
       'dt/summary',
