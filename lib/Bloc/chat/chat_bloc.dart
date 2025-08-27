@@ -14,11 +14,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     await Future<void>.delayed(const Duration(milliseconds: 600));
     try {
-      final data = await repository.fetchMessages();
+      final data = await repository.fetchConversations();
       if (data.isEmpty) {
         emit(ChatEmpty());
       } else {
-        emit(ChatLoaded(data));
+        emit(ChatLoaded(data.map((e) => {'from': e.name, 'text': e.lastText, 'time': e.lastAt.toIso8601String()}).toList()));
       }
     } catch (e) {
       emit(const ChatError('خطأ في تحميل الرسائل'));

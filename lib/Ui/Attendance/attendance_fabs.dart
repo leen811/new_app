@@ -37,9 +37,13 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
           final canCheck = state.canCheckIn;
           final disabled = (!canCheck && state.status == AttendanceStatus.ready) || state.status == AttendanceStatus.checkedOut;
 
-          Color bg() {
-            // شفاف زجاجي
-            return Colors.white.withOpacity(0.22);
+          Color mainBg() {
+            // أزرق غامق شفاف قليلاً في وضع الاستعداد، وأخضر شفاف عند الحضور
+            if (state.status == AttendanceStatus.checkedIn) {
+              return Colors.green.shade600.withOpacity(0.75);
+            }
+            const blueDeep = Color(0xFF1E3A8A); // أزرق غامق
+            return blueDeep.withOpacity(0.75);
           }
 
           IconData mainIcon = state.status == AttendanceStatus.checkedIn ? Icons.logout : Icons.fingerprint;
@@ -57,9 +61,10 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
                 heroTag: 'fab_attendance',
                 tooltip: disabled ? 'خارج النطاق' : null,
                 onPressed: disabled ? null : () => context.read<AttendanceBloc>().add(AttendanceFabPressed()),
-                backgroundColor: bg(),
+                backgroundColor: mainBg(),
                 foregroundColor: Colors.white,
-                elevation: 6,
+                elevation: 10,
+                shape: const CircleBorder(),
                 child: Icon(mainIcon),
               ),
             ),
@@ -77,9 +82,13 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
                 child: FloatingActionButton(
                   heroTag: 'fab_break',
                   onPressed: () => context.read<AttendanceBloc>().add(BreakFabPressed()),
-                  backgroundColor: bg(),
+                  backgroundColor: (state.breakStatus == BreakStatus.none
+                          ? Colors.orange
+                          : Colors.blue)
+                      .withOpacity(0.75),
                   foregroundColor: Colors.white,
-                  elevation: 6,
+                  elevation: 10,
+                  shape: const CircleBorder(),
                   child: Icon(state.breakStatus == BreakStatus.none ? Icons.local_cafe : Icons.local_cafe),
                 ),
               ),
