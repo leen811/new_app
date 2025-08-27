@@ -5,6 +5,7 @@ import 'Ui/Company/company_wizard_page.dart';
 import 'Ui/ForgotPassword/forgot_method_page.dart';
 import 'Ui/ForgotPassword/otp_verify_page.dart';
 import 'Ui/Splash/splash_page.dart';
+import 'Ui/Joint/home_shell.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -17,6 +18,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/login',
         pageBuilder: (context, state) => _fadePage(const LoginPage()),
+      ),
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) => _fadePage(const HomeShell()),
       ),
       GoRoute(
         path: '/company/new',

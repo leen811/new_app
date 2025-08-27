@@ -8,6 +8,9 @@ import '../../Bloc/auth/login_state.dart';
 import '../../Data/Repositories/auth_repository.dart';
 import '../tokens.dart';
 import '../widgets/app_button.dart';
+import '../../Bloc/auth/auth_bloc.dart';
+import '../../Bloc/auth/auth_event.dart';
+import '../../Data/Models/role.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -57,81 +60,83 @@ class _LoginViewState extends State<_LoginView> {
                   padding: const EdgeInsets.all(24),
                   decoration: glassDecoration(context),
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 12),
-                  Text('تسجيل الدخول', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
-                  const SizedBox(height: 12),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: _emailCtrl,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.email_outlined, color: Colors.white70),
-                            hintText: 'أدخل بريدك الإلكتروني',
-                            hintStyle: TextStyle(color: Colors.white70),
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                          ),
-                          onChanged: (v) => context.read<LoginBloc>().add(EmailChanged(v)),
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _passCtrl,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.lock_outline, color: Colors.white70),
-                            hintText: 'أدخل كلمة المرور',
-                            hintStyle: TextStyle(color: Colors.white70),
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                          ),
-                          obscureText: true,
-                          onChanged: (v) => context.read<LoginBloc>().add(PasswordChanged(v)),
-                        ),
-                        const SizedBox(height: 12),
-                        _RoleChips(),
-                        const SizedBox(height: 12),
-                        BlocConsumer<LoginBloc, LoginState>(
-                          listener: (context, state) {
-                            if (state is LoginSuccess) {
-                              context.go('/company/new');
-                            }
-                          },
-                          builder: (context, state) {
-                            final loading = state is LoginLoading;
-                            return AppButton(
-                              label: 'تسجيل الدخول',
-                              loading: loading,
-                              onPressed: () => context.read<LoginBloc>().add(Submitted()),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Wrap(
-                          alignment: WrapAlignment.spaceBetween,
-                          runSpacing: 8,
-                          spacing: 12,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 12),
+                      Text('تسجيل الدخول', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
+                      const SizedBox(height: 12),
+                      Form(
+                        key: _formKey,
+                        child: Column(
                           children: [
-                            TextButton(
-                              style: TextButton.styleFrom(foregroundColor: Colors.white),
-                              onPressed: () => context.go('/forgot'),
-                              child: const Text('نسيت كلمة المرور؟'),
+                            TextFormField(
+                              controller: _emailCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.email_outlined, color: Colors.white70),
+                                hintText: 'أدخل بريدك الإلكتروني',
+                                hintStyle: TextStyle(color: Colors.white70),
+                                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                              ),
+                              onChanged: (v) => context.read<LoginBloc>().add(EmailChanged(v)),
                             ),
-                            TextButton(
-                              style: TextButton.styleFrom(foregroundColor: Colors.white),
-                              onPressed: () => context.go('/company/new'),
-                              child: const Text('إنشاء حساب جديد'),
+                            const SizedBox(height: 12),
+                            TextFormField(
+                              controller: _passCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.lock_outline, color: Colors.white70),
+                                hintText: 'أدخل كلمة المرور',
+                                hintStyle: TextStyle(color: Colors.white70),
+                                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                              ),
+                              obscureText: true,
+                              onChanged: (v) => context.read<LoginBloc>().add(PasswordChanged(v)),
+                            ),
+                            const SizedBox(height: 12),
+                            _RoleChips(),
+                            const SizedBox(height: 12),
+                            BlocConsumer<LoginBloc, LoginState>(
+                              listener: (context, state) {
+                                if (state is LoginSuccess) {
+                                  // Set a default role for demo and navigate to home shell
+                                  context.read<AuthBloc>().add(const AuthRoleChanged(Role.employee));
+                                  context.go('/');
+                                }
+                              },
+                              builder: (context, state) {
+                                final loading = state is LoginLoading;
+                                return AppButton(
+                                  label: 'تسجيل الدخول',
+                                  loading: loading,
+                                  onPressed: () => context.read<LoginBloc>().add(Submitted()),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              runSpacing: 8,
+                              spacing: 12,
+                              children: [
+                                TextButton(
+                                  style: TextButton.styleFrom(foregroundColor: Colors.white),
+                                  onPressed: () => context.go('/forgot'),
+                                  child: const Text('نسيت كلمة المرور؟'),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(foregroundColor: Colors.white),
+                                  onPressed: () => context.go('/company/new'),
+                                  child: const Text('إنشاء حساب جديد'),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -147,10 +152,13 @@ class _RoleChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final roles = const [
-      {'label': 'موظف', 'role': UserRole.staff, 'color': Color(0xFF2251FF)},
-      {'label': 'مدير', 'role': UserRole.manager, 'color': Color(0xFFE11D48)},
-      {'label': 'قائد فريق', 'role': UserRole.lead, 'color': Color(0xFF7C3AED)},
-      {'label': 'موارد بشرية', 'role': UserRole.hr, 'color': Color(0xFF06B6D4)},
+      {'label': 'موظف', 'role': Role.employee, 'color': Color(0xFF2251FF)},
+      {'label': 'مدير', 'role': Role.manager, 'color': Color(0xFFE11D48)},
+      {'label': 'قائد فريق', 'role': Role.teamLeader, 'color': Color(0xFF7C3AED)},
+      {'label': 'موارد بشرية', 'role': Role.hr, 'color': Color(0xFF06B6D4)},
+      {'label': 'المالية', 'role': Role.finance, 'color': Color(0xFF16A34A)},
+      {'label': 'مسؤول النظام', 'role': Role.sysAdmin, 'color': Color(0xFFFB923C)},
+      {'label': 'زائر', 'role': Role.guest, 'color': Color(0xFF9CA3AF)},
     ];
     return Wrap(
       spacing: 8,
@@ -159,7 +167,11 @@ class _RoleChips extends StatelessWidget {
           .map((r) => ChoiceChip(
                 selected: false,
                 label: Text(r['label'] as String),
-                onSelected: (_) => context.read<LoginBloc>().add(RoleChipTapped(r['role'] as UserRole)),
+                onSelected: (_) {
+                  final role = r['role'] as Role;
+                  context.read<AuthBloc>().add(AuthRoleChanged(role));
+                  context.go('/');
+                },
                 selectedColor: (r['color'] as Color).withOpacity(0.9),
                 backgroundColor: (r['color'] as Color).withOpacity(0.6),
                 labelStyle: const TextStyle(color: Colors.white),

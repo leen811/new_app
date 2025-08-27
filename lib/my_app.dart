@@ -8,6 +8,12 @@ import 'Data/Repositories/company_repository.dart';
 import 'Data/Services/api_client.dart';
 import 'Data/Services/mock_adapter.dart';
 import 'router.dart';
+import 'Bloc/auth/auth_bloc.dart';
+import 'Data/Repositories/geofence_repository.dart';
+import 'Data/Repositories/attendance_repository.dart';
+import 'Data/Repositories/policy_repository.dart';
+import 'Data/Repositories/location_source.dart';
+import 'Data/Models/geofence_models.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -20,6 +26,10 @@ class _MyAppState extends State<MyApp> {
   late final ApiClient _api;
   late final IAuthRepository _authRepository;
   late final ICompanyRepository _companyRepository;
+  late final IGeofenceRepository _geofenceRepository;
+  late final IAttendanceRepository _attendanceRepository;
+  late final IPolicyRepository _policyRepository;
+  late final ILocationSource _locationSource;
   late final _router = buildRouter();
 
   @override
@@ -29,6 +39,10 @@ class _MyAppState extends State<MyApp> {
     MockApiAdapter(_api.dio);
     _authRepository = AuthRepository(_api.dio);
     _companyRepository = CompanyRepository(_api.dio);
+    _geofenceRepository = GeofenceRepository(_api.dio);
+    _attendanceRepository = AttendanceRepository(_api.dio);
+    _policyRepository = PolicyRepository(_api.dio);
+    _locationSource = _MockLocationSource();
   }
 
   @override
@@ -46,22 +60,37 @@ class _MyAppState extends State<MyApp> {
         providers: [
           RepositoryProvider<IAuthRepository>.value(value: _authRepository),
           RepositoryProvider<ICompanyRepository>.value(value: _companyRepository),
+          RepositoryProvider<IGeofenceRepository>.value(value: _geofenceRepository),
+          RepositoryProvider<IAttendanceRepository>.value(value: _attendanceRepository),
+          RepositoryProvider<IPolicyRepository>.value(value: _policyRepository),
+          RepositoryProvider<ILocationSource>.value(value: _locationSource),
         ],
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'إدارة الشركات',
-          theme: theme,
-          routerConfig: _router,
-          locale: const Locale('ar'),
-          supportedLocales: const [Locale('ar'), Locale('en')],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+        child: BlocProvider(
+          create: (_) => AuthBloc(),
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'إدارة الشركات',
+            theme: theme,
+            routerConfig: _router,
+            locale: const Locale('ar'),
+            supportedLocales: const [Locale('ar'), Locale('en')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class _MockLocationSource implements ILocationSource {
+  @override
+  Future<LocationPoint> getCurrent() async {
+    // Default to far location; Dev Panel will override via bloc event
+    return const LocationPoint(lat: 24.70, lng: 46.70);
   }
 }
 
