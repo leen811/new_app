@@ -5,6 +5,7 @@ import 'fixtures/auth_fixture.dart';
 import 'fixtures/company_fixture.dart';
 import 'fixtures/chat_fixture.dart';
 import 'fixtures/dt_fixture.dart';
+import 'fixtures/chat_detail_fixture.dart';
 import 'fixtures/tasks_fixture.dart';
 import 'fixtures/profile_fixture.dart';
 import 'fixtures/geofences_fixture.dart';
@@ -67,6 +68,24 @@ class MockApiAdapter {
     );
     adapter.onPost(
       'chat/mark-read',
+      (server) => server.reply(200, {'ok': true}, delay: delay),
+      data: Matchers.any,
+    );
+    // Chat detail endpoints
+    adapter.onGet(
+      '/v1/chat/history',
+      (server) {
+        final data = ChatDetailFixture.page(from: DateTime.now(), older: false);
+        server.reply(200, data, delay: delay);
+      },
+    );
+    adapter.onPost(
+      '/v1/chat/send',
+      (server) => server.reply(200, ChatDetailFixture.sendOk(), delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onPost(
+      '/v1/chat/mark-read',
       (server) => server.reply(200, {'ok': true}, delay: delay),
       data: Matchers.any,
     );

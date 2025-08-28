@@ -15,6 +15,7 @@ import 'Data/Repositories/policy_repository.dart';
 import 'Data/Repositories/location_source.dart';
 import 'Data/Models/geofence_models.dart';
 import 'Data/Repositories/chat_repository.dart';
+import 'Data/Repositories/chat_detail_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -32,6 +33,7 @@ class _MyAppState extends State<MyApp> {
   late final IPolicyRepository _policyRepository;
   late final ILocationSource _locationSource;
   late final IChatRepository _chatRepository;
+  late final IChatDetailRepository _chatDetailRepository;
   late final _router = buildRouter();
 
   @override
@@ -46,6 +48,7 @@ class _MyAppState extends State<MyApp> {
     _policyRepository = PolicyRepository(_api.dio);
     _locationSource = _MockLocationSource();
     _chatRepository = ChatRepository(_api.dio);
+    _chatDetailRepository = ChatDetailRepository(_api.dio);
   }
 
   @override
@@ -68,6 +71,7 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<IPolicyRepository>.value(value: _policyRepository),
           RepositoryProvider<ILocationSource>.value(value: _locationSource),
           RepositoryProvider<IChatRepository>.value(value: _chatRepository),
+          RepositoryProvider<IChatDetailRepository>.value(value: _chatDetailRepository),
         ],
         child: BlocProvider(
           create: (_) => AuthBloc(),

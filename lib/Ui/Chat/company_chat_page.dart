@@ -96,7 +96,7 @@ class _ChatListView extends StatelessWidget {
                       item: state.items[i],
                       onTap: () {
                         context.read<ChatListBloc>().add(ChatMarkedRead(state.items[i].id));
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('سيفتح تفاصيل الدردشة لاحقًا')));
+                        GoRouter.of(context).push('/chat/${state.items[i].id}');
                       },
                       onLongPress: () => context.read<ChatListBloc>().add(ChatPinnedToggled(state.items[i].id)),
                     ),
