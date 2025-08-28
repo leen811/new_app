@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.2.3
   json_annotation: ^4.9.0
   animations: ^2.0.11
+  material_symbols_icons: ^4.2867.0
 
 dev_dependencies:
   flutter_test:
