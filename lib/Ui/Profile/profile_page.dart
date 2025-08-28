@@ -1,17 +1,116 @@
 import 'package:flutter/material.dart';
-import '../Core/Widgets/glass_card.dart';
-import '../Core/Theme/tokens.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../Data/Repositories/profile_repository.dart';
+import '../../Bloc/profile/profile_bloc.dart';
+import '../../Bloc/profile/profile_event.dart';
+import '../../Bloc/profile/profile_state.dart';
+import 'widgets/gradient_header.dart';
+import 'widgets/performance_card.dart';
+import 'widgets/section_group.dart';
+import 'widgets/section_tile.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return gradientBackground(
-      child: const GlassCard(
-        child: Text('حسابي - Placeholder', style: TextStyle(color: Colors.white)),
+    return RepositoryProvider<IProfileRepository>(
+      create: (ctx) => ProfileRepository(ctx.read()),
+      child: BlocProvider(
+        create: (ctx) => ProfileBloc(ctx.read<IProfileRepository>())..add(ProfileOpened()),
+        child: const _Body(),
       ),
     );
   }
 }
+
+class _Body extends StatelessWidget {
+  const _Body();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF8FAFC),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+        title: Column(children: const [
+          Text('الملف الشخصي', style: TextStyle(color: Colors.black)),
+          SizedBox(height: 2),
+          Text('إدارة ملفك الشخصي والإعدادات', style: TextStyle(color: Color(0xFF667085), fontSize: 12)),
+        ]),
+        bottom: const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1, color: Color(0xFFE9EDF4))),
+      ),
+      body: BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+        if (state is ProfileLoading) {
+          return ListView(
+            children: [
+              Container(height: 160, margin: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(16))),
+              const SizedBox(height: 12),
+              Container(height: 200, margin: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Color(0xFFE6EAF2)))),
+            ],
+          );
+        }
+        if (state is ProfileError) {
+          return Center(child: Text(state.message));
+        }
+        final s = state as ProfileSuccess;
+        return NotificationListener<ScrollNotification>(
+          onNotification: (_) => false,
+          child: RefreshIndicator(
+            onRefresh: () async => context.read<ProfileBloc>().add(ProfileRefreshed()),
+            child: ListView(
+              children: [
+                const SizedBox(height: 12),
+                GradientHeader(user: s.user),
+                const SizedBox(height: 12),
+                PerformanceCard(perf: s.perf),
+                const SizedBox(height: 12),
+                SectionGroup(title: 'الملف الشخصي', tiles: const [
+                  SectionTile(title: 'المعلومات الشخصية', subtitle: 'عرض وتحديث بياناتك الشخصية', trailingIcon: Icons.person_outline),
+                ]),
+                SectionGroup(title: 'الذكاء الاصطناعي', tiles: const [
+                  SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined),
+                  SectionTile(title: 'التوأم الرقمي', subtitle: 'نموذج رقمي متقدم لتحليل أدائك', trailingIcon: Icons.memory_outlined),
+                  SectionTile(title: 'التحليلات الذكية', subtitle: 'تحليلات متقدمة بالذكاء الاصطناعي', trailingIcon: Icons.show_chart),
+                ]),
+                SectionGroup(title: 'التطوير والتعلم', tiles: const [
+                  SectionTile(title: 'التدريب الذكي', subtitle: 'برامج تدريب مخصصة وذكية', trailingIcon: Icons.school_outlined),
+                  SectionTile(title: 'الإنجازات والشارات', subtitle: 'جميع إنجازاتك وشاراتك المكتسبة', trailingIcon: Icons.emoji_events_outlined),
+                ]),
+                SectionGroup(title: 'الشؤون المالية', tiles: const [
+                  SectionTile(title: 'خصومات الراتب والأسباب', subtitle: 'عرض خصومات راتبك والأسباب التفصيلية', trailingIcon: Icons.receipt_long_outlined),
+                ]),
+                SectionGroup(title: 'التواصل والإشعارات', tiles: const [
+                  SectionTile(title: 'إشعارات البريد الإلكتروني', subtitle: 'إدارة ومتابعة بريدك مع إمكانية الرد', trailingIcon: Icons.mail_outline),
+                  SectionTile(title: 'الإشعارات الذكية', subtitle: 'إدارة إعدادات الإشعارات المخصصة', trailingIcon: Icons.notifications_none),
+                ]),
+                SectionGroup(title: 'الإعدادات والتفضيلات', tiles: const [
+                  SectionTile(title: 'الإعدادات العامة', subtitle: 'إعدادات التطبيق وتفضيلاتك الشخصية', trailingIcon: Icons.settings_outlined),
+                ]),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Container(
+                    decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFFECACA))),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    child: Row(children: const [
+                      Expanded(child: Text('تسجيل الخروج', style: TextStyle(color: Color(0xFFB91C1C), fontWeight: FontWeight.w700))),
+                      Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFFB91C1C)),
+                    ]),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+ 
 
 
