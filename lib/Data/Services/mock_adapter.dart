@@ -11,6 +11,7 @@ import 'fixtures/profile_fixture.dart';
 import 'fixtures/geofences_fixture.dart';
 import 'fixtures/attendance_fixture.dart';
 import 'fixtures/policy_fixture.dart';
+import 'fixtures/tasks_fixture.dart' as TasksFx;
 
 class MockApiAdapter {
   final Dio dio;
@@ -100,6 +101,38 @@ class MockApiAdapter {
     adapter.onGet(
       'profile/me',
       (server) => server.reply(200, ProfileFixture.me, delay: delay),
+    );
+    // Tasks tab endpoints
+    adapter.onGet(
+      '/v1/tasks/kpi-overview',
+      (server) => server.reply(200, TasksFx.TasksTabFixture.kpiOverview, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/tasks/daily',
+      (server) => server.reply(200, TasksFx.TasksTabFixture.dailyTasks, delay: delay),
+    );
+    adapter.onPost(
+      RegExp(r"/v1/tasks/.+/toggle-complete"),
+      (server) => server.reply(200, {'ok': true, 'done': true}, delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onPost(
+      RegExp(r"/v1/tasks/.+/timer/start"),
+      (server) => server.reply(200, {'ok': true}, delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onPost(
+      RegExp(r"/v1/tasks/.+/timer/stop"),
+      (server) => server.reply(200, {'ok': true, 'seconds': 10}, delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onGet(
+      '/v1/challenges/group',
+      (server) => server.reply(200, TasksFx.TasksTabFixture.challengesGroup, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/challenges/team-progress',
+      (server) => server.reply(200, TasksFx.TasksTabFixture.teamProgress, delay: delay),
     );
 
     // Attendance & geofence
