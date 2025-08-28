@@ -8,7 +8,7 @@ abstract class TasksEvent extends Equatable {
 
 class TasksFetch extends TasksEvent {}
 class TasksToggleDone extends TasksEvent {
-  final int id;
+  final String id;
   const TasksToggleDone(this.id);
   @override
   List<Object?> get props => [id];

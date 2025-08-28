@@ -14,8 +14,9 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     emit(TasksLoading());
     await Future<void>.delayed(const Duration(milliseconds: 600));
     try {
-      final tasks = await repository.fetchTasks();
-      if (tasks.isEmpty) emit(TasksEmpty()); else emit(TasksLoaded(tasks));
+      final items = await repository.fetchDailyTasks();
+      final maps = items.map((e) => e.toJson()).toList();
+      if (maps.isEmpty) emit(TasksEmpty()); else emit(TasksLoaded(maps));
     } catch (e) {
       emit(const TasksError('تعذر تحميل المهام'));
     }
