@@ -37,7 +37,12 @@ class _Body extends StatelessWidget {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       const Expanded(child: Text('المساعد الذكي', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800))),
-                      TextButton(onPressed: () => context.read<AssistantBloc>().add(AssistantCleared()), child: const Text('مسح')),
+                      IconButton(
+                        tooltip: 'مسح',
+                        onPressed: () => context.read<AssistantBloc>().add(AssistantCleared()),
+                        icon: const Icon(Icons.delete_outline, color: Colors.white, size: 20),
+                        splashRadius: 18,
+                      ),
                     ]),
                     const SizedBox(height: 4),
                     Row(children: const [
