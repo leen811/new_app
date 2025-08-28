@@ -29,8 +29,6 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    if (keyboardOpen) return const SizedBox.shrink();
     return Positioned(
       left: 16,
       bottom: 24,
