@@ -10,13 +10,13 @@ class ProfileRepository implements IProfileRepository {
   ProfileRepository(this.dio);
   @override
   Future<Map<String, dynamic>> me() async {
-    final resp = await dio.get('profile/me');
+    final resp = await dio.get('/v1/profile/me');
     return Map<String, dynamic>.from(resp.data as Map);
   }
 
   @override
   Future<Map<String, dynamic>> performance() async {
-    final resp = await dio.get('profile/performance');
+    final resp = await dio.get('/v1/profile/performance');
     return Map<String, dynamic>.from(resp.data as Map);
   }
 }

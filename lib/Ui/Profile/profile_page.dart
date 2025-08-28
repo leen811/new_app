@@ -14,12 +14,9 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<IProfileRepository>(
-      create: (ctx) => ProfileRepository(ctx.read()),
-      child: BlocProvider(
-        create: (ctx) => ProfileBloc(ctx.read<IProfileRepository>())..add(ProfileOpened()),
-        child: const _Body(),
-      ),
+    return BlocProvider(
+      create: (ctx) => ProfileBloc(ctx.read<IProfileRepository>())..add(ProfileOpened()),
+      child: const _Body(),
     );
   }
 }
