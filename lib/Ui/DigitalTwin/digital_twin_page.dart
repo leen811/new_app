@@ -52,9 +52,17 @@ class _Body extends StatelessWidget {
           }
           if (state is TwinError) return Center(child: Text(state.message));
           final s = state as TwinSuccess;
-          return RefreshIndicator(
-            onRefresh: () async => context.read<DigitalTwinBloc>().add(TwinRefreshed()),
+          return NotificationListener<ScrollNotification>(
+            onNotification: (n) {
+              if (n is ScrollUpdateNotification) {
+                if (n.metrics.pixels < -64 && !s.refreshing) {
+                  context.read<DigitalTwinBloc>().add(TwinRefreshed());
+                }
+              }
+              return false;
+            },
             child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 const SizedBox(height: 12),
                 _KpiGrid(overview: s.overview),
@@ -88,7 +96,7 @@ class _KpiGrid extends StatelessWidget {
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2)), boxShadow: [BoxShadow(color: const Color(0xFF0B1524).withOpacity(0.06), blurRadius: 12, offset: const Offset(0, 4))]),
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CircleAvatar(backgroundColor: iconColor.withOpacity(0.10), child: Icon(icon, color: iconColor)),
+          Center(child: CircleAvatar(backgroundColor: iconColor.withOpacity(0.10), child: Icon(icon, color: iconColor))),
           const SizedBox(height: 12),
           Text(title, style: const TextStyle(color: Color(0xFF667085), fontSize: 12)),
           const SizedBox(height: 6),
@@ -102,7 +110,7 @@ class _KpiGrid extends StatelessWidget {
       child: GridView(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.5),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.3),
         children: [
           card(Icons.center_focus_strong, 'درجة التركيز', '${overview.focusPct}%', iconColor: const Color(0xFF7C3AED)),
           card(Icons.bolt, 'مستوى الطاقة', '${overview.energyPct}%', valueColor: const Color(0xFF10B981), iconColor: const Color(0xFF10B981)),
@@ -137,7 +145,7 @@ class _SegmentedTabs extends StatelessWidget {
               curve: Curves.easeOutCubic,
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(color: active ? Colors.white : Colors.transparent, borderRadius: BorderRadius.circular(18), boxShadow: active ? [BoxShadow(color: const Color(0xFF0B1524).withOpacity(0.06), blurRadius: 10)] : null),
-              child: Center(child: Text(labels[i], style: TextStyle(color: active ? const Color(0xFF2F56D9) : const Color(0xFF667085), fontWeight: FontWeight.w700))),
+              child: Center(child: Text(labels[i], textAlign: TextAlign.center, style: TextStyle(color: active ? const Color(0xFF2F56D9) : const Color(0xFF667085), fontWeight: FontWeight.w700))),
             ),
           ),
         );
@@ -170,7 +178,7 @@ class _Recommendations extends StatelessWidget {
             const SizedBox(height: 10),
             Text(r.title, style: const TextStyle(fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Text(r.body, style: const TextStyle(color: Color(0xFF667085))),
+            Text(r.body, textAlign: TextAlign.justify, style: const TextStyle(color: Color(0xFF667085))),
             const SizedBox(height: 12),
             Wrap(spacing: 10, runSpacing: 10, children: r.ctas.map<Widget>((c) => OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(shape: const StadiumBorder()), child: Text(c.label))).toList()),
           ]),
