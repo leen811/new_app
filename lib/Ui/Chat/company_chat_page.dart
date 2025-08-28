@@ -86,9 +86,12 @@ class _ChatListView extends StatelessWidget {
                 return const Center(child: Text('لا توجد محادثات'));
               }
               if (state is ChatListSuccess) {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<ChatListBloc>().add(ChatListRefreshed());
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (n) {
+                    if (n is OverscrollNotification && n.overscroll < 0 && n.metrics.extentBefore == 0) {
+                      context.read<ChatListBloc>().add(ChatListRefreshed());
+                    }
+                    return false;
                   },
                   child: ListView.separated(
                     itemCount: state.items.length,

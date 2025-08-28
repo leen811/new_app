@@ -11,6 +11,7 @@ class TaskItem extends Equatable {
   final String category;
   final bool done;
   final int timerSeconds;
+  final bool isRunning;
 
   const TaskItem({
     required this.id,
@@ -23,6 +24,7 @@ class TaskItem extends Equatable {
     required this.category,
     required this.done,
     required this.timerSeconds,
+    this.isRunning = false,
   });
 
   factory TaskItem.fromJson(Map<String, dynamic> json) => TaskItem(
@@ -36,6 +38,7 @@ class TaskItem extends Equatable {
         category: json['category'] as String? ?? '',
         done: json['done'] as bool? ?? false,
         timerSeconds: (json['timerSeconds'] as num? ?? 0).toInt(),
+        isRunning: json['isRunning'] as bool? ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,9 +52,10 @@ class TaskItem extends Equatable {
         'category': category,
         'done': done,
         'timerSeconds': timerSeconds,
+        'isRunning': isRunning,
       };
 
-  TaskItem copyWith({bool? done, int? timerSeconds}) => TaskItem(
+  TaskItem copyWith({bool? done, int? timerSeconds, bool? isRunning}) => TaskItem(
         id: id,
         title: title,
         desc: desc,
@@ -62,12 +66,13 @@ class TaskItem extends Equatable {
         category: category,
         done: done ?? this.done,
         timerSeconds: timerSeconds ?? this.timerSeconds,
+        isRunning: isRunning ?? this.isRunning,
       );
 
   bool get isPlaceholderEmpty => title.isEmpty && desc.isEmpty;
 
   @override
-  List<Object?> get props => [id, title, desc, priority, tags, estimatedMin, intlTimeLabel, category, done, timerSeconds];
+  List<Object?> get props => [id, title, desc, priority, tags, estimatedMin, intlTimeLabel, category, done, timerSeconds, isRunning];
 }
 
 

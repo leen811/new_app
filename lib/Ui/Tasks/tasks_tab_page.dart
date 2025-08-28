@@ -13,6 +13,8 @@ import '../../Bloc/tasks/challenges/challenges_state.dart';
 import '../../Bloc/tasks/team/team_progress_bloc.dart';
 import '../../Bloc/tasks/team/team_progress_event.dart';
 import '../../Bloc/tasks/team/team_progress_state.dart';
+import '../../Data/Models/task_item.dart';
+import '../widgets/app_button.dart';
 import '../../Data/Repositories/tasks_repository.dart';
 import 'widgets/kpi_row.dart';
 import 'widgets/segmented_tabs.dart';
@@ -40,7 +42,15 @@ class _TasksBody extends StatelessWidget {
   const _TasksBody();
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Center(child: Text('المهام')),
+        backgroundColor: const Color(0xFFF8FAFC),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+      ),
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         bottom: true,
@@ -49,7 +59,10 @@ class _TasksBody extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                child: Text('تابع مهامك اليومية وشارك في التحديات الجماعية', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('تابع مهامك اليومية وشارك في التحديات الجماعية', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  
+                ]),
               ),
             ),
             SliverToBoxAdapter(
@@ -61,6 +74,8 @@ class _TasksBody extends StatelessWidget {
                 return KpiRow(data: overview);
               }),
             ),
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+
             SliverPersistentHeader(
               pinned: true,
               delegate: _TabsHeaderDelegate(child: BlocBuilder<TasksTabBloc, TasksTabState>(builder: (context, state) {
@@ -99,33 +114,211 @@ class _DailyTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DailyTasksBloc, DailyTasksState>(builder: (context, state) {
-      if (state is DailyTasksLoading) {
+      Widget header = Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+        child: Row(
+          children: [
+            const Expanded(child: Text('مهامك اليومية', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87))),
+            IconButton(onPressed: () => _showAddTaskDialog(context), icon: const Icon(Icons.add, color: Color(0xFF2F56D9))),
+          ],
+        ),
+      );
+
+      if (state is DailyTasksInitial || state is DailyTasksLoading) {
         return ListView.separated(
           padding: const EdgeInsets.only(bottom: 24),
-          itemCount: 3,
+          itemCount: 4,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (_, __) => Container(height: 120, margin: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))),),
+          itemBuilder: (context, i) {
+            if (i == 0) return header;
+            return Container(height: 120, margin: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))),);
+          },
         );
       }
-      if (state is DailyTasksError) return Center(child: Text(state.message));
-      if (state is DailyTasksEmpty) return const Center(child: Text('لا توجد مهام لليوم'));
+      if (state is DailyTasksError) {
+        return ListView(children: [header, Center(child: Padding(padding: const EdgeInsets.all(24), child: Text(state.message)))]);
+      }
+      if (state is DailyTasksEmpty) {
+        return ListView(children: const [
+          Padding(padding: EdgeInsets.fromLTRB(12, 0, 12, 8), child: Text('مهامك اليومية', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87))),
+          Center(child: Padding(padding: EdgeInsets.all(24), child: Text('لا توجد مهام لليوم'))),
+        ]);
+      }
       final items = (state as DailyTasksSuccess).items;
-      return RefreshIndicator(
-        onRefresh: () async => context.read<DailyTasksBloc>().add(DailyTasksRefresh()),
+      return NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          if (n is OverscrollNotification && n.overscroll < 0 && n.metrics.extentBefore == 0) {
+            final bloc = context.read<DailyTasksBloc>();
+            if (bloc.state is! DailyTasksLoading) {
+              bloc.add(DailyTasksRefresh());
+            }
+          }
+          return false;
+        },
         child: ListView.separated(
           padding: const EdgeInsets.only(bottom: 24),
-          itemCount: items.length,
+          itemCount: items.length + 1,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (_, i) => TaskCard(
-            item: items[i],
-            onToggle: () => context.read<DailyTasksBloc>().add(DailyTaskToggleComplete(items[i].id)),
-            onTimerStart: () => context.read<DailyTasksBloc>().add(DailyTaskTimerStart(items[i].id)),
-            onTimerStop: () => context.read<DailyTasksBloc>().add(DailyTaskTimerStop(items[i].id)),
-          ),
+          itemBuilder: (context, i) {
+            if (i == 0) return header;
+            final idx = i - 1;
+            return TaskCard(
+              item: items[idx],
+              onToggle: () => context.read<DailyTasksBloc>().add(DailyTaskToggleComplete(items[idx].id)),
+              onTimerStart: () => context.read<DailyTasksBloc>().add(DailyTaskTimerStart(items[idx].id)),
+              onTimerStop: () => context.read<DailyTasksBloc>().add(DailyTaskTimerStop(items[idx].id)),
+            );
+          },
         ),
       );
     });
   }
+}
+
+void _showAddTaskDialog(BuildContext context) {
+  final pageContext = context; // capture outer context that has the providers
+  final titleCtrl = TextEditingController();
+  final descCtrl = TextEditingController();
+  String priority = 'متوسطة';
+  DateTimeRange? range;
+  final Set<String> selectedWorks = {'عمل'};
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'add_task',
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 220),
+    pageBuilder: (ctx, a1, a2) {
+      const Color darkBlue = Color(0xFF1E3A8A);
+      final theme = Theme.of(ctx).copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          hintStyle: const TextStyle(color: Color(0xFF98A2B3)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: darkBlue, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: darkBlue, width: 2),
+          ),
+        ),
+      );
+      return Center(
+        child: Dialog(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFE6E8F0)),
+          ),
+          child: Theme(
+            data: theme,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 16),
+                child: StatefulBuilder(builder: (context, setState) {
+                  String rangeLabel = range == null
+                      ? 'اختر المدة'
+                      : '${MaterialLocalizations.of(context).formatMediumDate(range!.start)} - ${MaterialLocalizations.of(context).formatMediumDate(range!.end)}';
+                  return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                    Row(children: [
+                      const Expanded(child: Text('إضافة مهمة جديدة', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black))),
+                      IconButton(onPressed: () => Navigator.pop(ctx), icon: const Icon(Icons.close), splashRadius: 20),
+                    ]),
+                    const SizedBox(height: 12),
+                    TextField(controller: titleCtrl, decoration: const InputDecoration(hintText: 'عنوان المهمة')), 
+                    const SizedBox(height: 12),
+                    TextField(controller: descCtrl, maxLines: 3, decoration: const InputDecoration(hintText: 'وصف المهمة (اختياري)')),
+                    const SizedBox(height: 12),
+                    const Text('أنواع العمل', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    Wrap(spacing: 6, runSpacing: -6, children: [
+                      for (final w in const ['عمل','توثيق','تصميم','اجتماع','مراجعة','تطوير'])
+                        FilterChip(
+                          label: Text(w),
+                          selected: selectedWorks.contains(w),
+                          onSelected: (v) => setState(() {
+                            if (v) selectedWorks.add(w); else selectedWorks.remove(w);
+                          }),
+                        ),
+                    ]),
+                    const SizedBox(height: 12),
+                    Row(children: [
+                      const Text('المدة: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () async {
+                          final now = DateTime.now();
+                          final r = await showDateRangePicker(
+                            context: context,
+                            firstDate: now.subtract(const Duration(days: 365)),
+                            lastDate: now.add(const Duration(days: 365 * 3)),
+                            initialDateRange: range ?? DateTimeRange(start: now, end: now.add(const Duration(days: 1))),
+                          );
+                          if (r != null) setState(() => range = r);
+                        },
+                        child: Text(rangeLabel),
+                      ),
+                    ]),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: priority,
+                      items: const [DropdownMenuItem(value: 'عالية', child: Text('عالية')), DropdownMenuItem(value: 'متوسطة', child: Text('متوسطة')), DropdownMenuItem(value: 'منخفضة', child: Text('منخفضة'))],
+                      dropdownColor: Colors.white,
+                      onChanged: (v) => setState(() => priority = v ?? 'متوسطة'),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(children: [
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء', style: TextStyle(color: darkBlue))),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: AppButton(
+                          label: 'إضافة',
+                          color: darkBlue,
+                          height: 44,
+                          radius: BorderRadius.circular(10),
+                          onPressed: () {
+                            final label = range == null
+                                ? ''
+                                : '${MaterialLocalizations.of(context).formatMediumDate(range!.start)} - ${MaterialLocalizations.of(context).formatMediumDate(range!.end)}';
+                            final item = TaskItem(
+                              id: DateTime.now().millisecondsSinceEpoch.toString(),
+                              title: titleCtrl.text.trim(),
+                              desc: descCtrl.text.trim(),
+                              priority: priority,
+                              tags: selectedWorks.toList(),
+                              estimatedMin: 0,
+                              intlTimeLabel: label,
+                              category: selectedWorks.isNotEmpty ? selectedWorks.first : 'عمل',
+                              done: false,
+                              timerSeconds: 0,
+                            );
+                            pageContext.read<DailyTasksBloc>().add(DailyTaskAdded(item));
+                            Navigator.pop(ctx);
+                          },
+                        ),
+                      ),
+                    ]),
+                  ]);
+                }),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (context, anim, _, child) {
+      final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutCubic);
+      return FadeTransition(opacity: curved, child: ScaleTransition(scale: Tween(begin: 0.98, end: 1.0).animate(curved), child: child));
+    },
+  );
 }
 
 class _ChallengesTab extends StatelessWidget {
@@ -140,8 +333,16 @@ class _ChallengesTab extends StatelessWidget {
       if (state is ChallengesError) return Center(child: Text(state.message));
       if (state is ChallengesEmpty) return const Center(child: Text('لا توجد تحديات'));
       final items = (state as ChallengesSuccess).items;
-      return RefreshIndicator(
-        onRefresh: () async => context.read<ChallengesBloc>().add(ChallengesRefresh()),
+      return NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          if (n is OverscrollNotification && n.overscroll < 0 && n.metrics.extentBefore == 0) {
+            final bloc = context.read<ChallengesBloc>();
+            if (bloc.state is! ChallengesLoading) {
+              bloc.add(ChallengesRefresh());
+            }
+          }
+          return false;
+        },
         child: ListView.separated(
           padding: const EdgeInsets.only(bottom: 24),
           itemCount: items.length,
@@ -164,8 +365,16 @@ class _TeamTab extends StatelessWidget {
       if (state is TeamProgressError) return Center(child: Text(state.message));
       if (state is TeamProgressEmpty) return const Center(child: Text('لا يوجد تقدم بعد'));
       final items = (state as TeamProgressSuccess).items;
-      return RefreshIndicator(
-        onRefresh: () async => context.read<TeamProgressBloc>().add(TeamProgressRefresh()),
+      return NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          if (n is OverscrollNotification && n.overscroll < 0 && n.metrics.extentBefore == 0) {
+            final bloc = context.read<TeamProgressBloc>();
+            if (bloc.state is! TeamProgressLoading) {
+              bloc.add(TeamProgressRefresh());
+            }
+          }
+          return false;
+        },
         child: ListView.separated(
           padding: const EdgeInsets.only(bottom: 24),
           itemCount: items.length,
