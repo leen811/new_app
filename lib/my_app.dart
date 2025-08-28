@@ -17,6 +17,7 @@ import 'Data/Models/geofence_models.dart';
 import 'Data/Repositories/chat_repository.dart';
 import 'Data/Repositories/chat_detail_repository.dart';
 import 'Data/Repositories/tasks_repository.dart';
+import 'Data/Repositories/profile_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -36,6 +37,7 @@ class _MyAppState extends State<MyApp> {
   late final IChatRepository _chatRepository;
   late final IChatDetailRepository _chatDetailRepository;
   late final ITasksRepository _tasksRepository;
+  late final IProfileRepository _profileRepository;
   late final _router = buildRouter();
 
   @override
@@ -52,6 +54,7 @@ class _MyAppState extends State<MyApp> {
     _chatRepository = ChatRepository(_api.dio);
     _chatDetailRepository = ChatDetailRepository(_api.dio);
     _tasksRepository = TasksRepository(_api.dio);
+    _profileRepository = ProfileRepository(_api.dio);
   }
 
   @override
@@ -76,6 +79,7 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<IChatRepository>.value(value: _chatRepository),
           RepositoryProvider<IChatDetailRepository>.value(value: _chatDetailRepository),
           RepositoryProvider<ITasksRepository>.value(value: _tasksRepository),
+          RepositoryProvider<IProfileRepository>.value(value: _profileRepository),
         ],
         child: BlocProvider(
           create: (_) => AuthBloc(),

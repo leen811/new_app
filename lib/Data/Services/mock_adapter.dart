@@ -8,6 +8,7 @@ import 'fixtures/dt_fixture.dart';
 import 'fixtures/chat_detail_fixture.dart';
 import 'fixtures/tasks_fixture.dart';
 import 'fixtures/profile_fixture.dart';
+import 'fixtures/profile_fixture.dart' as ProfileFx;
 import 'fixtures/geofences_fixture.dart';
 import 'fixtures/attendance_fixture.dart';
 import 'fixtures/policy_fixture.dart';
@@ -101,6 +102,15 @@ class MockApiAdapter {
     adapter.onGet(
       'profile/me',
       (server) => server.reply(200, ProfileFixture.me, delay: delay),
+    );
+    // Profile tab endpoints
+    adapter.onGet(
+      '/v1/profile/me',
+      (server) => server.reply(200, ProfileFx.ProfileTabFixture.user, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/profile/performance',
+      (server) => server.reply(200, ProfileFx.ProfileTabFixture.performance, delay: delay),
     );
     // Tasks tab endpoints
     adapter.onGet(
