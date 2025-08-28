@@ -18,10 +18,10 @@ class CustomBottomNavBar extends StatelessWidget {
   static const Color _divider = Color(0xFFE9EDF4);
   static const Color _shadowColor = Color(0x0F0B1524); // 0x0F ≈ 6% opacity
   static const Color _inactiveIcon = Color(0xFF98A2B3);
-  static const Color _inactiveText = Color(0xE699A2B3); // 90% alpha of 98A2B3
+  // static const Color _inactiveText = Color(0xE699A2B3); // label removed
 
   static final List<_NavItemSpec> _items = [
-    _NavItemSpec(label: 'الرئيسية', icon: Icons.home_outlined, activeColor: Color(0xFF2F56D9)),
+    _NavItemSpec(label: 'الرئيسية', icon: Icons.home_max_outlined, activeColor: Color(0xFF2F56D9)),
     _NavItemSpec(label: 'الشات', icon: Icons.chat_bubble_outline, activeColor: Color(0xFF7C3AED)),
     _NavItemSpec(label: 'المساعد الذكي', icon: Icons.smart_toy_outlined, activeColor: Color(0xFF0EA5E9)),
     _NavItemSpec(label: 'المهام', icon: Icons.task_alt_outlined, activeColor: Color(0xFF10B981)),
@@ -158,7 +158,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color iconColor = isActive ? activeColor : CustomBottomNavBar._inactiveIcon;
-    final Color textColor = isActive ? activeColor : CustomBottomNavBar._inactiveText;
+    // label removed; keep colors minimal
 
     return InkWell(
       onTap: onTap,
@@ -166,34 +166,24 @@ class _NavItem extends StatelessWidget {
       highlightColor: activeColor.withOpacity(0.08),
       child: SizedBox(
         height: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedSwitcher(
-              duration: colorDuration,
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeOut,
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: colorDuration,
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeOut,
+            child: Semantics(
+              key: ValueKey<bool>(isActive),
+              label: label,
+              button: true,
               child: IconTheme(
-                key: ValueKey<bool>(isActive),
                 data: IconThemeData(
                   color: iconColor,
-                  size: 22, // أنحف/أصغر قليلاً لإحساس أكثر رقة
+                  size: 22,
                 ),
                 child: Icon(icon),
               ),
             ),
-            const SizedBox(height: 6),
-            AnimatedDefaultTextStyle(
-              duration: colorDuration,
-              curve: Curves.easeOut,
-              style: textTheme.labelMedium!.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: textColor,
-              ),
-              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-            ),
-          ],
+          ),
         ),
       ),
     );
