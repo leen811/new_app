@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 // Using built-in Material Icons to avoid symbol font rendering issues
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -136,7 +137,7 @@ class _IndicatorWrapper extends StatelessWidget {
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _NavItem extends StatefulWidget {
   const _NavItem({
     required this.label,
     required this.icon,
@@ -156,31 +157,101 @@ class _NavItem extends StatelessWidget {
   final Duration colorDuration;
 
   @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
+  late final AnimationController _pressCtrl;
+  late final AnimationController _bumpCtrl;
+  late final Animation<double> _bumpAnim;
+
+  static const double _activeScale = 1.12;
+  static const double _overshootPeak = 1.16 / _activeScale; // relative bump over base
+
+  @override
+  void initState() {
+    super.initState();
+    _pressCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 120))..value = 1.0;
+    _bumpCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 220));
+    _bumpAnim = _bumpCtrl.drive(
+      TweenSequence<double>([
+        TweenSequenceItem(tween: Tween(begin: 1.0, end: _overshootPeak).chain(CurveTween(curve: Curves.easeOutCubic)), weight: 70),
+        TweenSequenceItem(tween: Tween(begin: _overshootPeak, end: 1.0).chain(CurveTween(curve: Curves.easeInCubic)), weight: 30),
+      ]),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _NavItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final reduced = MediaQuery.of(context).accessibleNavigation;
+    if (!oldWidget.isActive && widget.isActive && !reduced) {
+      _bumpCtrl.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pressCtrl.dispose();
+    _bumpCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Color iconColor = isActive ? activeColor : CustomBottomNavBar._inactiveIcon;
-    // label removed; keep colors minimal
+    final bool reduced = MediaQuery.of(context).accessibleNavigation;
+    final Color iconColor = widget.isActive ? widget.activeColor : CustomBottomNavBar._inactiveIcon;
+
+    final Duration baseDuration = const Duration(milliseconds: 200);
+    final Curve baseCurve = widget.isActive ? Curves.easeOutCubic : Curves.easeInCubic;
+
+    // Press pulse: 0.96 -> 1.0 when controller runs, idle at 1.0
+    final double pressFactor = reduced ? 1.0 : (1.0 - 0.04 * (1.0 - _pressCtrl.value));
+    final double bumpFactor = reduced || !widget.isActive ? 1.0 : _bumpAnim.value;
+    final double baseScale = reduced ? 1.0 : (widget.isActive ? _activeScale : 1.0);
+    final double finalScale = baseScale * bumpFactor * pressFactor;
+    final Offset targetOffset = reduced ? Offset.zero : (widget.isActive ? const Offset(0, -0.06) : Offset.zero);
 
     return InkWell(
-      onTap: onTap,
-      splashColor: activeColor.withOpacity(0.12),
-      highlightColor: activeColor.withOpacity(0.08),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        if (!reduced) {
+          _pressCtrl
+            ..value = 0.0
+            ..forward();
+        }
+        widget.onTap();
+      },
+      splashColor: widget.activeColor.withOpacity(0.12),
+      highlightColor: widget.activeColor.withOpacity(0.08),
       child: SizedBox(
         height: double.infinity,
         child: Center(
-          child: AnimatedSwitcher(
-            duration: colorDuration,
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeOut,
-            child: Semantics(
-              key: ValueKey<bool>(isActive),
-              label: label,
-              button: true,
-              child: IconTheme(
-                data: IconThemeData(
-                  color: iconColor,
-                  size: 26,
+          child: AnimatedSlide(
+            offset: targetOffset,
+            curve: baseCurve,
+            duration: baseDuration,
+            child: AnimatedScale(
+              scale: finalScale,
+              curve: baseCurve,
+              duration: baseDuration,
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: AnimatedSwitcher(
+                  duration: widget.colorDuration,
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeOut,
+                  child: Semantics(
+                    key: ValueKey<bool>(widget.isActive),
+                    label: widget.label,
+                    button: true,
+                    child: IconTheme(
+                      data: IconThemeData(color: iconColor, size: 26),
+                      child: Icon(widget.icon),
+                    ),
+                  ),
                 ),
-                child: Icon(icon),
               ),
             ),
           ),
