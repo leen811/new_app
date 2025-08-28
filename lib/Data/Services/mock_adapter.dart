@@ -13,6 +13,7 @@ import 'fixtures/geofences_fixture.dart';
 import 'fixtures/attendance_fixture.dart';
 import 'fixtures/policy_fixture.dart';
 import 'fixtures/tasks_fixture.dart' as TasksFx;
+import 'fixtures/ai_fixture.dart';
 
 class MockApiAdapter {
   final Dio dio;
@@ -27,6 +28,21 @@ class MockApiAdapter {
     adapter.onPost(
       'auth/login',
       (server) => server.reply(200, AuthFixture.loginSuccess, delay: delay),
+      data: Matchers.any,
+    );
+    // Assistant AI endpoints
+    adapter.onGet(
+      '/v1/ai/suggest',
+      (server) => server.reply(200, AiFixture.suggest, delay: delay),
+    );
+    adapter.onPost(
+      '/v1/ai/chat',
+      (server) => server.reply(200, AiFixture.reply(''), delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onPost(
+      '/v1/ai/execute',
+      (server) => server.reply(200, AiFixture.executed(''), delay: delay),
       data: Matchers.any,
     );
     adapter.onPost(
