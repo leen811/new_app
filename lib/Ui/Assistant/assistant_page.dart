@@ -11,12 +11,9 @@ class AssistantPage extends StatelessWidget {
   const AssistantPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<IAssistantRepository>(
-      create: (ctx) => AssistantRepository(ctx.read()),
-      child: BlocProvider(
-        create: (ctx) => AssistantBloc(ctx.read<IAssistantRepository>())..add(AssistantOpened()),
-        child: const _Body(),
-      ),
+    return BlocProvider(
+      create: (ctx) => AssistantBloc(ctx.read<IAssistantRepository>())..add(AssistantOpened()),
+      child: const _Body(),
     );
   }
 }
