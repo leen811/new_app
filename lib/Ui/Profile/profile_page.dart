@@ -56,10 +56,16 @@ class _Body extends StatelessWidget {
         }
         final s = state as ProfileSuccess;
         return NotificationListener<ScrollNotification>(
-          onNotification: (_) => false,
-          child: RefreshIndicator(
-            onRefresh: () async => context.read<ProfileBloc>().add(ProfileRefreshed()),
-            child: ListView(
+          onNotification: (n) {
+            if (n is ScrollUpdateNotification) {
+              if (n.metrics.pixels < -64) {
+                context.read<ProfileBloc>().add(ProfileRefreshed());
+              }
+            }
+            return false;
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 const SizedBox(height: 12),
                 GradientHeader(user: s.user),
@@ -102,7 +108,6 @@ class _Body extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
-          ),
         );
       }),
     );

@@ -20,7 +20,12 @@ class DigitalTwinBloc extends Bloc<DigitalTwinEvent, DigitalTwinState> {
 
   Future<void> _onLoad(DigitalTwinEvent event, Emitter<DigitalTwinState> emit) async {
     final isRefresh = event is TwinRefreshed && state is TwinSuccess;
-    if (!isRefresh) emit(TwinLoading());
+    if (!isRefresh) {
+      emit(TwinLoading());
+    } else {
+      final s = state as TwinSuccess;
+      emit(s.copyWith(refreshing: true));
+    }
     try {
       final results = await Future.wait([
         repository.overview(),
@@ -32,7 +37,8 @@ class DigitalTwinBloc extends Bloc<DigitalTwinEvent, DigitalTwinState> {
       final recs = (results[1] as List<Map<String, dynamic>>).map((e) => TwinRecommendation.fromJson(e)).toList();
       final weekly = (results[2] as List<Map<String, dynamic>>).map((e) => TwinWeeklyPoint.fromJson(e)).toList();
       final daily = (results[3] as List<Map<String, dynamic>>).map((e) => TwinDailyPoint.fromJson(e)).toList();
-      emit(TwinSuccess(overview: overview, recs: recs, weekly: weekly, daily: daily, tabIndex: 0, refreshing: false));
+      final currentTab = state is TwinSuccess ? (state as TwinSuccess).tabIndex : 0;
+      emit(TwinSuccess(overview: overview, recs: recs, weekly: weekly, daily: daily, tabIndex: currentTab, refreshing: false));
     } catch (e) {
       emit(const TwinError('تعذر تحميل التوأم الرقمي'));
     }
