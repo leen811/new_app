@@ -14,6 +14,7 @@ import 'fixtures/attendance_fixture.dart';
 import 'fixtures/policy_fixture.dart';
 import 'fixtures/tasks_fixture.dart' as TasksFx;
 import 'fixtures/ai_fixture.dart';
+import 'fixtures/digital_twin_fixture.dart';
 
 class MockApiAdapter {
   final Dio dio;
@@ -165,6 +166,24 @@ class MockApiAdapter {
     adapter.onGet(
       'geofences',
       (server) => server.reply(200, GeofencesFixture.list, delay: delay),
+    );
+
+    // Digital Twin endpoints
+    adapter.onGet(
+      '/v1/twin/overview',
+      (server) => server.reply(200, DigitalTwinFixture.overview, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/twin/recommendations',
+      (server) => server.reply(200, DigitalTwinFixture.recommendations, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/twin/productivity/weekly',
+      (server) => server.reply(200, DigitalTwinFixture.weekly(), delay: delay),
+    );
+    adapter.onGet(
+      '/v1/twin/productivity/daily',
+      (server) => server.reply(200, DigitalTwinFixture.daily(), delay: delay),
     );
     adapter.onGet(
       'attendance/policy',
