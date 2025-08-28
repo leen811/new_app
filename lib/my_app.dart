@@ -18,6 +18,7 @@ import 'Data/Repositories/chat_repository.dart';
 import 'Data/Repositories/chat_detail_repository.dart';
 import 'Data/Repositories/tasks_repository.dart';
 import 'Data/Repositories/profile_repository.dart';
+import 'Data/Repositories/assistant_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -38,6 +39,7 @@ class _MyAppState extends State<MyApp> {
   late final IChatDetailRepository _chatDetailRepository;
   late final ITasksRepository _tasksRepository;
   late final IProfileRepository _profileRepository;
+  late final IAssistantRepository _assistantRepository;
   late final _router = buildRouter();
 
   @override
@@ -55,6 +57,7 @@ class _MyAppState extends State<MyApp> {
     _chatDetailRepository = ChatDetailRepository(_api.dio);
     _tasksRepository = TasksRepository(_api.dio);
     _profileRepository = ProfileRepository(_api.dio);
+    _assistantRepository = AssistantRepository(_api.dio);
   }
 
   @override
@@ -80,6 +83,7 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<IChatDetailRepository>.value(value: _chatDetailRepository),
           RepositoryProvider<ITasksRepository>.value(value: _tasksRepository),
           RepositoryProvider<IProfileRepository>.value(value: _profileRepository),
+          RepositoryProvider<IAssistantRepository>.value(value: _assistantRepository),
         ],
         child: BlocProvider(
           create: (_) => AuthBloc(),

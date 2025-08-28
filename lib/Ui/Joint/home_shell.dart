@@ -6,7 +6,7 @@ import '../../Bloc/auth/auth_state.dart';
 import '../../Data/Models/role.dart';
 import '../Home/home_factory.dart';
 import '../Chat/company_chat_page.dart';
-import '../DigitalTwin/digital_twin_page.dart';
+import '../Assistant/assistant_page.dart';
 import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
 import '../Attendance/attendance_fabs.dart';
@@ -42,7 +42,7 @@ class _HomeShellState extends State<HomeShell> {
         final pages = [
           HomeFactory.build(role),
           const CompanyChatPage(),
-          const DigitalTwinPage(),
+          const AssistantPage(),
           const TasksPage(),
           const ProfilePage(),
         ];
