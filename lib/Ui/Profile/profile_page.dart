@@ -9,6 +9,7 @@ import 'widgets/gradient_header.dart';
 import 'widgets/performance_card.dart';
 import 'widgets/section_group.dart';
 import 'widgets/section_tile.dart';
+import '../../Core/Navigation/app_routes.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -68,10 +69,10 @@ class _Body extends StatelessWidget {
                 SectionGroup(title: 'الملف الشخصي', tiles: const [
                   SectionTile(title: 'المعلومات الشخصية', subtitle: 'عرض وتحديث بياناتك الشخصية', trailingIcon: Icons.person_outline),
                 ]),
-                SectionGroup(title: 'الذكاء الاصطناعي', tiles: const [
-                  SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined),
-                  SectionTile(title: 'التوأم الرقمي', subtitle: 'نموذج رقمي متقدم لتحليل أدائك', trailingIcon: Icons.memory_outlined),
-                  SectionTile(title: 'التحليلات الذكية', subtitle: 'تحليلات متقدمة بالذكاء الاصطناعي', trailingIcon: Icons.show_chart),
+                SectionGroup(title: 'الذكاء الاصطناعي', tiles: [
+                  const SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined),
+                  SectionTile(title: 'التوأم الرقمي', subtitle: 'نموذج رقمي متقدم لتحليل أدائك', trailingIcon: Icons.memory_outlined, onTap: () => context.goDigitalTwin()),
+                  const SectionTile(title: 'التحليلات الذكية', subtitle: 'تحليلات متقدمة بالذكاء الاصطناعي', trailingIcon: Icons.show_chart),
                 ]),
                 SectionGroup(title: 'التطوير والتعلم', tiles: const [
                   SectionTile(title: 'التدريب الذكي', subtitle: 'برامج تدريب مخصصة وذكية', trailingIcon: Icons.school_outlined),
