@@ -10,12 +10,9 @@ class DigitalTwinPage extends StatelessWidget {
   const DigitalTwinPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<IDigitalTwinRepository>(
-      create: (ctx) => DigitalTwinRepository(ctx.read()),
-      child: BlocProvider(
-        create: (ctx) => DigitalTwinBloc(ctx.read<IDigitalTwinRepository>())..add(TwinOpened()),
-        child: const _Body(),
-      ),
+    return BlocProvider(
+      create: (ctx) => DigitalTwinBloc(ctx.read<IDigitalTwinRepository>())..add(TwinOpened()),
+      child: const _Body(),
     );
   }
 }
@@ -86,12 +83,12 @@ class _KpiGrid extends StatelessWidget {
   final dynamic overview;
   @override
   Widget build(BuildContext context) {
-    Widget card(IconData icon, String title, String value, {Color? valueColor}) {
+    Widget card(IconData icon, String title, String value, {Color? valueColor, required Color iconColor}) {
       return Container(
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2)), boxShadow: [BoxShadow(color: const Color(0xFF0B1524).withOpacity(0.06), blurRadius: 12, offset: const Offset(0, 4))]),
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CircleAvatar(backgroundColor: const Color(0xFFF2F4F7), child: Icon(icon, color: const Color(0xFF7C3AED))),
+          CircleAvatar(backgroundColor: iconColor.withOpacity(0.10), child: Icon(icon, color: iconColor)),
           const SizedBox(height: 12),
           Text(title, style: const TextStyle(color: Color(0xFF667085), fontSize: 12)),
           const SizedBox(height: 6),
@@ -105,14 +102,14 @@ class _KpiGrid extends StatelessWidget {
       child: GridView(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.9),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.5),
         children: [
-          card(Icons.center_focus_strong, 'درجة التركيز', '${overview.focusPct}%'),
-          card(Icons.bolt, 'مستوى الطاقة', '${overview.energyPct}%', valueColor: const Color(0xFF10B981)),
-          card(Icons.trending_up, 'الإنتاجية الأسبوعية', '${overview.weeklyProdPct}%'),
-          card(Icons.person_outline, 'توازن الحياة', '${overview.lifeBalancePct}%'),
-          card(Icons.schedule, 'الساعات المثالية', '${overview.idealHours}h'),
-          card(Icons.error_outline, 'مستوى التوتر', '${overview.stressPct}%', valueColor: const Color(0xFFEF4444)),
+          card(Icons.center_focus_strong, 'درجة التركيز', '${overview.focusPct}%', iconColor: const Color(0xFF7C3AED)),
+          card(Icons.bolt, 'مستوى الطاقة', '${overview.energyPct}%', valueColor: const Color(0xFF10B981), iconColor: const Color(0xFF10B981)),
+          card(Icons.trending_up, 'الإنتاجية الأسبوعية', '${overview.weeklyProdPct}%', iconColor: const Color(0xFF2F56D9)),
+          card(Icons.person_outline, 'توازن الحياة', '${overview.lifeBalancePct}%', iconColor: const Color(0xFFF59E0B)),
+          card(Icons.schedule, 'الساعات المثالية', '${overview.idealHours}h', iconColor: const Color(0xFF0EA5E9)),
+          card(Icons.error_outline, 'مستوى التوتر', '${overview.stressPct}%', valueColor: const Color(0xFFEF4444), iconColor: const Color(0xFFEF4444)),
         ],
       ),
     );
