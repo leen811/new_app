@@ -10,6 +10,7 @@ import '../DigitalTwin/digital_twin_page.dart';
 import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
 import '../Attendance/attendance_fabs.dart';
+import 'widgets/custom_bottom_nav.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
 import '../../Bloc/attendance/attendance_event.dart';
 import '../../Data/Repositories/attendance_repository.dart';
@@ -52,16 +53,9 @@ class _HomeShellState extends State<HomeShell> {
               const AttendanceFabs(),
             ],
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _index,
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
-              NavigationDestination(icon: Icon(Icons.chat_bubble_outline), label: 'الشات'),
-              NavigationDestination(icon: Icon(Icons.hub_outlined), label: 'التوأم الرقمي'),
-              NavigationDestination(icon: Icon(Icons.check_circle_outline), label: 'المهام'),
-              NavigationDestination(icon: Icon(Icons.person_outline), label: 'حسابي'),
-            ],
-            onDestinationSelected: (i) => setState(() => _index = i),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: _index,
+            onItemSelected: (i) => setState(() => _index = i),
           ),
         );
       },
