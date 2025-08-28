@@ -6,6 +6,7 @@ import 'Ui/ForgotPassword/forgot_method_page.dart';
 import 'Ui/ForgotPassword/otp_verify_page.dart';
 import 'Ui/Splash/splash_page.dart';
 import 'Ui/Joint/home_shell.dart';
+import 'Ui/Chat/chat_detail_page.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -34,6 +35,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/forgot/verify',
         pageBuilder: (context, state) => _fadePage(const OtpVerifyPage()),
+      ),
+      GoRoute(
+        path: '/chat/:id',
+        pageBuilder: (context, state) => _fadePage(ChatDetailPage(conversationId: state.pathParameters['id']!)),
       ),
     ],
   );

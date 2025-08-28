@@ -178,7 +178,7 @@ class _NavItem extends StatelessWidget {
               child: IconTheme(
                 data: IconThemeData(
                   color: iconColor,
-                  size: 22,
+                  size: 26,
                 ),
                 child: Icon(icon),
               ),
