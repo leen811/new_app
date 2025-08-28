@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+// Using built-in Material Icons to avoid symbol font rendering issues
 
 class CustomBottomNavBar extends StatelessWidget {
   const CustomBottomNavBar({super.key, required this.currentIndex, required this.onItemSelected});
@@ -19,7 +20,7 @@ class CustomBottomNavBar extends StatelessWidget {
   static const Color _inactiveIcon = Color(0xFF98A2B3);
   static const Color _inactiveText = Color(0xE699A2B3); // 90% alpha of 98A2B3
 
-  static const List<_NavItemSpec> _items = [
+  static final List<_NavItemSpec> _items = [
     _NavItemSpec(label: 'الرئيسية', icon: Icons.home_outlined, activeColor: Color(0xFF2F56D9)),
     _NavItemSpec(label: 'الشات', icon: Icons.chat_bubble_outline, activeColor: Color(0xFF7C3AED)),
     _NavItemSpec(label: 'المساعد الذكي', icon: Icons.smart_toy_outlined, activeColor: Color(0xFF0EA5E9)),
@@ -172,7 +173,14 @@ class _NavItem extends StatelessWidget {
               duration: colorDuration,
               switchInCurve: Curves.easeOut,
               switchOutCurve: Curves.easeOut,
-              child: Icon(icon, key: ValueKey<bool>(isActive), size: 24, color: iconColor),
+              child: IconTheme(
+                key: ValueKey<bool>(isActive),
+                data: IconThemeData(
+                  color: iconColor,
+                  size: 22, // أنحف/أصغر قليلاً لإحساس أكثر رقة
+                ),
+                child: Icon(icon),
+              ),
             ),
             const SizedBox(height: 6),
             AnimatedDefaultTextStyle(
@@ -193,7 +201,7 @@ class _NavItem extends StatelessWidget {
 }
 
 class _NavItemSpec {
-  const _NavItemSpec({required this.label, required this.icon, required this.activeColor});
+  _NavItemSpec({required this.label, required this.icon, required this.activeColor});
   final String label;
   final IconData icon;
   final Color activeColor;
