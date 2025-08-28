@@ -31,10 +31,11 @@ class AssistantBloc extends Bloc<AssistantEvent, AssistantState> {
     final text = state.input.trim();
     if (text.isEmpty) return;
     final mine = AssistantMessage(isMe: true, text: text, at: DateTime.now());
-    emit(state.copyWith(messages: [...state.messages, mine], input: '', loading: true));
+    final before = [...state.messages, mine];
+    emit(state.copyWith(messages: before, input: '', loading: true));
     final reply = await repository.chat(text);
     final ai = AssistantMessage(isMe: false, text: reply['text'] as String, at: DateTime.now());
-    emit(state.copyWith(messages: [...state.messages, mine, ai], loading: false));
+    emit(state.copyWith(messages: [...before, ai], loading: false));
   }
 
   Future<void> _onQuick(AssistantQuickActionPressed event, Emitter<AssistantState> emit) async {

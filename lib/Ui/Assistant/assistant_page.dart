@@ -57,7 +57,7 @@ class _Body extends StatelessWidget {
                         for (var i = 0; i < state.messages.length; i++) {
                           final m = state.messages[i];
                           final bubble = Align(
-                            alignment: m.isMe ? Alignment.centerLeft : Alignment.centerRight,
+                            alignment: m.isMe ? Alignment.centerRight : Alignment.centerLeft,
                             child: Container(
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               constraints: const BoxConstraints(maxWidth: 600),
