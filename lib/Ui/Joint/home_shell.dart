@@ -50,7 +50,7 @@ class _HomeShellState extends State<HomeShell> {
           body: Stack(
             children: [
               IndexedStack(index: _index, children: pages),
-              const AttendanceFabs(),
+              if (_index != 2) const AttendanceFabs(),
             ],
           ),
           bottomNavigationBar: CustomBottomNavBar(
