@@ -66,7 +66,7 @@ class _Body extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: CourseFiltersBar(
                     categories: categories,
-                    selected: s.category,
+                    selected: s.category == 'all' ? categories.first : s.category,
                     onSelected: (c) =>
                         context.read<CoursesBloc>().add(FilterChanged(c)),
                   ),
@@ -74,13 +74,14 @@ class _Body extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.all(12),
                   sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.64,
-                        ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      // Give cards more vertical space on compact screens to avoid overflow
+                          childAspectRatio: 0.83
+                          ,
+                    ),
                     delegate: SliverChildBuilderDelegate((context, i) {
                       final c = s.items[i];
                       return Container(
@@ -226,31 +227,42 @@ class _Body extends StatelessWidget {
                                   const SizedBox(height: 8),
                                   Row(
                                     children: [
-                                      OutlinedButton(
-                                        onPressed: () {},
-                                        child: const Text('تفاصيل'),
+                                      SizedBox(
+                                        height: 34,
+                                        child: OutlinedButton(
+                                          onPressed: () {},
+                                          child: const Text('تفاصيل'),
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
-                                      FilledButton(
-                                        onPressed: () {},
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text('ابدأ الآن'),
-                                            SizedBox(width: 6),
-                                            Icon(Icons.play_arrow, size: 16),
-                                          ],
+                                      SizedBox(
+                                        height: 34,
+                                        child: FilledButton(
+                                          onPressed: () {},
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('ابدأ الآن'),
+                                              SizedBox(width: 6),
+                                              Icon(Icons.play_arrow, size: 16),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       const Spacer(),
-                                      IconButton(
-                                        onPressed: () => context
-                                            .read<CoursesBloc>()
-                                            .add(BookmarkToggled(c.id)),
-                                        icon: Icon(
-                                          c.isBookmarked
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_outline,
+                                      SizedBox(
+                                        height: 34,
+                                        width: 34,
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () => context
+                                              .read<CoursesBloc>()
+                                              .add(BookmarkToggled(c.id)),
+                                          icon: Icon(
+                                            c.isBookmarked
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_outline,
+                                          ),
                                         ),
                                       ),
                                     ],
