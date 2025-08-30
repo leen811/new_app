@@ -12,13 +12,17 @@ class AttendanceFabs extends StatefulWidget {
   State<AttendanceFabs> createState() => _AttendanceFabsState();
 }
 
-class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProviderStateMixin {
+class _AttendanceFabsState extends State<AttendanceFabs>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat(reverse: true);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -35,7 +39,9 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
       child: BlocBuilder<AttendanceBloc, AttendanceState>(
         builder: (context, state) {
           final canCheck = state.canCheckIn;
-          final disabled = (!canCheck && state.status == AttendanceStatus.ready) || state.status == AttendanceStatus.checkedOut;
+          final disabled =
+              (!canCheck && state.status == AttendanceStatus.ready) ||
+              state.status == AttendanceStatus.checkedOut;
 
           Color mainBg() {
             // أزرق غامق شفاف قليلاً في وضع الاستعداد، وأخضر شفاف عند الحضور
@@ -46,9 +52,13 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
             return blueDeep.withOpacity(0.75);
           }
 
-          IconData mainIcon = state.status == AttendanceStatus.checkedIn ? Icons.logout : Icons.fingerprint;
+          IconData mainIcon = state.status == AttendanceStatus.checkedIn
+              ? Icons.logout
+              : Icons.fingerprint;
 
-          final bob = Tween<double>(begin: 0, end: -4).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+          final bob = Tween<double>(begin: 0, end: -4).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+          );
 
           final children = <Widget>[
             AnimatedBuilder(
@@ -60,7 +70,11 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
               child: FloatingActionButton(
                 heroTag: 'fab_attendance',
                 tooltip: disabled ? 'خارج النطاق' : null,
-                onPressed: disabled ? null : () => context.read<AttendanceBloc>().add(AttendanceFabPressed()),
+                onPressed: disabled
+                    ? null
+                    : () => context.read<AttendanceBloc>().add(
+                        AttendanceFabPressed(),
+                      ),
                 backgroundColor: mainBg(),
                 foregroundColor: Colors.white,
                 elevation: 10,
@@ -81,25 +95,32 @@ class _AttendanceFabsState extends State<AttendanceFabs> with SingleTickerProvid
                 ),
                 child: FloatingActionButton(
                   heroTag: 'fab_break',
-                  onPressed: () => context.read<AttendanceBloc>().add(BreakFabPressed()),
-                  backgroundColor: (state.breakStatus == BreakStatus.none
-                          ? Colors.orange
-                          : Colors.blue)
-                      .withOpacity(0.75),
+                  onPressed: () =>
+                      context.read<AttendanceBloc>().add(BreakFabPressed()),
+                  backgroundColor:
+                      (state.breakStatus == BreakStatus.none
+                              ? Colors.orange
+                              : Colors.blue)
+                          .withOpacity(0.75),
                   foregroundColor: Colors.white,
                   elevation: 10,
                   shape: const CircleBorder(),
-                  child: Icon(state.breakStatus == BreakStatus.none ? Icons.local_cafe : Icons.local_cafe),
+                  child: Icon(
+                    state.breakStatus == BreakStatus.none
+                        ? Icons.local_cafe
+                        : Icons.local_cafe,
+                  ),
                 ),
               ),
             );
           }
 
-          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: children);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          );
         },
       ),
     );
   }
 }
-
-

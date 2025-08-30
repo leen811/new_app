@@ -8,6 +8,10 @@ class ActionRouter {
       context.goDigitalTwin();
       return true;
     }
+    if (l == 'التدريب الذكي' || l == 'Smart Training') {
+      context.goSmartTraining();
+      return true;
+    }
     return false;
   }
 }

@@ -27,5 +27,3 @@ class AssistantRepository implements IAssistantRepository {
     return Map<String, dynamic>.from(r.data as Map);
   }
 }
-
-

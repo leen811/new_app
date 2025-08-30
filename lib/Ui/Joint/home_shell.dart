@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Bloc/auth/auth_bloc.dart';
 import '../../Bloc/auth/auth_state.dart';
@@ -19,13 +20,26 @@ import '../../Data/Repositories/policy_repository.dart';
 import '../../Data/Repositories/location_source.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.initialIndex = 0});
+  final int initialIndex;
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.initialIndex;
+  }
+  @override
+  void didUpdateWidget(covariant HomeShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialIndex != widget.initialIndex) {
+      setState(() => _index = widget.initialIndex);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +69,9 @@ class _HomeShellState extends State<HomeShell> {
           ),
           bottomNavigationBar: CustomBottomNavBar(
             currentIndex: _index,
-            onItemSelected: (i) => setState(() => _index = i),
+            onItemSelected: (i) {
+              GoRouter.of(context).go('/?tab=$i');
+            },
           ),
         );
       },

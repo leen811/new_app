@@ -76,12 +76,12 @@ class _Body extends StatelessWidget {
                   SectionTile(title: 'المعلومات الشخصية', subtitle: 'عرض وتحديث بياناتك الشخصية', trailingIcon: Icons.person_outline),
                 ]),
                 SectionGroup(title: 'الذكاء الاصطناعي', tiles: [
-                  const SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined),
+                  SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined, onTap: () => context.goAssistant()),
                   SectionTile(title: 'التوأم الرقمي', subtitle: 'نموذج رقمي متقدم لتحليل أدائك', trailingIcon: Icons.memory_outlined, onTap: () => context.goDigitalTwin()),
                   const SectionTile(title: 'التحليلات الذكية', subtitle: 'تحليلات متقدمة بالذكاء الاصطناعي', trailingIcon: Icons.show_chart),
                 ]),
-                SectionGroup(title: 'التطوير والتعلم', tiles: const [
-                  SectionTile(title: 'التدريب الذكي', subtitle: 'برامج تدريب مخصصة وذكية', trailingIcon: Icons.school_outlined),
+                SectionGroup(title: 'التطوير والتعلم', tiles: [
+                  SectionTile(title: 'التدريب الذكي', subtitle: 'برامج تدريب مخصصة وذكية', trailingIcon: Icons.school_outlined, onTap: () => context.goSmartTraining()),
                   SectionTile(title: 'الإنجازات والشارات', subtitle: 'جميع إنجازاتك وشاراتك المكتسبة', trailingIcon: Icons.emoji_events_outlined),
                 ]),
                 SectionGroup(title: 'الشؤون المالية', tiles: const [

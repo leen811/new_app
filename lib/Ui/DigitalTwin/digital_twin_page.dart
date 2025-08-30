@@ -1,4 +1,6 @@
 import 'package:animations/animations.dart';
+import 'widgets/weekly_line_chart.dart';
+import 'widgets/daily_line_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Bloc/twin/digital_twin_bloc.dart';
@@ -196,13 +198,51 @@ class _Charts extends StatelessWidget {
   final List<dynamic> daily;
   @override
   Widget build(BuildContext context) {
-    // Placeholders for brevity; you can replace with fl_chart detailed charts later
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(children: [
-        Container(height: 220, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))), child: const Center(child: Text('اتجاه الإنتاجية الأسبوعية'))),
+        _WeeklyChart(weekly: weekly),
         const SizedBox(height: 12),
-        Container(height: 220, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))), child: const Center(child: Text('نمط الإنتاجية اليومي'))),
+        _DailyChart(daily: daily),
+      ]),
+    );
+  }
+}
+
+class _WeeklyChart extends StatelessWidget {
+  const _WeeklyChart({required this.weekly});
+  final List<dynamic> weekly;
+  @override
+  Widget build(BuildContext context) {
+    final days = weekly.map<String>((e) => e.dayAr as String).toList();
+    final energy = weekly.map<int>((e) => e.energy as int).toList();
+    final prod = weekly.map<int>((e) => e.productivity as int).toList();
+    return Container(
+      height: 240,
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))),
+      padding: const EdgeInsets.all(12),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Padding(padding: EdgeInsetsDirectional.only(start: 8, bottom: 6), child: Text('اتجاه الإنتاجية الأسبوعية')),
+        Expanded(child: WeeklyLineChart(energy: energy, productivity: prod, labels: days)),
+      ]),
+    );
+  }
+}
+
+class _DailyChart extends StatelessWidget {
+  const _DailyChart({required this.daily});
+  final List<dynamic> daily;
+  @override
+  Widget build(BuildContext context) {
+    final labels = daily.map<String>((e) => e.timeLabel as String).toList();
+    final values = daily.map<int>((e) => e.value as int).toList();
+    return Container(
+      height: 240,
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))),
+      padding: const EdgeInsets.all(12),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Padding(padding: EdgeInsetsDirectional.only(start: 8, bottom: 6), child: Text('نمط الإنتاجية اليومي')),
+        Expanded(child: DailyLineChart(values: values, labels: labels)),
       ]),
     );
   }

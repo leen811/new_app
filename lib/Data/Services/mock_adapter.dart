@@ -15,6 +15,7 @@ import 'fixtures/policy_fixture.dart';
 import 'fixtures/tasks_fixture.dart' as TasksFx;
 import 'fixtures/ai_fixture.dart';
 import 'fixtures/digital_twin_fixture.dart';
+import 'fixtures/training_fixture.dart';
 
 class MockApiAdapter {
   final Dio dio;
@@ -35,6 +36,24 @@ class MockApiAdapter {
     adapter.onGet(
       '/v1/ai/suggest',
       (server) => server.reply(200, AiFixture.suggest, delay: delay),
+    );
+
+    // Smart Training endpoints
+    adapter.onGet(
+      '/v1/training/alerts',
+      (server) => server.reply(200, TrainingFixture.alerts, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/training/skills-progress',
+      (server) => server.reply(200, TrainingFixture.skills, delay: delay),
+    );
+    adapter.onGet('/v1/training/courses', (server) {
+      server.reply(200, TrainingFixture.page1('all'), delay: delay);
+    });
+    adapter.onPost(
+      RegExp(r"/v1/training/courses/.+/bookmark"),
+      (server) => server.reply(200, {'ok': true, 'isBookmarked': true}, delay: delay),
+      data: Matchers.any,
     );
     adapter.onPost(
       '/v1/ai/chat',

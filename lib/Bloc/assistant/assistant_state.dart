@@ -4,7 +4,11 @@ class AssistantMessage extends Equatable {
   final bool isMe;
   final String text;
   final DateTime at;
-  const AssistantMessage({required this.isMe, required this.text, required this.at});
+  const AssistantMessage({
+    required this.isMe,
+    required this.text,
+    required this.at,
+  });
   @override
   List<Object?> get props => [isMe, text, at];
 }
@@ -23,18 +27,34 @@ class AssistantState extends Equatable {
     required this.connected,
   });
 
-  factory AssistantState.initial() => const AssistantState(messages: [], quickActions: [], input: '', loading: false, connected: true);
+  factory AssistantState.initial() => const AssistantState(
+    messages: [],
+    quickActions: [],
+    input: '',
+    loading: false,
+    connected: true,
+  );
 
-  AssistantState copyWith({List<AssistantMessage>? messages, List<String>? quickActions, String? input, bool? loading, bool? connected}) => AssistantState(
-        messages: messages ?? this.messages,
-        quickActions: quickActions ?? this.quickActions,
-        input: input ?? this.input,
-        loading: loading ?? this.loading,
-        connected: connected ?? this.connected,
-      );
+  AssistantState copyWith({
+    List<AssistantMessage>? messages,
+    List<String>? quickActions,
+    String? input,
+    bool? loading,
+    bool? connected,
+  }) => AssistantState(
+    messages: messages ?? this.messages,
+    quickActions: quickActions ?? this.quickActions,
+    input: input ?? this.input,
+    loading: loading ?? this.loading,
+    connected: connected ?? this.connected,
+  );
 
   @override
-  List<Object?> get props => [messages, quickActions, input, loading, connected];
+  List<Object?> get props => [
+    messages,
+    quickActions,
+    input,
+    loading,
+    connected,
+  ];
 }
-
-
