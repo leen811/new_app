@@ -29,7 +29,7 @@ class _Body extends StatelessWidget {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Colors.green)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0))),
         title: Column(children: const [
           Text('التدريب الذكي', style: TextStyle(color: Colors.black)),
           SizedBox(height: 2),
