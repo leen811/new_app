@@ -53,6 +53,15 @@ class _Body extends StatelessWidget {
             'التقني (1)',
             'الإنتاجية (1)',
           ];
+          String _mapLabelToKey(String label) {
+            if (label.startsWith('جميع')) return 'all';
+            if (label.contains('الإدارة')) return 'management';
+            if (label.contains('التكنولوجيا')) return 'technology';
+            if (label.contains('الناعمة')) return 'soft';
+            if (label.contains('التقني')) return 'engineering';
+            if (label.contains('الإنتاجية')) return 'productivity';
+            return 'all';
+          }
           return NotificationListener<ScrollNotification>(
             onNotification: (n) {
               if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
@@ -68,7 +77,7 @@ class _Body extends StatelessWidget {
                     categories: categories,
                     selected: s.category == 'all' ? categories.first : s.category,
                     onSelected: (c) =>
-                        context.read<CoursesBloc>().add(FilterChanged(c)),
+                        context.read<CoursesBloc>().add(FilterChanged(_mapLabelToKey(c))),
                   ),
                 ),
                 SliverPadding(
