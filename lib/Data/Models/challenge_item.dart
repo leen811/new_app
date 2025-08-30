@@ -22,18 +22,25 @@ class ChallengeItem extends Equatable {
   });
 
   factory ChallengeItem.fromJson(Map<String, dynamic> json) => ChallengeItem(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        desc: json['desc'] as String? ?? '',
-        teamProgress: (json['teamProgress'] as num).toInt(),
-        total: (json['total'] as num).toInt(),
-        meProgress: (json['meProgress'] as num).toInt(),
-        deadlineLabel: json['deadlineLabel'] as String,
-        participants: (json['participants'] as num).toInt(),
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    desc: json['desc'] as String? ?? '',
+    teamProgress: (json['teamProgress'] as num).toInt(),
+    total: (json['total'] as num).toInt(),
+    meProgress: (json['meProgress'] as num).toInt(),
+    deadlineLabel: json['deadlineLabel'] as String,
+    participants: (json['participants'] as num).toInt(),
+  );
 
   @override
-  List<Object?> get props => [id, title, desc, teamProgress, total, meProgress, deadlineLabel, participants];
+  List<Object?> get props => [
+    id,
+    title,
+    desc,
+    teamProgress,
+    total,
+    meProgress,
+    deadlineLabel,
+    participants,
+  ];
 }
-
-

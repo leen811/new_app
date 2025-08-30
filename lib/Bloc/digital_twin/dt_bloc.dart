@@ -13,7 +13,7 @@ class DtBloc extends Bloc<DtEvent, DtState> {
     emit(DtLoading());
     await Future<void>.delayed(const Duration(milliseconds: 600));
     try {
-      final summary = await repository.fetchSummary();
+      final summary = await repository.overview();
       if (summary.isEmpty) {
         emit(DtEmpty());
       } else {
@@ -24,5 +24,3 @@ class DtBloc extends Bloc<DtEvent, DtState> {
     }
   }
 }
-
-

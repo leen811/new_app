@@ -9,6 +9,8 @@ import 'Ui/Joint/home_shell.dart';
 import 'Ui/Chat/chat_detail_page.dart';
 import 'Core/Navigation/app_routes.dart';
 import 'Ui/DigitalTwin/digital_twin_page.dart';
+import 'Ui/Training/smart_training_page.dart';
+import 'Ui/Training/courses_page.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -24,7 +26,11 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: '/',
-        pageBuilder: (context, state) => _fadePage(const HomeShell()),
+        pageBuilder: (context, state) {
+          final q = state.uri.queryParameters;
+          final initialIndex = int.tryParse(q['tab'] ?? '') ?? 0;
+          return _fadePage(HomeShell(initialIndex: initialIndex));
+        },
       ),
       GoRoute(
         path: '/company/new',
@@ -45,6 +51,18 @@ GoRouter buildRouter() {
       GoRoute(
         path: digitalTwinRoute,
         pageBuilder: (context, state) => _fadePage(const DigitalTwinPage()),
+      ),
+      GoRoute(
+        path: smartTrainingRoute,
+        pageBuilder: (context, state) => _fadePage(const SmartTrainingPage()),
+      ),
+      GoRoute(
+        path: smartTrainingCoursesRoute,
+        pageBuilder: (context, state) => _fadePage(const CoursesPage()),
+      ),
+      GoRoute(
+        path: assistantRoute,
+        pageBuilder: (context, state) => _fadePage(const HomeShell(initialIndex: 2)),
       ),
     ],
   );

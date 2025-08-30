@@ -6,5 +6,3 @@ class TasksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const TasksTabPage();
 }
-
-
