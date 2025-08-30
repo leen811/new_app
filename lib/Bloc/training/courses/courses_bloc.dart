@@ -54,6 +54,16 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
 
   String _normalizeCategory(String category) {
     final c = category.trim();
+    // Pass-through if already a normalized key
+    const keys = {
+      'all',
+      'management',
+      'technology',
+      'soft',
+      'engineering',
+      'productivity',
+    };
+    if (keys.contains(c)) return c;
     if (c == 'all' || c.startsWith('جميع')) return 'all';
     if (c.contains('الإدارة')) return 'management';
     if (c.contains('التكنولوجيا')) return 'technology';
