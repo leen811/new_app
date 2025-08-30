@@ -62,6 +62,23 @@ class _Body extends StatelessWidget {
             if (label.contains('الإنتاجية')) return 'productivity';
             return 'all';
           }
+          String _mapKeyToLabel(String key) {
+            switch (key) {
+              case 'management':
+                return 'الإدارة والقيادة (1)';
+              case 'technology':
+                return 'التكنولوجيا (1)';
+              case 'soft':
+                return 'المهارات الناعمة (1)';
+              case 'engineering':
+                return 'التقني (1)';
+              case 'productivity':
+                return 'الإنتاجية (1)';
+              case 'all':
+              default:
+                return 'جميع الكورسات (5)';
+            }
+          }
           return NotificationListener<ScrollNotification>(
             onNotification: (n) {
               if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
@@ -75,7 +92,7 @@ class _Body extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: CourseFiltersBar(
                     categories: categories,
-                    selected: s.category == 'all' ? categories.first : s.category,
+                    selected: _mapKeyToLabel(s.category),
                     onSelected: (c) =>
                         context.read<CoursesBloc>().add(FilterChanged(_mapLabelToKey(c))),
                   ),

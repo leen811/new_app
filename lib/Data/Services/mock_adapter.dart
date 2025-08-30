@@ -47,7 +47,7 @@ class MockApiAdapter {
       '/v1/training/skills-progress',
       (server) => server.reply(200, TrainingFixture.skills, delay: delay),
     );
-    // Courses with category filters
+    // Courses with category filters (match by query parameters)
     adapter.onGet(
       '/v1/training/courses',
       (server) => server.reply(200, TrainingFixture.page(category: 'all', page: 1), delay: delay),
