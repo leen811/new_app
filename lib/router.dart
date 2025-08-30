@@ -11,6 +11,8 @@ import 'Core/Navigation/app_routes.dart';
 import 'Ui/DigitalTwin/digital_twin_page.dart';
 import 'Ui/Training/smart_training_page.dart';
 import 'Ui/Training/courses_page.dart';
+import 'Ui/Perf360/perf360_page.dart';
+import 'Ui/Profile/PersonalInfo/personal_info_page.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -59,6 +61,14 @@ GoRouter buildRouter() {
       GoRoute(
         path: smartTrainingCoursesRoute,
         pageBuilder: (context, state) => _fadePage(const CoursesPage()),
+      ),
+      GoRoute(
+        path: '/profile/personal-info',
+        pageBuilder: (context, state) => _fadePage(const PersonalInfoPage()),
+      ),
+      GoRoute(
+        path: perf360Route,
+        pageBuilder: (context, state) => _fadePage(const Perf360Page()),
       ),
       GoRoute(
         path: assistantRoute,

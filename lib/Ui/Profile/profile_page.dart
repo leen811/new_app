@@ -10,6 +10,7 @@ import 'widgets/performance_card.dart';
 import 'widgets/section_group.dart';
 import 'widgets/section_tile.dart';
 import '../../Core/Navigation/app_routes.dart';
+import '../Common/coming_soon/coming_soon.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -72,8 +73,8 @@ class _Body extends StatelessWidget {
                 const SizedBox(height: 12),
                 PerformanceCard(perf: s.perf),
                 const SizedBox(height: 12),
-                SectionGroup(title: 'الملف الشخصي', tiles: const [
-                  SectionTile(title: 'المعلومات الشخصية', subtitle: 'عرض وتحديث بياناتك الشخصية', trailingIcon: Icons.person_outline),
+                SectionGroup(title: 'الملف الشخصي', tiles: [
+                  SectionTile(title: 'المعلومات الشخصية', subtitle: 'عرض وتحديث بياناتك الشخصية', trailingIcon: Icons.person_outline, onTap: () => context.goProfilePersonalInfo()),
                 ]),
                 SectionGroup(title: 'الذكاء الاصطناعي', tiles: [
                   SectionTile(title: 'المساعد الذكي', subtitle: 'مساعد ذكي شخصي لتحسين أدائك', trailingIcon: Icons.smart_toy_outlined, onTap: () => context.goAssistant()),
@@ -82,14 +83,15 @@ class _Body extends StatelessWidget {
                 ]),
                 SectionGroup(title: 'التطوير والتعلم', tiles: [
                   SectionTile(title: 'التدريب الذكي', subtitle: 'برامج تدريب مخصصة وذكية', trailingIcon: Icons.school_outlined, onTap: () => context.goSmartTraining()),
-                  SectionTile(title: 'الإنجازات والشارات', subtitle: 'جميع إنجازاتك وشاراتك المكتسبة', trailingIcon: Icons.emoji_events_outlined),
+                  SectionTile(title: 'تقييم الأداء 360°', subtitle: 'تقييم شامل من جميع الزوايا', trailingIcon: Icons.assessment_outlined, onTap: () => context.goPerf360()),
+                  SectionTile(title: 'الإنجازات والشارات', subtitle: 'جميع إنجازاتك وشاراتك المكتسبة', trailingIcon: Icons.emoji_events_outlined, onTap: () => ComingSoon.show(context, featureName: 'الإنجازات والشارات', icon: Icons.emoji_events_rounded)),
                 ]),
                 SectionGroup(title: 'الشؤون المالية', tiles: const [
                   SectionTile(title: 'خصومات الراتب والأسباب', subtitle: 'عرض خصومات راتبك والأسباب التفصيلية', trailingIcon: Icons.receipt_long_outlined),
                 ]),
-                SectionGroup(title: 'التواصل والإشعارات', tiles: const [
-                  SectionTile(title: 'إشعارات البريد الإلكتروني', subtitle: 'إدارة ومتابعة بريدك مع إمكانية الرد', trailingIcon: Icons.mail_outline),
-                  SectionTile(title: 'الإشعارات الذكية', subtitle: 'إدارة إعدادات الإشعارات المخصصة', trailingIcon: Icons.notifications_none),
+                SectionGroup(title: 'التواصل والإشعارات', tiles: [
+                  SectionTile(title: 'إشعارات البريد الإلكتروني', subtitle: 'إدارة ومتابعة بريدك مع إمكانية الرد', trailingIcon: Icons.mail_outline, onTap: () => ComingSoon.show(context, featureName: 'إشعارات البريد الإلكتروني', icon: Icons.mark_email_unread_rounded)),
+                  const SectionTile(title: 'الإشعارات الذكية', subtitle: 'إدارة إعدادات الإشعارات المخصصة', trailingIcon: Icons.notifications_none),
                 ]),
                 SectionGroup(title: 'الإعدادات والتفضيلات', tiles: const [
                   SectionTile(title: 'الإعدادات العامة', subtitle: 'إعدادات التطبيق وتفضيلاتك الشخصية', trailingIcon: Icons.settings_outlined),

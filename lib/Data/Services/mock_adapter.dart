@@ -16,6 +16,7 @@ import 'fixtures/tasks_fixture.dart' as TasksFx;
 import 'fixtures/ai_fixture.dart';
 import 'fixtures/digital_twin_fixture.dart';
 import 'fixtures/training_fixture.dart';
+import 'fixtures/perf360_fixture.dart';
 
 class MockApiAdapter {
   final Dio dio;
@@ -42,6 +43,34 @@ class MockApiAdapter {
     adapter.onGet(
       '/v1/training/alerts',
       (server) => server.reply(200, TrainingFixture.alerts, delay: delay),
+    );
+
+    // Perf360 endpoints
+    adapter.onGet(
+      '/v1/perf360/summary',
+      (server) => server.reply(200, Perf360Fixture.summary, delay: delay),
+      queryParameters: {'me': 1},
+    );
+    adapter.onGet(
+      '/v1/perf360/pending',
+      (server) => server.reply(200, Perf360Fixture.pending, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/perf360/peers',
+      (server) => server.reply(200, Perf360Fixture.peers, delay: delay),
+    );
+    adapter.onPost(
+      '/v1/perf360/submit',
+      (server) => server.reply(200, {'ok': true}, delay: delay),
+      data: Matchers.any,
+    );
+    adapter.onGet(
+      '/v1/perf360/results',
+      (server) => server.reply(200, Perf360Fixture.results, delay: delay),
+    );
+    adapter.onGet(
+      '/v1/perf360/analytics',
+      (server) => server.reply(200, Perf360Fixture.analytics, delay: delay),
     );
     adapter.onGet(
       '/v1/training/skills-progress',
@@ -175,6 +204,16 @@ class MockApiAdapter {
     adapter.onGet(
       '/v1/profile/performance',
       (server) => server.reply(200, ProfileFx.ProfileTabFixture.performance, delay: delay),
+    );
+    // Personal info detail endpoints
+    adapter.onGet(
+      '/v1/profile/personal-info',
+      (server) => server.reply(200, ProfileFx.PersonalInfoFixture.detail, delay: delay),
+    );
+    adapter.onPut(
+      '/v1/profile/personal-info',
+      (server) => server.reply(200, {'ok': true, ...ProfileFx.PersonalInfoFixture.detail}, delay: delay),
+      data: Matchers.any,
     );
     // Tasks tab endpoints
     adapter.onGet(
