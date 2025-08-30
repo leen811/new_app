@@ -47,9 +47,37 @@ class MockApiAdapter {
       '/v1/training/skills-progress',
       (server) => server.reply(200, TrainingFixture.skills, delay: delay),
     );
-    adapter.onGet('/v1/training/courses', (server) {
-      server.reply(200, TrainingFixture.page1('all'), delay: delay);
-    });
+    // Courses with category filters
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'all', page: 1), delay: delay),
+      queryParameters: {'category': 'all', 'page': Matchers.any},
+    );
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'management', page: 1), delay: delay),
+      queryParameters: {'category': 'management', 'page': Matchers.any},
+    );
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'technology', page: 1), delay: delay),
+      queryParameters: {'category': 'technology', 'page': Matchers.any},
+    );
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'soft', page: 1), delay: delay),
+      queryParameters: {'category': 'soft', 'page': Matchers.any},
+    );
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'engineering', page: 1), delay: delay),
+      queryParameters: {'category': 'engineering', 'page': Matchers.any},
+    );
+    adapter.onGet(
+      '/v1/training/courses',
+      (server) => server.reply(200, TrainingFixture.page(category: 'productivity', page: 1), delay: delay),
+      queryParameters: {'category': 'productivity', 'page': Matchers.any},
+    );
     adapter.onPost(
       RegExp(r"/v1/training/courses/.+/bookmark"),
       (server) => server.reply(200, {'ok': true, 'isBookmarked': true}, delay: delay),

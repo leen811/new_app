@@ -40,7 +40,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   }
 
   Future<void> _loadPage(Emitter<CoursesState> emit, {required String category, required int page, required bool reset, List<CourseItem>? previous}) async {
-    final res = await repository.courses(category: category, page: page);
+    final key = _normalizeCategory(category);
+    final res = await repository.courses(category: key, page: page);
     final items = List<Map<String, dynamic>>.from(res['items'] as List).map((e) => CourseItem.fromJson(e)).toList();
     final next = res['nextPage'] as int?;
     if (reset) {
@@ -49,6 +50,17 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       final merged = <CourseItem>[...(previous ?? <CourseItem>[]), ...items];
       emit(CoursesSuccess(items: merged, category: category, nextPage: next, loadingMore: false));
     }
+  }
+
+  String _normalizeCategory(String category) {
+    final c = category.trim();
+    if (c == 'all' || c.startsWith('جميع')) return 'all';
+    if (c.contains('الإدارة')) return 'management';
+    if (c.contains('التكنولوجيا')) return 'technology';
+    if (c.contains('الناعمة')) return 'soft';
+    if (c.contains('التقني')) return 'engineering';
+    if (c.contains('الإنتاجية')) return 'productivity';
+    return 'all';
   }
 
   Map<String, dynamic> _toJson(CourseItem c) => {
