@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,6 +80,19 @@ class _MyAppState extends State<MyApp> {
       colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
       textTheme: GoogleFonts.cairoTextTheme(),
       inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+      // إعدادات الانتقالات للسحب
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          // iOS: لا سحب تفاعلي
+          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          // Android: افتراضي غير تفاعلي
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          // باقي المنصات
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+          TargetPlatform.macOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+        },
+      ),
     );
 
     return Directionality(
