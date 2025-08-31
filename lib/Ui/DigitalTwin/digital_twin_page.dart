@@ -7,6 +7,7 @@ import '../../Bloc/twin/digital_twin_bloc.dart';
 import '../../Bloc/twin/digital_twin_event.dart';
 import '../../Bloc/twin/digital_twin_state.dart';
 import '../../Data/Repositories/digital_twin_repository.dart';
+import '../Common/press_fx.dart';
 
 class DigitalTwinPage extends StatelessWidget {
   const DigitalTwinPage({super.key});
@@ -43,7 +44,7 @@ class _Body extends StatelessWidget {
             child: GestureDetector(
               onTap: () => context.read<DigitalTwinBloc>().add(TwinRefreshed()),
               child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: const Color(0xFFEDE9FE), borderRadius: BorderRadius.circular(999)), child: const Text('تحديث مباشر', style: TextStyle(color: Color(0xFF7C3AED), fontWeight: FontWeight.w700, fontSize: 12))),
-            ),
+            ).withPressFX(),
           ),
         ],
       ),
@@ -149,7 +150,7 @@ class _SegmentedTabs extends StatelessWidget {
               decoration: BoxDecoration(color: active ? Colors.white : Colors.transparent, borderRadius: BorderRadius.circular(18), boxShadow: active ? [BoxShadow(color: const Color(0xFF0B1524).withOpacity(0.06), blurRadius: 10)] : null),
               child: Center(child: Text(labels[i], textAlign: TextAlign.center, style: TextStyle(color: active ? const Color(0xFF2F56D9) : const Color(0xFF667085), fontWeight: FontWeight.w700))),
             ),
-          ),
+          ).withPressFX(),
         );
       })),
     );
@@ -182,7 +183,7 @@ class _Recommendations extends StatelessWidget {
             const SizedBox(height: 6),
             Text(r.body, textAlign: TextAlign.justify, style: const TextStyle(color: Color(0xFF667085))),
             const SizedBox(height: 12),
-            Wrap(spacing: 10, runSpacing: 10, children: r.ctas.map<Widget>((c) => OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(shape: const StadiumBorder()), child: Text(c.label))).toList()),
+            Wrap(spacing: 10, runSpacing: 10, children: r.ctas.map<Widget>((c) => OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(shape: const StadiumBorder()), child: Text(c.label)).withPressFX()).toList()),
           ]),
         );
       },

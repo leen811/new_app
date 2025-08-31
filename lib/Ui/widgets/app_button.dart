@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Common/press_fx.dart';
 
 class AppButton extends StatelessWidget {
   final String label;
@@ -26,7 +27,7 @@ class AppButton extends StatelessWidget {
             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
             : Text(label),
       ),
-    );
+    ).withPressFX();
   }
 }
 

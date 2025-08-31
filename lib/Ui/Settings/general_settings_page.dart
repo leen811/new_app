@@ -12,6 +12,7 @@ import 'widgets/tiles/tile_nav.dart';
 import 'widgets/tiles/tile_choice_chips.dart';
 import 'widgets/pickers/language_picker_sheet.dart';
 import 'widgets/pickers/theme_picker_sheet.dart';
+import '../Common/press_fx.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
   const GeneralSettingsPage({super.key});
@@ -143,13 +144,13 @@ class _Body extends StatelessWidget {
                     child: TextButton(
                       onPressed: () async {
                         final ok = await showDialog<bool>(context: context, builder: (_) => AlertDialog(title: const Text('إعادة التعيين'), content: const Text('هل تريد إعادة الإعدادات إلى القيم الافتراضية؟'), actions: [
-                          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('إلغاء')),
-                          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('تأكيد')),
+                          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('إلغاء')).withPressFX(),
+                          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('تأكيد')).withPressFX(),
                         ]));
                         if (ok == true) context.read<SettingsBloc>().add(ResetRequested());
                       },
                       child: const Text('إعادة التعيين')
-                    ),
+                    ).withPressFX(),
                   ),
                 ]),
               ),

@@ -6,6 +6,7 @@ import '../../Bloc/auth/otp_state.dart';
 import '../../Data/Repositories/auth_repository.dart';
 import '../tokens.dart';
 import '../widgets/app_button.dart';
+import '../Common/press_fx.dart';
 
 class OtpVerifyPage extends StatelessWidget {
   const OtpVerifyPage({super.key});
@@ -64,7 +65,7 @@ class _OtpView extends StatelessWidget {
                       const SizedBox(height: 12),
                       AppButton(label: 'تحقّق من الرمز', loading: loading, onPressed: () => context.read<OtpBloc>().add(VerifyPressed())),
                       const SizedBox(height: 8),
-                      TextButton(onPressed: () => context.read<OtpBloc>().add(ResendPressed()), child: const Text('إعادة الإرسال')),
+                      TextButton(onPressed: () => context.read<OtpBloc>().add(ResendPressed()), child: const Text('إعادة الإرسال')).withPressFX(),
                     ],
                   );
                 },

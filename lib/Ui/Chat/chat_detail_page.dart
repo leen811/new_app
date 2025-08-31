@@ -8,6 +8,7 @@ import '../../Bloc/chat/detail/chat_detail_state.dart';
 import '../../Data/Repositories/chat_detail_repository.dart';
 import 'widgets/message_bubble.dart';
 import 'widgets/chat_input_bar.dart';
+import '../Common/press_fx.dart';
 
 class ChatDetailPage extends StatefulWidget {
   const ChatDetailPage({super.key, required this.conversationId});
@@ -55,7 +56,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               backgroundColor: Colors.white,
               elevation: 0,
               surfaceTintColor: Colors.transparent,
-              leading: IconButton(onPressed: () => Navigator.of(context).maybePop(), icon: const Icon(Icons.arrow_back_ios_new)),
+              leading: IconButton(onPressed: () => Navigator.of(context).maybePop(), icon: const Icon(Icons.arrow_back_ios_new)).withPressFX(),
               centerTitle: true,
               title: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -120,7 +121,7 @@ class _Body extends StatelessWidget {
                     return GestureDetector(
                       onLongPress: () => _showMessageSheet(context, m),
                       child: MessageBubble(isMe: m.isMe, text: m.text, createdAt: m.createdAt),
-                    );
+                    ).withPressFX();
                   },
                 ),
               );
@@ -170,9 +171,9 @@ void _showMessageSheet(BuildContext context, Message m) {
             ListTile(leading: const Icon(Icons.reply), title: const Text('رد'), onTap: () {
               Navigator.pop(context);
               context.read<ChatDetailBloc>().add(ChatReplyRequested(m.id));
-            }),
-            const ListTile(leading: Icon(Icons.copy), title: Text('نسخ')),
-            const ListTile(leading: Icon(Icons.delete_outline), title: Text('حذف')),
+            }).withPressFX(),
+            const ListTile(leading: Icon(Icons.copy), title: Text('نسخ')).withPressFX(),
+            const ListTile(leading: Icon(Icons.delete_outline), title: Text('حذف')).withPressFX(),
             const SizedBox(height: 8),
           ],
         ),

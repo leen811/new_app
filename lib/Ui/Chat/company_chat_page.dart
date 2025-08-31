@@ -10,6 +10,7 @@ import 'widgets/chat_tile.dart';
 import 'widgets/chat_search_field.dart';
 import 'widgets/new_group_dialog.dart';
 import 'widgets/new_chat_dialog.dart';
+import '../Common/press_fx.dart';
 
 class CompanyChatPage extends StatelessWidget {
   const CompanyChatPage({super.key});
@@ -32,7 +33,7 @@ class CompanyChatPage extends StatelessWidget {
                     useBlur: false,
                     builder: (_) => const NewGroupDialog(),
                   ),
-              icon: const Icon(Icons.group_add_outlined, color: Colors.black87)),
+              icon: const Icon(Icons.group_add_outlined, color: Colors.black87)).withPressFX(),
           const SizedBox(width: 4),
           IconButton(
               onPressed: () => showAppDialog(
@@ -41,7 +42,7 @@ class CompanyChatPage extends StatelessWidget {
                     useBlur: false,
                     builder: (_) => const NewChatDialog(),
                   ),
-              icon: const Icon(Icons.chat_bubble_outline, color: Colors.black87)),
+              icon: const Icon(Icons.chat_bubble_outline, color: Colors.black87)).withPressFX(),
           const SizedBox(width: 8),
         ],
       ),
@@ -78,7 +79,7 @@ class _ChatListView extends StatelessWidget {
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text(state.message),
                     const SizedBox(height: 8),
-                    ElevatedButton(onPressed: () => context.read<ChatListBloc>().add(ChatListFetched()), child: const Text('إعادة المحاولة')),
+                    ElevatedButton(onPressed: () => context.read<ChatListBloc>().add(ChatListFetched()), child: const Text('إعادة المحاولة')).withPressFX(),
                   ]),
                 );
               }

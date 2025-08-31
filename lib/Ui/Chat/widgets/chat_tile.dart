@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../Data/Models/chat_item.dart';
+import '../../Common/press_fx.dart';
 
 class ChatTile extends StatelessWidget {
   final ChatItem item;
@@ -68,7 +69,7 @@ class ChatTile extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ).withPressFX();
   }
 }
 

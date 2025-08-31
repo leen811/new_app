@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../Common/press_fx.dart';
 
 class TileChoiceChips extends StatelessWidget {
   const TileChoiceChips({super.key, required this.title, required this.value, required this.options, required this.onChanged, this.onExpand});
@@ -7,7 +8,7 @@ class TileChoiceChips extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(onPressed: onExpand, icon: const Icon(Icons.unfold_more_rounded)),
+        IconButton(onPressed: onExpand, icon: const Icon(Icons.unfold_more_rounded)).withPressFX(),
         Expanded(child: Align(alignment: Alignment.centerRight, child: Text(title, textAlign: TextAlign.right, style: const TextStyle(fontWeight: FontWeight.w700)))),
       ]),
       const SizedBox(height: 6),
@@ -36,7 +37,7 @@ class TileChoiceChips extends StatelessWidget {
           Text(label, style: TextStyle(color: selected ? Colors.white : const Color(0xFF111827), fontWeight: FontWeight.w700, fontSize: 13)),
         ]),
       ),
-    );
+    ).withPressFX();
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Common/press_fx.dart';
 
 class EmptyView extends StatelessWidget {
   final String message;
@@ -23,7 +24,7 @@ class ErrorView extends StatelessWidget {
         children: [
           Text(message),
           const SizedBox(height: 8),
-          ElevatedButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+          ElevatedButton(onPressed: onRetry, child: const Text('إعادة المحاولة')).withPressFX(),
         ],
       ),
     );

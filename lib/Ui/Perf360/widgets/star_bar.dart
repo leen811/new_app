@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Common/press_fx.dart';
 
 class StarBar extends StatefulWidget {
   const StarBar({super.key, required this.value, required this.onChanged, this.size = 22, this.gap = 4, this.activeColor = const Color(0xFFF59E0B), this.inactiveColor = const Color(0xFFD6DBE3), this.readOnly = false});
@@ -73,7 +74,7 @@ class _StarBarState extends State<StarBar> {
         _updateByDx(d.localPosition.dx, totalWidth);
       },
       child: row,
-    );
+    ).withPressFX();
   }
 }
 

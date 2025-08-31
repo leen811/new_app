@@ -11,6 +11,7 @@ import '../widgets/app_button.dart';
 import '../../Bloc/auth/auth_bloc.dart';
 import '../../Bloc/auth/auth_event.dart';
 import '../../Data/Models/role.dart';
+import '../Common/press_fx.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -125,12 +126,12 @@ class _LoginViewState extends State<_LoginView> {
                                   style: TextButton.styleFrom(foregroundColor: Colors.white),
                                   onPressed: () => context.go('/forgot'),
                                   child: const Text('نسيت كلمة المرور؟'),
-                                ),
+                                ).withPressFX(),
                                 TextButton(
                                   style: TextButton.styleFrom(foregroundColor: Colors.white),
                                   onPressed: () => context.go('/company/new'),
                                   child: const Text('إنشاء حساب جديد'),
-                                ),
+                                ).withPressFX(),
                               ],
                             ),
                           ],
@@ -176,7 +177,7 @@ class _RoleChips extends StatelessWidget {
                 backgroundColor: (r['color'] as Color).withOpacity(0.6),
                 labelStyle: const TextStyle(color: Colors.white),
                 shape: RoundedRectangleBorder(borderRadius: RadiusTokens.chip),
-              ))
+              ).withPressFX())
           .toList(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Common/press_fx.dart';
 
 class CourseFiltersBar extends StatelessWidget {
   const CourseFiltersBar({super.key, required this.categories, required this.selected, required this.onSelected});
@@ -35,7 +36,7 @@ class CourseFiltersBar extends StatelessWidget {
                   style: TextStyle(color: active ? Colors.white : const Color(0xFF334155), fontWeight: FontWeight.w700),
                   child: Text(label),
                 ),
-              ),
+              ).withPressFX(),
             ),
           );
         },
