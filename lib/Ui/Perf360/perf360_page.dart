@@ -9,6 +9,7 @@ import 'tabs/new_eval_tab.dart';
 import 'tabs/results_tab.dart';
 import 'tabs/analytics_tab.dart';
 import 'package:animations/animations.dart';
+import '../Common/press_fx.dart';
 
 class Perf360Page extends StatelessWidget {
   const Perf360Page({super.key});
@@ -23,7 +24,7 @@ class Perf360Page extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0))),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0))).withPressFX(),
         centerTitle: true,
         title: Column(children: const [
           Text('نظام تقييم الأداء 360 درجة', style: TextStyle(color: Colors.black)),
@@ -109,7 +110,7 @@ class _PerfTabs extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 onTap: () => context.read<Perf360Bloc>().add(Perf360TabChanged(i)),
                 child: Center(child: AnimatedDefaultTextStyle(duration: const Duration(milliseconds: 200), style: TextStyle(color: active ? const Color(0xFF2F56D9) : const Color(0xFF667085), fontWeight: FontWeight.w700), child: Text(labels[i]))),
-              ),
+              ).withPressFX(),
             );
           })),
         ]);

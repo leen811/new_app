@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Common/press_fx.dart';
 
 class SegmentedTabs extends StatelessWidget {
   const SegmentedTabs({
@@ -83,7 +84,7 @@ class SegmentedTabs extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      ).withPressFX(),
                     ),
                   );
                 }),

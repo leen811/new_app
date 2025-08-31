@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../press_fx.dart';
 
 class ComingSoonSheet extends StatefulWidget {
   const ComingSoonSheet({super.key, required this.featureName, this.icon});
@@ -47,9 +48,9 @@ class _ComingSoonSheetState extends State<ComingSoonSheet> with SingleTickerProv
                 const LinearProgressIndicator(minHeight: 6, color: Color(0xFF2F56D9), backgroundColor: Color(0xFFEEF2FF)),
                 const SizedBox(height: 16),
                 Row(children: [
-                  Expanded(child: ElevatedButton(onPressed: () { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم حفظ اهتمامك مؤقتًا'))); }, child: const Text('أبلغني عند التفعيل'))),
+                  Expanded(child: ElevatedButton(onPressed: () { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم حفظ اهتمامك مؤقتًا'))); }, child: const Text('أبلغني عند التفعيل')).withPressFX()),
                   const SizedBox(width: 8),
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('عودة')),
+                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('عودة')).withPressFX(),
                 ])
               ]),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Common/press_fx.dart';
 
 class SectionTile extends StatelessWidget {
   const SectionTile({super.key, required this.title, required this.subtitle, required this.trailingIcon, this.onTap});
@@ -28,7 +29,7 @@ class SectionTile extends StatelessWidget {
           ),
         ]),
       ),
-    );
+    ).withPressFX();
   }
 }
 

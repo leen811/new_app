@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'base_tile.dart';
+import '../../../Common/press_fx.dart';
 
 class TileNav extends StatelessWidget {
   const TileNav({super.key, required this.title, this.subtitle, required this.onTap});
@@ -20,7 +21,7 @@ class TileNav extends StatelessWidget {
           const Icon(Icons.chevron_left),
         ]),
       ),
-    );
+    ).withPressFX();
   }
 }
 

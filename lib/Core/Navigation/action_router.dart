@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
+import '../../Ui/Common/press_fx.dart';
 
 class ActionRouter {
   static bool openByLabel(BuildContext context, String label) {
@@ -25,7 +26,7 @@ class TwinLinkButton extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () => ActionRouter.openByLabel(context, label), child: Text(label));
+    return TextButton(onPressed: () => ActionRouter.openByLabel(context, label), child: Text(label)).withPressFX();
   }
 }
 
@@ -34,7 +35,7 @@ class Perf360LinkButton extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () => ActionRouter.openByLabel(context, label), child: Text(label));
+    return TextButton(onPressed: () => ActionRouter.openByLabel(context, label), child: Text(label)).withPressFX();
   }
 }
 

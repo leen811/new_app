@@ -11,6 +11,7 @@ import 'widgets/section_group.dart';
 import 'widgets/section_tile.dart';
 import '../../Core/Navigation/app_routes.dart';
 import '../Common/coming_soon/coming_soon.dart';
+import '../Common/press_fx.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

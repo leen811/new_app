@@ -10,6 +10,7 @@ import 'widgets/section_header.dart';
 import 'widgets/labeled_text_field.dart';
 import 'widgets/read_only_row.dart';
 import 'widgets/avatar_stack.dart';
+import '../../Common/press_fx.dart';
 
 class PersonalInfoPage extends StatelessWidget {
   const PersonalInfoPage({super.key});
@@ -50,7 +51,7 @@ class _Body extends StatelessWidget {
 
               label: const Text('تعديل'),
               icon: const Icon(Icons.edit),
-            );
+            ).withPressFX();
           }
           return FloatingActionButton.extended(
             backgroundColor: const Color(0xFF16A34A),
@@ -61,7 +62,7 @@ class _Body extends StatelessWidget {
 
             label: const Text('حفظ'),
             icon: const Icon(Icons.check),
-          );
+          ).withPressFX();
         },
       ),
       body: SafeArea(
@@ -222,7 +223,7 @@ class _Body extends StatelessWidget {
                                     .read<ProfileInfoBloc>()
                                     .add(ProfileInfoEditToggled(true)),
                                 child: const Text('تعديل'),
-                              ),
+                              ).withPressFX(),
                             )
                           else
                             FittedBox(
@@ -231,7 +232,7 @@ class _Body extends StatelessWidget {
                                     .read<ProfileInfoBloc>()
                                     .add(ProfileInfoEditToggled(false)),
                                 child: const Text('إلغاء'),
-                              ),
+                              ).withPressFX(),
                             ),
                         ],
                       ),

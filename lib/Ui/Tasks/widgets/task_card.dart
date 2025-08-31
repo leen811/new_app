@@ -4,6 +4,7 @@ import '../../../Bloc/tasks/daily/daily_tasks_bloc.dart';
 import '../../../Bloc/tasks/daily/daily_tasks_event.dart';
 import '../../../Data/Models/task_item.dart';
 import '../../widgets/app_button.dart';
+import '../../Common/press_fx.dart';
 
 class TaskCard extends StatelessWidget {
   const TaskCard({
@@ -217,7 +218,7 @@ class _SquareButton extends StatelessWidget {
         ),
         child: Icon(icon, size: 16, color: const Color(0xFF334155)),
       ),
-    );
+    ).withPressFX();
   }
 }
 
@@ -244,7 +245,7 @@ class _SquareToggle extends StatelessWidget {
           color: checked ? Colors.white : const Color(0xFF334155),
         ),
       ),
-    );
+    ).withPressFX();
   }
 }
 
@@ -291,7 +292,7 @@ class _CircleIconButton extends StatelessWidget {
         ),
         child: Icon(icon, size: 16, color: const Color(0xFF334155)),
       ),
-    );
+    ).withPressFX();
   }
 }
 
@@ -370,11 +371,11 @@ void _openDetailsDialog(BuildContext context, TaskItem item) async {
                                 ),
                               ),
                             ),
-                            IconButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              icon: const Icon(Icons.close),
-                              splashRadius: 20,
-                            ),
+                                                         IconButton(
+                               onPressed: () => Navigator.pop(ctx),
+                               icon: const Icon(Icons.close),
+                               splashRadius: 20,
+                             ).withPressFX(),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -413,16 +414,16 @@ void _openDetailsDialog(BuildContext context, TaskItem item) async {
                               'مراجعة',
                               'تطوير',
                             ])
-                              FilterChip(
-                                label: Text(w),
-                                selected: selectedWorks.contains(w),
-                                onSelected: (v) => setState(() {
-                                  if (v)
-                                    selectedWorks.add(w);
-                                  else
-                                    selectedWorks.remove(w);
-                                }),
-                              ),
+                                                             FilterChip(
+                                 label: Text(w),
+                                 selected: selectedWorks.contains(w),
+                                 onSelected: (v) => setState(() {
+                                   if (v)
+                                     selectedWorks.add(w);
+                                   else
+                                     selectedWorks.remove(w);
+                                 }),
+                               ).withPressFX(),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -454,7 +455,7 @@ void _openDetailsDialog(BuildContext context, TaskItem item) async {
                                 if (r != null) setState(() => range = r);
                               },
                               child: Text(rangeLabel),
-                            ),
+                            ).withPressFX(),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -487,7 +488,7 @@ void _openDetailsDialog(BuildContext context, TaskItem item) async {
                                 'إلغاء',
                                 style: TextStyle(color: darkBlue),
                               ),
-                            ),
+                            ).withPressFX(),
                             const SizedBox(width: 8),
                             Expanded(
                               child: AppButton(

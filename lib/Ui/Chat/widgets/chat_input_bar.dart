@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Common/press_fx.dart';
 
 class ChatInputBar extends StatelessWidget {
   const ChatInputBar({super.key, required this.text, required this.onTextChanged, required this.onSendPressed, this.replyPreview, this.onClearReply});
@@ -27,7 +28,7 @@ class ChatInputBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(child: replyPreview!),
                 if (onClearReply != null)
-                  IconButton(onPressed: onClearReply, icon: const Icon(Icons.close, size: 18)),
+                  IconButton(onPressed: onClearReply, icon: const Icon(Icons.close, size: 18)).withPressFX(),
               ]),
             ),
           Container(
@@ -41,7 +42,7 @@ class ChatInputBar extends StatelessWidget {
               children: [
                 _SendButton(enabled: hasText, onPressed: onSendPressed),
                 const SizedBox(width: 12),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.emoji_emotions_outlined)),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.emoji_emotions_outlined)).withPressFX(),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -59,8 +60,8 @@ class ChatInputBar extends StatelessWidget {
                     controller: TextEditingController.fromValue(TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length))),
                   ),
                 ),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined)),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined)).withPressFX(),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)).withPressFX(),
               ],
             ),
           ),
@@ -91,7 +92,7 @@ class _SendButton extends StatelessWidget {
             height: 44,
             child: Icon(Icons.send, color: Colors.white),
           ),
-        ),
+        ).withPressFX(),
       ),
     );
   }
