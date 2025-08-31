@@ -30,6 +30,7 @@ dependencies:
   material_symbols_icons: ^4.2867.0
   intl: 0.20.2
   fl_chart: ^0.66.2
+  dismissible_page: ^1.0.0
 
 dev_dependencies:
   flutter_test:

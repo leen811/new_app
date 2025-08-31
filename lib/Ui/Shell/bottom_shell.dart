@@ -11,7 +11,7 @@ import '../Assistant/assistant_page.dart';
 import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
 import '../Attendance/attendance_fabs.dart';
-import 'widgets/custom_bottom_nav.dart';
+import '../Joint/widgets/custom_bottom_nav.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
 import '../../Bloc/attendance/attendance_event.dart';
 import '../../Data/Repositories/attendance_repository.dart';
@@ -19,34 +19,36 @@ import '../../Data/Repositories/geofence_repository.dart';
 import '../../Data/Repositories/policy_repository.dart';
 import '../../Data/Repositories/location_source.dart';
 
-class HomeShell extends StatefulWidget {
-  const HomeShell({super.key, this.initialIndex = 0});
+/// Shell محسن للتبويبات مع IndexedStack (بدون سحب)
+class BottomShell extends StatefulWidget {
+  const BottomShell({super.key, this.initialIndex = 0});
   final int initialIndex;
+  
   @override
-  State<HomeShell> createState() => _HomeShellState();
+  State<BottomShell> createState() => _BottomShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
-  int _index = 0;
+class _BottomShellState extends State<BottomShell> {
+  int _currentIndex = 0;
   
   @override
   void initState() {
     super.initState();
-    _index = widget.initialIndex;
+    _currentIndex = widget.initialIndex;
   }
   
   @override
-  void didUpdateWidget(covariant HomeShell oldWidget) {
+  void didUpdateWidget(covariant BottomShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialIndex != widget.initialIndex) {
-      setState(() => _index = widget.initialIndex);
+      _currentIndex = widget.initialIndex;
     }
   }
 
   /// تغيير التبويب فوري بدون أنيميشن
   void _onTabChanged(int index) {
-    if (_index != index) {
-      setState(() => _index = index);
+    if (_currentIndex != index) {
+      setState(() => _currentIndex = index);
       // تحديث URL
       GoRouter.of(context).go('/?tab=$index');
     }
@@ -63,31 +65,36 @@ class _HomeShellState extends State<HomeShell> {
       )..add(AttendanceInitRequested()),
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-        final role = state is AuthRoleState ? state.role : Role.guest;
-        final pages = [
-          HomeFactory.build(role),
-          const CompanyChatPage(),
-          const AssistantPage(),
-          const TasksPage(),
-          const ProfilePage(),
-        ];
-        return Scaffold(
-          body: Stack(
-            children: [
-              // IndexedStack للتبويبات بدون سحب/أنيميشن
-              IndexedStack(index: _index, children: pages),
-              if (_index != 2) const AttendanceFabs(),
-            ],
-          ),
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: _index,
-            onItemSelected: _onTabChanged,
-          ),
-        );
-      },
-    ),
+          final role = state is AuthRoleState ? state.role : Role.guest;
+          
+          // تعريف الصفحات
+          final pages = [
+            HomeFactory.build(role),
+            const CompanyChatPage(),
+            const AssistantPage(),
+            const TasksPage(),
+            const ProfilePage(),
+          ];
+          
+          return Scaffold(
+            body: Stack(
+              children: [
+                // IndexedStack للتبويبات بدون سحب/أنيميشن
+                IndexedStack(index: _currentIndex, children: pages),
+                
+                // أزرار الحضور (إلا في تبويب المساعد)
+                if (_currentIndex != 2) const AttendanceFabs(),
+              ],
+            ),
+            
+            // شريط التنقل السفلي
+            bottomNavigationBar: CustomBottomNavBar(
+              currentIndex: _currentIndex,
+              onItemSelected: _onTabChanged,
+            ),
+          );
+        },
+      ),
     );
   }
 }
-
-
