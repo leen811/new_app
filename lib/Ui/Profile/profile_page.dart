@@ -93,8 +93,8 @@ class _Body extends StatelessWidget {
                   SectionTile(title: 'إشعارات البريد الإلكتروني', subtitle: 'إدارة ومتابعة بريدك مع إمكانية الرد', trailingIcon: Icons.mail_outline, onTap: () => ComingSoon.show(context, featureName: 'إشعارات البريد الإلكتروني', icon: Icons.mark_email_unread_rounded)),
                   const SectionTile(title: 'الإشعارات الذكية', subtitle: 'إدارة إعدادات الإشعارات المخصصة', trailingIcon: Icons.notifications_none),
                 ]),
-                SectionGroup(title: 'الإعدادات والتفضيلات', tiles: const [
-                  SectionTile(title: 'الإعدادات العامة', subtitle: 'إعدادات التطبيق وتفضيلاتك الشخصية', trailingIcon: Icons.settings_outlined),
+                SectionGroup(title: 'الإعدادات والتفضيلات', tiles: [
+                  SectionTile(title: 'الإعدادات العامة', subtitle: 'إعدادات التطبيق وتفضيلاتك الشخصية', trailingIcon: Icons.settings_outlined, onTap: () => context.goSettingsGeneral()),
                 ]),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),

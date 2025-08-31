@@ -13,6 +13,7 @@ import 'Ui/Training/smart_training_page.dart';
 import 'Ui/Training/courses_page.dart';
 import 'Ui/Perf360/perf360_page.dart';
 import 'Ui/Profile/PersonalInfo/personal_info_page.dart';
+import 'Ui/Settings/general_settings_page.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -67,6 +68,26 @@ GoRouter buildRouter() {
         pageBuilder: (context, state) => _fadePage(const PersonalInfoPage()),
       ),
       GoRoute(
+        path: settingsGeneralRoute,
+        pageBuilder: (context, state) => _fadePage(const GeneralSettingsPage()),
+      ),
+      GoRoute(
+        path: settingsChangePasswordRoute,
+        pageBuilder: (context, state) => _fadePage(const _PlaceholderPage(title: 'تغيير كلمة المرور')),
+      ),
+      GoRoute(
+        path: legalTermsRoute,
+        pageBuilder: (context, state) => _fadePage(const _PlaceholderPage(title: 'اتفاقية الاستخدام')),
+      ),
+      GoRoute(
+        path: '/about/tos',
+        pageBuilder: (context, state) => _fadePage(const _PlaceholderPage(title: 'اتفاقية الاستخدام')),
+      ),
+      GoRoute(
+        path: '/about/privacy',
+        pageBuilder: (context, state) => _fadePage(const _PlaceholderPage(title: 'سياسة الخصوصية')),
+      ),
+      GoRoute(
         path: perf360Route,
         pageBuilder: (context, state) => _fadePage(const Perf360Page()),
       ),
@@ -98,6 +119,18 @@ CustomTransitionPage _fadePage(Widget child) {
       );
     },
   );
+}
+
+class _PlaceholderPage extends StatelessWidget {
+  const _PlaceholderPage({required this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Align(alignment: Alignment.centerRight, child: Text(title))),
+      body: const Center(child: Text('قريباً')),
+    );
+  }
 }
 
 

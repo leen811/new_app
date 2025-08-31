@@ -7,6 +7,9 @@ const String smartTrainingCoursesRoute = '/smart-training/courses';
 const String assistantRoute = '/assistant';
 const String perf360Route = '/performance-360';
 const String profilePersonalInfoRoute = '/profile/personal-info';
+const String settingsGeneralRoute = '/settings/general';
+const String settingsChangePasswordRoute = '/settings/security/change-password';
+const String legalTermsRoute = '/legal/terms';
 
 extension AppRoutesExt on BuildContext {
   void goDigitalTwin() => GoRouter.of(this).push(digitalTwinRoute);
@@ -15,6 +18,9 @@ extension AppRoutesExt on BuildContext {
   void goAssistant() => GoRouter.of(this).go('/?tab=2');
   void goPerf360() => GoRouter.of(this).push(perf360Route);
   void goProfilePersonalInfo() => GoRouter.of(this).push(profilePersonalInfoRoute);
+  void goSettingsGeneral() => GoRouter.of(this).push(settingsGeneralRoute);
+  void goSettingsChangePassword() => GoRouter.of(this).push(settingsChangePasswordRoute);
+  void goLegalTerms() => GoRouter.of(this).push(legalTermsRoute);
 }
 
 

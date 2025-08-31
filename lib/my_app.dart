@@ -22,6 +22,7 @@ import 'Data/Repositories/assistant_repository.dart';
 import 'Data/Repositories/digital_twin_repository.dart';
 import 'Data/Repositories/perf360_repository.dart';
 import 'Data/Repositories/training_repository.dart';
+import 'Data/Repositories/settings_repository.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   late final IDigitalTwinRepository _digitalTwinRepository;
   late final ITrainingRepository _trainingRepository;
   late final IPerf360Repository _perf360Repository;
+  late final ISettingsRepository _settingsRepository;
   late final _router = buildRouter();
 
   @override
@@ -67,6 +69,7 @@ class _MyAppState extends State<MyApp> {
     _digitalTwinRepository = DigitalTwinRepository(_api.dio);
     _trainingRepository = TrainingRepository(_api.dio);
     _perf360Repository = Perf360Repository(_api.dio);
+    _settingsRepository = SettingsRepository(_api.dio);
   }
 
   @override
@@ -96,6 +99,7 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<IDigitalTwinRepository>.value(value: _digitalTwinRepository),
           RepositoryProvider<ITrainingRepository>.value(value: _trainingRepository),
           RepositoryProvider<IPerf360Repository>.value(value: _perf360Repository),
+          RepositoryProvider<ISettingsRepository>.value(value: _settingsRepository),
         ],
         child: BlocProvider(
           create: (_) => AuthBloc(),

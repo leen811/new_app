@@ -17,6 +17,7 @@ import 'fixtures/ai_fixture.dart';
 import 'fixtures/digital_twin_fixture.dart';
 import 'fixtures/training_fixture.dart';
 import 'fixtures/perf360_fixture.dart';
+import 'fixtures/settings_fixture.dart';
 
 class MockApiAdapter {
   final Dio dio;
@@ -293,6 +294,17 @@ class MockApiAdapter {
     adapter.onPost(
       'attendance/break/stop',
       (server) => server.reply(200, AttendanceFixture.breakStop, delay: delay),
+      data: Matchers.any,
+    );
+
+    // Settings - General
+    adapter.onGet(
+      '/v1/settings/general',
+      (server) => server.reply(200, SettingsFixture.general, delay: delay),
+    );
+    adapter.onPut(
+      '/v1/settings/general',
+      (server) => server.reply(200, {'ok': true, ...SettingsFixture.general}, delay: delay),
       data: Matchers.any,
     );
   }
