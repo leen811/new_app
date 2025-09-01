@@ -22,4 +22,3 @@ class DtError extends DtState {
   List<Object?> get props => [message];
 }
 
-
