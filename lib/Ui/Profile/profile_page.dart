@@ -161,11 +161,12 @@ class _Body extends StatelessWidget {
                 ),
                 SectionGroup(
                   title: 'الشؤون المالية',
-                  tiles: const [
+                  tiles: [
                     SectionTile(
                       title: 'خصومات الراتب والأسباب',
                       subtitle: 'عرض خصومات راتبك والأسباب التفصيلية',
                       trailingIcon: Icons.receipt_long_outlined,
+                      onTap: () => context.goPayrollDeductions(),
                     ),
                   ],
                 ),

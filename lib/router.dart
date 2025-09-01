@@ -12,6 +12,7 @@ import 'Ui/Training/smart_training_page.dart';
 import 'Ui/Training/courses_page.dart';
 import 'Ui/Perf360/perf360_page.dart';
 import 'Ui/Profile/PersonalInfo/personal_info_page.dart';
+import 'Ui/Profile/Payroll/payroll_deductions_page.dart';
 import 'Ui/Settings/general_settings_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
@@ -72,6 +73,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/profile/personal-info',
         pageBuilder: (context, state) => _swipePage(const PersonalInfoPage()),
+      ),
+      GoRoute(
+        path: '/profile/payroll-deductions',
+        pageBuilder: (context, state) => _swipePage(const PayrollDeductionsPage()),
       ),
       GoRoute(
         path: settingsGeneralRoute,
