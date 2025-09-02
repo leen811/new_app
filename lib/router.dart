@@ -15,6 +15,7 @@ import 'Ui/Profile/PersonalInfo/personal_info_page.dart';
 import 'Ui/Profile/Payroll/payroll_deductions_page.dart';
 import 'Ui/Settings/general_settings_page.dart';
 import 'Ui/Attendance/attendance_page.dart';
+import 'Ui/Leave/leave_management_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
 
@@ -110,6 +111,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/attendance',
         pageBuilder: (context, state) => _swipePage(const AttendancePage()),
+      ),
+      GoRoute(
+        path: '/leave',
+        pageBuilder: (context, state) => _swipePage(const LeaveManagementPage()),
       ),
     ],
   );
