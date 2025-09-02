@@ -84,9 +84,8 @@ class _HomeContent extends StatelessWidget {
               (context, index) {
                 switch (index) {
                   case 0:
-                    return WorkHoursCard(
-                      worked: const Duration(hours: 4, minutes: 20),
-                      shift: const Duration(hours: 8),
+                    return const WorkHoursCard(
+                      shift: Duration(hours: 8),
                     );
                   case 1:
                     return EnergyProgressCard(pct: snapshot.energyPct / 100);
@@ -138,7 +137,7 @@ class _HomeContent extends StatelessWidget {
                       description: 'مهامك وتحدياتك',
                       icon: Icons.track_changes,
                       iconBackgroundColor: const Color(0xFFFB923C),
-                      onTap: () => context.go('/tasks'),
+                      onTap: () => context.go('/?tab=3'),
                     ),
                     QuickActionTile(
                       title: 'الحضور والانصراف',
