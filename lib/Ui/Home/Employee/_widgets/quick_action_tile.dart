@@ -73,7 +73,7 @@ class _QuickActionTileState extends State<QuickActionTile>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -117,7 +117,7 @@ class _QuickActionTileState extends State<QuickActionTile>
                     textAlign: TextAlign.center,
                   ),
                   
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   
                   // الوصف
                   Text(

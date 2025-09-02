@@ -147,11 +147,11 @@ class _HomeContent extends StatelessWidget {
                       onTap: () => context.go('/attendance'),
                     ),
                     QuickActionTile(
-                      title: 'طلب إجازة',
-                      description: 'قدّم طلب إجازة جديد',
+                      title: 'الاستئذان وطلب الإجازات',
+                      description: 'قدّم طلب إجازة أو استئذان جديد',
                       icon: Icons.beach_access,
                       iconBackgroundColor: const Color(0xFF34D399),
-                      onTap: () => context.go('/leave/request'),
+                      onTap: () => context.go('/leave'),
                     ),
                     QuickActionTile(
                       title: 'متجر المكافآت',
@@ -178,7 +178,7 @@ class _HomeContent extends StatelessWidget {
         // Achievements Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 32.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 45.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
