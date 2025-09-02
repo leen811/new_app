@@ -12,12 +12,6 @@ import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
 import '../_shared/attendance_fabs.dart';
 import 'widgets/custom_bottom_nav.dart';
-import '../../Bloc/attendance/attendance_bloc.dart';
-import '../../Bloc/attendance/attendance_event.dart';
-import '../../Data/Repositories/attendance_repository.dart';
-import '../../Data/Repositories/geofence_repository.dart';
-import '../../Data/Repositories/policy_repository.dart';
-import '../../Data/Repositories/location_source.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, this.initialIndex = 0});
@@ -54,38 +48,56 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => AttendanceBloc(
-        attendanceRepository: ctx.read<IAttendanceRepository>(),
-        geofenceRepository: ctx.read<IGeofenceRepository>(),
-        policyRepository: ctx.read<IPolicyRepository>(),
-        locationSource: ctx.read<ILocationSource>(),
-      )..add(AttendanceInitRequested()),
-      child: BlocBuilder<AuthBloc, AuthState>(
+    return BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-        final role = state is AuthRoleState ? state.role : Role.guest;
-        final pages = [
-          HomeFactory.build(role),
-          const CompanyChatPage(),
-          const AssistantPage(),
-          const TasksPage(),
-          const ProfilePage(),
-        ];
-        return Scaffold(
-          body: Stack(
-            children: [
-              // IndexedStack للتبويبات بدون سحب/أنيميشن
-              IndexedStack(index: _index, children: pages),
-              if (_index != 2) const AttendanceFABs(),
-            ],
-          ),
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: _index,
-            onItemSelected: _onTabChanged,
-          ),
-        );
+        try {
+          final role = state is AuthRoleState ? state.role : Role.guest;
+          final pages = [
+            HomeFactory.build(role),
+            const CompanyChatPage(),
+            const AssistantPage(),
+            const TasksPage(),
+            const ProfilePage(),
+          ];
+          return Scaffold(
+            body: Stack(
+              children: [
+                // IndexedStack للتبويبات بدون سحب/أنيميشن
+                IndexedStack(index: _index, children: pages),
+                TickerMode(
+                  enabled: ModalRoute.of(context)?.isCurrent ?? true,
+                  child: (_index != 2) ? const AttendanceFABs() : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+            bottomNavigationBar: CustomBottomNavBar(
+              currentIndex: _index,
+              onItemSelected: _onTabChanged,
+            ),
+          );
+        } catch (e) {
+          print('❌ Error in HomeShell: $e');
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text('حدث خطأ في عرض الصفحة'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    child: const Text('إعادة المحاولة'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
       },
-    ),
     );
   }
 }

@@ -2,62 +2,128 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
-import '../../Bloc/attendance/attendance_event.dart';
 import '../../Bloc/attendance/attendance_state.dart';
-import '../../Data/Repositories/attendance_repository.dart';
-import '../../Data/Repositories/geofence_repository.dart';
-import '../../Data/Repositories/policy_repository.dart';
-import '../../Data/Repositories/location_source.dart';
-import '../_shared/attendance_fabs.dart';
+import '../../Bloc/attendance/attendance_event.dart';
 
-class AttendancePage extends StatelessWidget {
-  const AttendancePage({super.key});
+
+// ويدجت صغيرة تعرض الديورَيْشنات فقط
+class _DurationText extends StatelessWidget {
+  final String Function(AttendanceState) selector;
+  final TextStyle? style;
+  const _DurationText(this.selector, {this.style});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => AttendanceBloc(
-        attendanceRepository: ctx.read<IAttendanceRepository>(),
-        geofenceRepository: ctx.read<IGeofenceRepository>(),
-        policyRepository: ctx.read<IPolicyRepository>(),
-        locationSource: ctx.read<ILocationSource>(),
-      )..add(AttendanceInitRequested()),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF7F8FA),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF7F8FA),
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
-            onPressed: () => context.go('/'),
-          ),
-          title: const Text(
-            'الحضور والانصراف',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-          centerTitle: true,
+    return BlocSelector<AttendanceBloc, AttendanceState, String>(
+      selector: selector,
+      builder: (_, value) => Text(
+        value,
+        style: style ?? Theme.of(context).textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold, 
+          color: Colors.black, 
+          fontSize: 18
         ),
-        body: BlocBuilder<AttendanceBloc, AttendanceState>(
-          builder: (context, state) {
-            // عرض رسالة الخطأ إذا وُجدت
+      ),
+    );
+  }
+}
+
+class AttendancePage extends StatefulWidget {
+  const AttendancePage({super.key});
+
+  @override
+  State<AttendancePage> createState() => _AttendancePageState();
+}
+
+class _AttendancePageState extends State<AttendancePage>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF7F8FA),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
+          onPressed: () => context.go('/'),
+        ),
+        title: const Text(
+          'الحضور والانصراف',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: BlocListener<AttendanceBloc, AttendanceState>(
+        // بنسمع فقط للتغيّرات اللي لازم تعمل سناك
+        listenWhen: (p, n) =>
+            p.errorMessage != n.errorMessage ||
+            (p.isCheckedIn != n.isCheckedIn && n.isCheckedIn && n.checkInAt != null),
+        listener: (context, state) {
+          // أخطاء
+          if (state.errorMessage != null) {
+            String message = 'حدث خطأ غير متوقع';
+            Color bg = Colors.red[600]!;
             if (state.errorMessage == 'OUT_OF_GEOFENCE') {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('لا يمكنك تسجيل الحضور خارج موقع العمل'),
-                    backgroundColor: Colors.red[600],
-                    behavior: SnackBarBehavior.floating,
-                    margin: const EdgeInsets.all(16),
-                  ),
-                );
-              });
+              message = 'لا يمكنك تسجيل الحضور خارج موقع العمل';
+            } else if (state.errorMessage == 'LOCATION_ERROR') {
+              message = 'خطأ في الحصول على الموقع. تأكد من تفعيل خدمات الموقع';
+              bg = Colors.orange[600]!;
             }
-            
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: bg,
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            // صفّر الخطأ بعد العرض
+            context.read<AttendanceBloc>().add(ClearErrorMessage());
+          }
+
+          // نجاح تسجيل الحضور (أول مرة يوصلنا isCheckedIn=true ومعه checkInAt)
+          if (state.isCheckedIn && state.checkInAt != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('تم تسجيل الحضور بنجاح! 🎉'),
+                backgroundColor: Colors.green[600],
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+
+        child: BlocBuilder<AttendanceBloc, AttendanceState>(
+          // خلّينا الـUI الكبير ما يعيد بناءه بتكات الوقت ولا بالأخطاء (صار في Listener لها)
+          buildWhen: (p, n) =>
+              p.status != n.status ||
+              p.breakStatus != n.breakStatus ||
+              p.checkInAt != n.checkInAt ||
+              p.lastAddress != n.lastAddress,
+          builder: (context, state) {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -70,10 +136,59 @@ class AttendancePage extends StatelessWidget {
                   _buildMainCard(context, state),
                   const SizedBox(height: 16),
                   
-                  // التبويبات
-                  _buildTabsSection(context, state),
-                  const SizedBox(height: 16),
+                  // التبويبات بثبات
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        TabBar(
+                          controller: _tabs,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          indicatorWeight: 3,
+                          labelColor: const Color(0xFF1E3A8A),
+                          unselectedLabelColor: Colors.grey,
+                          tabs: const [
+                            Tab(text: 'نظرة عامة'),
+                            Tab(text: 'الموقع'),
+                            Tab(text: 'الجهاز'),
+                            Tab(text: 'الإحصائيات'),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 260,
+                          child: TabBarView(
+                            controller: _tabs,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              _buildOverviewTab(context, state),
+                              _buildLocationTab(context, state),
+                              _buildDeviceTab(context),
+                              _buildStatisticsTab(context),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   
+                  const SizedBox(height: 16),
+                  // سجل الجلسات
+                  BlocBuilder<AttendanceBloc, AttendanceState>(
+                    buildWhen: (p, n) => p.sessions != n.sessions,
+                    builder: (_, state) => _buildSessionsList(context, state.sessions),
+                  ),
+                  const SizedBox(height: 16),
                   // الحضور الأسبوعي
                   _buildWeeklyAttendance(context),
                   const SizedBox(height: 100), // مساحة للأزرار العائمة
@@ -82,9 +197,8 @@ class AttendancePage extends StatelessWidget {
             );
           },
         ),
-        floatingActionButton: const AttendanceFABs(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
+      // الأزرار العائمة موجودة في HomeShell فقط لتجنب التضارب
     );
   }
 
@@ -152,7 +266,8 @@ class AttendancePage extends StatelessWidget {
           const SizedBox(height: 12),
           
           // عرض الموقع إذا كان مسجل حضور
-          if (state.isCheckedIn && state.lastPosition != null) ...[
+          if (state.isCheckedIn && state.lastAddress != null) ...[
+            const SizedBox(height: 8),
             Row(
               children: [
                 Icon(Icons.place_rounded, color: Colors.blue[600], size: 16),
@@ -164,7 +279,7 @@ class AttendancePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    state.lastAddress ?? '${state.lastPosition!.latitude.toStringAsFixed(5)}, ${state.lastPosition!.longitude.toStringAsFixed(5)}',
+                    state.lastAddress!,
                     style: TextStyle(
                       color: Colors.blue[700],
                       fontSize: 11,
@@ -181,7 +296,8 @@ class AttendancePage extends StatelessWidget {
   }
 
   Widget _buildMainCard(BuildContext context, AttendanceState state) {
-    return Container(
+    try {
+      return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -221,9 +337,10 @@ class AttendancePage extends StatelessWidget {
                 child: _buildTimeCard(
                   context,
                   'إجمالي ساعات العمل',
-                  _formatDuration(state.totalWorkDuration),
+                  null, // سنستبدل الtext بويدجت
                   Icons.work_outline_rounded,
                   state.isCheckedIn ? 'جاري العمل' : 'سجل الحضور لبدء العداد',
+                  durationSelector: (s) => _formatDuration(s.totalWorkDuration),
                 ),
               ),
               const SizedBox(width: 12),
@@ -231,9 +348,10 @@ class AttendancePage extends StatelessWidget {
                 child: _buildTimeCard(
                   context,
                   'وقت الاستراحة',
-                  _formatDuration(state.breakDuration),
+                  null, // سنستبدل الtext بويدجت
                   Icons.local_cafe_outlined,
                   state.isOnBreak ? 'في استراحة حالياً' : 'إجمالي وقت الاستراحة',
+                  durationSelector: (s) => _formatDuration(s.breakDuration),
                 ),
               ),
             ],
@@ -249,7 +367,12 @@ class AttendancePage extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildSmallInfoCard(context, 'ساعات العمل الفعلية', _formatDuration(state.pureWorkDuration)),
+                child: _buildSmallInfoCard(
+                  context, 
+                  'ساعات العمل الفعلية', 
+                  null,
+                  durationSelector: (s) => _formatDuration(s.pureWorkDuration),
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -278,9 +401,21 @@ class AttendancePage extends StatelessWidget {
         ],
       ),
     );
+    } catch (e) {
+      print('❌ Error in _buildMainCard: $e');
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Text('خطأ في عرض البيانات'),
+      );
+    }
   }
 
-  Widget _buildTimeCard(BuildContext context, String title, String time, IconData icon, String subtitle) {
+  Widget _buildTimeCard(BuildContext context, String title, String? time, IconData icon, String subtitle, {String Function(AttendanceState)? durationSelector}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -306,14 +441,24 @@ class AttendancePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            time,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 18,
+          if (durationSelector != null)
+            _DurationText(
+              durationSelector,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            )
+          else
+            Text(
+              time ?? '--:--',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 18,
+              ),
             ),
-          ),
           const SizedBox(height: 4),
           Text(
             subtitle,
@@ -327,7 +472,7 @@ class AttendancePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSmallInfoCard(BuildContext context, String title, String value) {
+  Widget _buildSmallInfoCard(BuildContext context, String title, String? value, {String Function(AttendanceState)? durationSelector}) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -345,260 +490,189 @@ class AttendancePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 14,
+          if (durationSelector != null)
+            BlocSelector<AttendanceBloc, AttendanceState, String>(
+              selector: durationSelector,
+              builder: (_, v) => Text(
+                v, 
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+              ),
+            )
+          else
+            Text(
+              value ?? '--',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 14,
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildTabsSection(BuildContext context, AttendanceState state) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: DefaultTabController(
-        length: 4,
-        child: Column(
+
+
+  Widget _buildOverviewTab(BuildContext context, AttendanceState state) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        Row(
           children: [
-            TabBar(
-              labelColor: const Color(0xFF1E3A8A),
-              unselectedLabelColor: Colors.grey[600],
-              indicatorColor: const Color(0xFF1E3A8A),
-              indicatorWeight: 3,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-              tabs: const [
-                Tab(text: 'نظرة عامة'),
-                Tab(text: 'الموقع'),
-                Tab(text: 'الجهاز'),
-                Tab(text: 'الإحصائيات'),
-              ],
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('وقت الحضور',
+                      style: TextStyle(color: Colors.green[700], fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      state.checkInAt != null
+                        ? '${state.checkInAt!.hour.toString().padLeft(2, '0')}:${state.checkInAt!.minute.toString().padLeft(2, '0')}'
+                        : '--:--',
+                      style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            SizedBox(
-              height: 240,
-              child: TabBarView(
-                children: [
-                  _buildOverviewTab(context, state),
-                  _buildLocationTab(context, state),
-                  _buildDeviceTab(context),
-                  _buildStatisticsTab(context),
-                ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('وقت الانصراف',
+                      style: TextStyle(color: Color(0xFFB91C1C), fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 4),
+                    Text('--:--',
+                      style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
+        const SizedBox(height: 16),
 
-  Widget _buildOverviewTab(BuildContext context, AttendanceState state) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // بطاقتان صغيرتان
-          Row(
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: Colors.grey[50], borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.green[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green[200]!),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'وقت الحضور',
-                        style: TextStyle(
-                          color: Colors.green[700],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '--:--',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              Text('ملخص اليوم',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: Colors.black),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red[200]!),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('إجمالي ساعات العمل:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  BlocSelector<AttendanceBloc, AttendanceState, String>(
+                    selector: (s) => _formatDuration(s.totalWorkDuration),
+                    builder: (_, v) => Text(v, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'وقت الانصراف',
-                        style: TextStyle(
-                          color: Colors.red[700],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '--:--',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('ساعات العمل الفعلية:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  BlocSelector<AttendanceBloc, AttendanceState, String>(
+                    selector: (s) => _formatDuration(s.pureWorkDuration),
+                    builder: (_, v) => Text(v, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
-                ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('وقت الاستراحة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  BlocSelector<AttendanceBloc, AttendanceState, String>(
+                    selector: (s) => _formatDuration(s.breakDuration),
+                    builder: (_, v) => Text(v, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('الحالة الحالية:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  Text(
+                    state.isCheckedIn ? 'حاضر' : 'غير حاضر',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 12,
+                      color: state.isCheckedIn ? Colors.green[600] : Colors.orange[600],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          
-          // ملخص اليوم
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ملخص اليوم',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
+        ),
+        const SizedBox(height: 16),
+
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.public_rounded, color: Colors.blue[600], size: 16),
+                  const SizedBox(width: 6),
+                  Text('الطقس اليوم',
+                    style: TextStyle(color: Colors.blue[700], fontSize: 12, fontWeight: FontWeight.w600),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('إجمالي ساعات العمل:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    Text(_formatDuration(state.totalWorkDuration), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('ساعات العمل الفعلية:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    Text(_formatDuration(state.pureWorkDuration), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('وقت الاستراحة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    Text(_formatDuration(state.breakDuration), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('الحالة الحالية:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    Text(
-                      state.isCheckedIn ? 'حاضر' : 'غير حاضر',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: state.isCheckedIn ? Colors.green[600] : Colors.orange[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('الحرارة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                const Text('26°C', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ]),
+              const SizedBox(height: 8),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('الحالة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                const Text('مشمس', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ]),
+              const SizedBox(height: 8),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('الرطوبة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                const Text('58%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ]),
+            ],
           ),
-          const SizedBox(height: 16),
-          
-          // الطقس اليوم
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.public_rounded, color: Colors.blue[600], size: 16),
-                    const SizedBox(width: 6),
-                    Text(
-                      'الطقس اليوم',
-                      style: TextStyle(
-                        color: Colors.blue[700],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('الحرارة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    const Text('26°C', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('الحالة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    const Text('مشمس', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('الرطوبة:', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    const Text('58%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -722,6 +796,95 @@ class AttendancePage extends StatelessWidget {
     );
   }
 
+  Widget _buildSessionsList(BuildContext context, List<AttendanceSession> sessions) {
+    if (sessions.isEmpty) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 6))],
+        ),
+        child: const Center(child: Text('لا يوجد سجلات حضور/انصراف بعد', style: TextStyle(color: Colors.grey))),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white, borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 6))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.history_rounded, color: Colors.grey[600], size: 16),
+              const SizedBox(width: 6),
+              Text('سجل الحضور/الانصراف', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600, color: Colors.black,
+              )),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...sessions.map((s) {
+            final inTime = '${s.checkInAt.hour.toString().padLeft(2,'0')}:${s.checkInAt.minute.toString().padLeft(2,'0')}';
+            final inLoc  = s.inStamp.display;
+
+            final outTime = s.checkOutAt != null
+                ? '${s.checkOutAt!.hour.toString().padLeft(2,'0')}:${s.checkOutAt!.minute.toString().padLeft(2,'0')}'
+                : '--:--';
+
+            final outLoc  = s.outStamp?.display ?? '—';
+
+            return Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.login_rounded, size: 18, color: Color(0xFF16A34A)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('تشيك إن • $inTime', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 2),
+                          Text(inLoc, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFDC2626)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('تشيك أوت • $outTime', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 2),
+                          Text(outLoc, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 20, thickness: 0.5),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildWeeklyAttendance(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -839,9 +1002,14 @@ class AttendancePage extends StatelessWidget {
   }
 
   String _formatDuration(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-    final seconds = duration.inSeconds.remainder(60);
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    try {
+      final hours = duration.inHours;
+      final minutes = duration.inMinutes.remainder(60);
+      final seconds = duration.inSeconds.remainder(60);
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    } catch (e) {
+      print('❌ Error formatting duration: $e');
+      return '00:00:00';
+    }
   }
 }

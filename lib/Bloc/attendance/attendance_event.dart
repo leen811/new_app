@@ -20,6 +20,7 @@ class BreakStartRequested extends AttendanceEvent {}
 class BreakEndRequested extends AttendanceEvent {}
 class TickWork extends AttendanceEvent {}
 class TickBreak extends AttendanceEvent {}
+class ClearErrorMessage extends AttendanceEvent {}
 
 // الاحتفاظ بالأحداث القديمة للتوافق العكسي
 class AttendanceFabPressed extends AttendanceEvent {}

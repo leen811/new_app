@@ -18,6 +18,18 @@ class _AttendanceFABsState extends State<AttendanceFABs>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _bobbingAnimation;
+  bool _mainFabPressed = false;
+  bool _breakFabPressed = false;
+  
+  // مقدار الشفافية للزرّين
+  static const double _fabOpacity = 0.85;
+
+  // مجال السحب العمودي (px) حول موقع الزر الأساسي
+  static const double _dragRangeUp = 56;   // لفوق
+  static const double _dragRangeDown = 40; // لتحت
+
+  late double _mainHomeBottom;
+  late double _breakHomeBottom;
   
   Offset _mainFabPosition = const Offset(24, 24); // أسفل يسار (RTL)
   Offset _breakFabPosition = const Offset(24, 24); // أسفل يسار (RTL)
@@ -31,11 +43,33 @@ class _AttendanceFABsState extends State<AttendanceFABs>
     );
     
     _bobbingAnimation = Tween<double>(
-      begin: 0,
+      begin: -3,
       end: 3,
-    ).chain(CurveTween(curve: Curves.easeInOut)).animate(_animationController);
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _mainFabPressed = false;
+    _breakFabPressed = false;
+    
+    _mainHomeBottom = _mainFabPosition.dy;   // 24 افتراضياً
+    _breakHomeBottom = _breakFabPosition.dy; // 24 افتراضياً
     
     _animationController.repeat(reverse: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final enabled = TickerMode.of(context);
+    if (enabled) {
+      if (!_animationController.isAnimating) {
+        _animationController.repeat(reverse: true);
+      }
+    } else {
+      _animationController.stop();
+    }
   }
 
   @override
@@ -43,20 +77,32 @@ class _AttendanceFABsState extends State<AttendanceFABs>
     _animationController.dispose();
     super.dispose();
   }
+
+  // تحكّم عام بالسحب العمودي (نقيس من "bottom")
+  double _clampVertical({
+    required double currentBottom,
+    required double deltaDy,
+    required double homeBottom,
+  }) {
+    // ملاحظة: deltaDy موجب = إصبع نازل => لازم ننقص bottom
+    final tentative = currentBottom - deltaDy;
+    final min = (homeBottom - _dragRangeDown).clamp(0.0, double.infinity);
+    final max = homeBottom + _dragRangeUp;
+    return tentative.clamp(min, max);
+  }
   
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
     final bool keyboardOpen = media.viewInsets.bottom > 0;
-    final screenSize = media.size;
-    final safeArea = media.padding;
+
 
     return BlocBuilder<AttendanceBloc, AttendanceState>(
       buildWhen: (p, n) =>
           p.isCheckedIn != n.isCheckedIn || p.isOnBreak != n.isOnBreak,
       builder: (context, state) {
-        final bool isCheckedIn = state.isCheckedIn == true;
-        final bool isOnBreak = state.isOnBreak == true;
+        final bool isCheckedIn = state.isCheckedIn;
+        final bool isOnBreak = state.isOnBreak;
 
         // إخفاء الزرين عند فتح الكيبورد
         final double opacity = keyboardOpen ? 0.0 : 1.0;
@@ -72,25 +118,23 @@ class _AttendanceFABsState extends State<AttendanceFABs>
                 if (isCheckedIn) ...[
                   Positioned(
                     left: _breakFabPosition.dx,
-                    bottom: _breakFabPosition.dy + 80, // فوق الزر الرئيسي بـ 10px + حجم الزر
+                    bottom: _breakFabPosition.dy + 66, // 56 + 10 = 66px
                     child: AnimatedBuilder(
                       animation: _bobbingAnimation,
                       builder: (context, child) {
                         return Transform.translate(
                           offset: Offset(0, sin(_bobbingAnimation.value) * 3),
-                          child: Draggable(
-                            feedback: _buildBreakFAB(isOnBreak),
-                            childWhenDragging: _buildBreakFAB(isOnBreak, opacity: 0.5),
-                            onDragEnd: (details) {
-                              final newPosition = details.offset;
-                              final constrainedPosition = _constrainPosition(
-                                newPosition,
-                                screenSize,
-                                safeArea,
-                                isBreak: true,
-                              );
+                          child: GestureDetector(
+                            onPanUpdate: (details) {
+                              if (!mounted) return;
                               setState(() {
-                                _breakFabPosition = constrainedPosition;
+                                final newBottom = _clampVertical(
+                                  currentBottom: _breakFabPosition.dy,
+                                  deltaDy: details.delta.dy,
+                                  homeBottom: _breakHomeBottom,
+                                );
+                                // ثبّت المحور X (ما في سحب أفقي)
+                                _breakFabPosition = Offset(_breakFabPosition.dx, newBottom);
                               });
                             },
                             child: _buildBreakFAB(isOnBreak),
@@ -110,19 +154,17 @@ class _AttendanceFABsState extends State<AttendanceFABs>
                     builder: (context, child) {
                       return Transform.translate(
                         offset: Offset(0, sin(_bobbingAnimation.value) * 3),
-                        child: Draggable(
-                          feedback: _buildMainFAB(isCheckedIn),
-                          childWhenDragging: _buildMainFAB(isCheckedIn, opacity: 0.5),
-                          onDragEnd: (details) {
-                            final newPosition = details.offset;
-                            final constrainedPosition = _constrainPosition(
-                              newPosition,
-                              screenSize,
-                              safeArea,
-                              isBreak: false,
-                            );
+                        child: GestureDetector(
+                          onPanUpdate: (details) {
+                            if (!mounted) return;
                             setState(() {
-                              _mainFabPosition = constrainedPosition;
+                              final newBottom = _clampVertical(
+                                currentBottom: _mainFabPosition.dy,
+                                deltaDy: details.delta.dy,
+                                homeBottom: _mainHomeBottom,
+                              );
+                              // ثبّت المحور X (ما في سحب أفقي)
+                              _mainFabPosition = Offset(_mainFabPosition.dx, newBottom);
                             });
                           },
                           child: _buildMainFAB(isCheckedIn),
@@ -145,43 +187,61 @@ class _AttendanceFABsState extends State<AttendanceFABs>
     return Opacity(
       opacity: opacity,
       child: GestureDetector(
+        onTapDown: (_) {
+          if (!mounted) return;
+          setState(() => _mainFabPressed = true);
+        },
+        onTapUp: (_) {
+          if (!mounted) return;
+          setState(() => _mainFabPressed = false);
+        },
+        onTapCancel: () {
+          if (!mounted) return;
+          setState(() => _mainFabPressed = false);
+        },
         onTap: () {
-          // تنفيذ العملية مباشرة بدون التنقل
-          final bloc = context.read<AttendanceBloc>();
-          print('🔵 Attendance FAB pressed - isCheckedIn: $isCheckedIn');
-          
-          // تأكد من أن BLoC موجود
-          if (bloc.isClosed) {
-            print('❌ BLoC is closed, cannot add event');
-            return;
-          }
-          
-          if (isCheckedIn) {
-            print('🔴 Sending CheckOutRequested event');
-            bloc.add(CheckOutRequested());
-          } else {
-            print('🟢 Sending CheckInRequested event');
-            bloc.add(CheckInRequested());
+          try {
+            final bloc = context.read<AttendanceBloc>();
+            print('🔵 Attendance FAB pressed - isCheckedIn: $isCheckedIn');
+            
+            if (bloc.isClosed) {
+              print('❌ BLoC is closed, cannot add event');
+              return;
+            }
+            
+            if (isCheckedIn) {
+              print('🔴 Sending CheckOutRequested event');
+              bloc.add(CheckOutRequested());
+            } else {
+              print('🟢 Sending CheckInRequested event');
+              bloc.add(CheckInRequested());
+            }
+          } catch (e) {
+            print('❌ Error in attendance FAB: $e');
           }
         },
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: primary,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.fingerprint_rounded,
-            size: 24,
-            color: Colors.white,
+        child: AnimatedScale(
+          scale: _mainFabPressed ? 0.94 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: primary.withOpacity(_fabOpacity), // << شفافية خفيفة
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.18),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.fingerprint_rounded,
+              size: 24,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
@@ -194,54 +254,66 @@ class _AttendanceFABsState extends State<AttendanceFABs>
     return Opacity(
       opacity: opacity,
       child: GestureDetector(
+        onTapDown: (_) {
+          if (!mounted) return;
+          setState(() => _breakFabPressed = true);
+        },
+        onTapUp: (_) {
+          if (!mounted) return;
+          setState(() => _breakFabPressed = false);
+        },
+        onTapCancel: () {
+          if (!mounted) return;
+          setState(() => _breakFabPressed = false);
+        },
         onTap: () {
-          final bloc = context.read<AttendanceBloc>();
-          print('☕ Break FAB pressed - isOnBreak: $isOnBreak');
-          if (isOnBreak) {
-            print('⏰ Sending BreakEndRequested event');
-            bloc.add(BreakEndRequested());
-          } else {
-            print('☕ Sending BreakStartRequested event');
-            bloc.add(BreakStartRequested());
+          try {
+            final bloc = context.read<AttendanceBloc>();
+            print('☕ Break FAB pressed - isOnBreak: $isOnBreak');
+            
+            if (bloc.isClosed) {
+              print('❌ BLoC is closed, cannot add break event');
+              return;
+            }
+            
+            if (isOnBreak) {
+              print('⏰ Sending BreakEndRequested event');
+              bloc.add(BreakEndRequested());
+            } else {
+              print('☕ Sending BreakStartRequested event');
+              bloc.add(BreakStartRequested());
+            }
+          } catch (e) {
+            print('❌ Error in break FAB: $e');
           }
         },
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: breakColor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Icon(
-            isOnBreak ? Icons.timer_off_rounded : Icons.local_cafe_rounded,
-            size: 18,
-            color: Colors.white,
+        child: AnimatedScale(
+          scale: _breakFabPressed ? 0.94 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: breakColor.withOpacity(_fabOpacity), // << شفافية خفيفة
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Icon(
+              isOnBreak ? Icons.timer_off_rounded : Icons.local_cafe_rounded,
+              size: 18,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Offset _constrainPosition(Offset position, Size screenSize, EdgeInsets safeArea, {required bool isBreak}) {
-    final fabSize = isBreak ? 40.0 : 56.0; // حجم الزر
-    final margin = 16.0; // هامش من الحواف
-    
-    // حدود السحب
-    final minX = margin;
-    final maxX = screenSize.width - fabSize - margin;
-    final minY = safeArea.top + margin;
-    final maxY = screenSize.height - fabSize - safeArea.bottom - margin;
-    
-    return Offset(
-      position.dx.clamp(minX, maxX),
-      position.dy.clamp(minY, maxY),
-    );
-  }
+
 }

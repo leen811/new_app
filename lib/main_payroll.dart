@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Ui/Profile/Payroll/payroll_deductions_page.dart';
-import 'Data/Repositories/payroll_repository.dart';
 
 void main() {
   runApp(const PayrollTestApp());
