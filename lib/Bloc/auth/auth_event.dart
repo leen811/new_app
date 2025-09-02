@@ -14,4 +14,8 @@ class AuthRoleChanged extends AuthEvent {
   List<Object?> get props => [role];
 }
 
+class AuthLogoutRequested extends AuthEvent {
+  const AuthLogoutRequested();
+}
+
 

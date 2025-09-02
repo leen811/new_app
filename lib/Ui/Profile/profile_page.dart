@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Data/Repositories/profile_repository.dart';
 import '../../Bloc/profile/profile_bloc.dart';
 import '../../Bloc/profile/profile_event.dart';
 import '../../Bloc/profile/profile_state.dart';
+import '../../Bloc/auth/auth_bloc.dart';
+import '../../Bloc/auth/auth_event.dart';
 import 'widgets/gradient_header.dart';
 import 'widgets/performance_card.dart';
 import 'widgets/section_group.dart';
@@ -203,33 +206,41 @@ class _Body extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFEE2E2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFFECACA)),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
-                    ),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'تسجيل الخروج',
-                            style: TextStyle(
-                              color: Color(0xFFB91C1C),
-                              fontWeight: FontWeight.w700,
+                  child: GestureDetector(
+                    onTap: () {
+                      // تسجيل الخروج
+                      context.read<AuthBloc>().add(const AuthLogoutRequested());
+                      // العودة لشاشة تسجيل الدخول
+                      context.go('/login');
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEE2E2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFFECACA)),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      child: Row(
+                        children: const [
+                          Expanded(
+                            child: Text(
+                              'تسجيل الخروج',
+                              style: TextStyle(
+                                color: Color(0xFFB91C1C),
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Color(0xFFB91C1C),
-                        ),
-                      ],
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Color(0xFFB91C1C),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

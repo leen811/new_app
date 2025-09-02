@@ -10,7 +10,7 @@ import '../Chat/company_chat_page.dart';
 import '../Assistant/assistant_page.dart';
 import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
-import '../Attendance/attendance_fabs.dart';
+import '../_shared/attendance_fabs.dart';
 import 'widgets/custom_bottom_nav.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
 import '../../Bloc/attendance/attendance_event.dart';
@@ -76,7 +76,7 @@ class _HomeShellState extends State<HomeShell> {
             children: [
               // IndexedStack للتبويبات بدون سحب/أنيميشن
               IndexedStack(index: _index, children: pages),
-              if (_index != 2) const AttendanceFabs(),
+              if (_index != 2) const AttendanceFABs(),
             ],
           ),
           bottomNavigationBar: CustomBottomNavBar(

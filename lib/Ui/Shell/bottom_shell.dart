@@ -10,7 +10,7 @@ import '../Chat/company_chat_page.dart';
 import '../Assistant/assistant_page.dart';
 import '../Tasks/tasks_page.dart';
 import '../Profile/profile_page.dart';
-import '../Attendance/attendance_fabs.dart';
+import '../_shared/attendance_fabs.dart';
 import '../Joint/widgets/custom_bottom_nav.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
 import '../../Bloc/attendance/attendance_event.dart';
@@ -83,7 +83,7 @@ class _BottomShellState extends State<BottomShell> {
                 IndexedStack(index: _currentIndex, children: pages),
                 
                 // أزرار الحضور (إلا في تبويب المساعد)
-                if (_currentIndex != 2) const AttendanceFabs(),
+                if (_currentIndex != 2) const AttendanceFABs(),
               ],
             ),
             

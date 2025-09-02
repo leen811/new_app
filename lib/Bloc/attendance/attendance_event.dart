@@ -14,6 +14,14 @@ class MockLocationChanged extends AttendanceEvent {
   @override
   List<Object?> get props => [point];
 }
+class CheckInRequested extends AttendanceEvent {}
+class CheckOutRequested extends AttendanceEvent {}
+class BreakStartRequested extends AttendanceEvent {}
+class BreakEndRequested extends AttendanceEvent {}
+class TickWork extends AttendanceEvent {}
+class TickBreak extends AttendanceEvent {}
+
+// الاحتفاظ بالأحداث القديمة للتوافق العكسي
 class AttendanceFabPressed extends AttendanceEvent {}
 class BreakFabPressed extends AttendanceEvent {}
 
