@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- أذونات الموقع -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>هذا التطبيق يحتاج إلى الوصول لموقعك لتسجيل الحضور والانصراف</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>هذا التطبيق يحتاج إلى الوصول لموقعك لتسجيل الحضور والانصراف</string>
 </dict>
 </plist>

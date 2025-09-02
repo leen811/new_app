@@ -139,8 +139,9 @@ class _MyAppState extends State<MyApp> {
 class _MockLocationSource implements ILocationSource {
   @override
   Future<LocationPoint> getCurrent() async {
-    // Default to far location; Dev Panel will override via bloc event
-    return const LocationPoint(lat: 24.70, lng: 46.70);
+    // Default to location inside the main office geofence
+    // Main office: lat: 24.7136, lng: 46.6753, radius: 150m
+    return const LocationPoint(lat: 24.7136, lng: 46.6753);
   }
 }
 

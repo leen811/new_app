@@ -1,0 +1,358 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../Data/Models/employee_home_models.dart';
+import '../../../Bloc/EmployeeHome/employee_home_bloc.dart';
+import '../../../Bloc/EmployeeHome/employee_home_event.dart';
+import '../../../Bloc/EmployeeHome/employee_home_state.dart';
+import '../../../Data/Repositories/employee_home_repository.dart';
+import '_widgets/greeting_strip.dart';
+import '_widgets/work_hours_card.dart';
+import '_widgets/energy_progress_card.dart';
+import '_widgets/coins_card.dart';
+import '_widgets/performance_card.dart';
+import '_widgets/quick_action_tile.dart';
+import '_widgets/today_list_section.dart';
+import '_widgets/achievement_item.dart';
+
+class EmployeeHomePage extends StatelessWidget {
+  const EmployeeHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => EmployeeHomeBloc(
+        repository: EmployeeHomeRepository(),
+      )..add(const EmployeeHomeLoaded()),
+      child: const _EmployeeHomeView(),
+    );
+  }
+}
+
+class _EmployeeHomeView extends StatelessWidget {
+  const _EmployeeHomeView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
+        body: BlocBuilder<EmployeeHomeBloc, EmployeeHomeState>(
+          builder: (context, state) {
+            if (state is EmployeeHomeLoading) {
+              return const _LoadingSkeleton();
+            } else if (state is EmployeeHomeReady) {
+              return _HomeContent(snapshot: state.snapshot);
+            } else if (state is EmployeeHomeError) {
+              return _ErrorView(message: state.message);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  final EmployeeSnapshot snapshot;
+
+  const _HomeContent({required this.snapshot});
+
+  double _tileExtentFor(double w) {
+    if (w < 360) return 124;   // أصغر أجهزة
+    if (w < 400) return 132;
+    return 140;                // الأوسع
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        // Greeting Strip
+        SliverToBoxAdapter(
+          child: GreetingStrip(),
+        ),
+        
+        // KPI Cards Grid
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                switch (index) {
+                  case 0:
+                    return WorkHoursCard(
+                      worked: const Duration(hours: 4, minutes: 20),
+                      shift: const Duration(hours: 8),
+                    );
+                  case 1:
+                    return EnergyProgressCard(pct: snapshot.energyPct / 100);
+                  case 2:
+                    return CoinsCard(value: snapshot.coins);
+                  case 3:
+                    return PerformanceCard(pct: snapshot.performancePct / 100);
+                  default:
+                    return const SizedBox.shrink();
+                }
+              },
+              childCount: 4,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              mainAxisExtent: _tileExtentFor(MediaQuery.sizeOf(context).width),
+            ),
+          ),
+        ),
+        
+        // Quick Actions Section
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'الإجراءات السريعة',
+                  style: GoogleFonts.cairo(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 1),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.1,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: [
+                    QuickActionTile(
+                      title: 'المهام اليومية',
+                      description: 'مهامك وتحدياتك',
+                      icon: Icons.track_changes,
+                      iconBackgroundColor: const Color(0xFFFB923C),
+                      onTap: () => context.go('/tasks'),
+                    ),
+                    QuickActionTile(
+                      title: 'الحضور والانصراف',
+                      description: 'تسجيل الدخول والخروج',
+                      icon: Icons.schedule,
+                      iconBackgroundColor: const Color(0xFF60A5FA),
+                      onTap: () => context.go('/attendance'),
+                    ),
+                    QuickActionTile(
+                      title: 'طلب إجازة',
+                      description: 'قدّم طلب إجازة جديد',
+                      icon: Icons.beach_access,
+                      iconBackgroundColor: const Color(0xFF34D399),
+                      onTap: () => context.go('/leave/request'),
+                    ),
+                    QuickActionTile(
+                      title: 'متجر المكافآت',
+                      description: 'اشترِ نقاطك',
+                      icon: Icons.card_giftcard,
+                      iconBackgroundColor: const Color(0xFFA78BFA),
+                      onTap: () => context.go('/rewards'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Today's Activities
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TodayListSection(activities: snapshot.todayActivities),
+          ),
+        ),
+        
+        // Achievements Section
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.emoji_events_outlined,
+                      color: const Color(0xFF64748B),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'الإنجازات الأخيرة وأوسمتك',
+                      style: GoogleFonts.cairo(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF0F172A),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ...snapshot.achievements.map((achievement) => 
+                  AchievementItem(achievement: achievement)
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LoadingSkeleton extends StatelessWidget {
+  const _LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        // Greeting skeleton
+        SliverToBoxAdapter(
+          child: Container(
+            height: 120,
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        
+        // KPI cards skeleton
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              childCount: 4,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              mainAxisExtent: 140,
+            ),
+          ),
+        ),
+        
+        // Quick actions skeleton
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 120,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.1,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: List.generate(4, (index) => 
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Today activities skeleton
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+
+  const _ErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<EmployeeHomeBloc>().add(const EmployeeHomeLoaded());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
+    );
+  }
+}
