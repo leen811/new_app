@@ -1,85 +1,137 @@
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../Data/Models/geofence_models.dart';
 
-enum AttendanceStatus { ready, checkedIn, checkedOut }
+class GeoStamp extends Equatable {
+  final double lat;
+  final double lng;
+  final String? address; // لو عندك geocoding
+  const GeoStamp({required this.lat, required this.lng, this.address});
+
+  String get display =>
+      address ?? '${lat.toStringAsFixed(5)}, ${lng.toStringAsFixed(5)}';
+
+  @override
+  List<Object?> get props => [lat, lng, address];
+}
+
+class AttendanceSession extends Equatable {
+  final DateTime checkInAt;
+  final GeoStamp inStamp;
+  final DateTime? checkOutAt;
+  final GeoStamp? outStamp;
+
+  const AttendanceSession({
+    required this.checkInAt,
+    required this.inStamp,
+    this.checkOutAt,
+    this.outStamp,
+  });
+
+  AttendanceSession close({required DateTime at, required GeoStamp stamp}) {
+    return AttendanceSession(
+      checkInAt: checkInAt,
+      inStamp: inStamp,
+      checkOutAt: at,
+      outStamp: stamp,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    checkInAt,
+    inStamp.lat, inStamp.lng, inStamp.address,
+    checkOutAt,
+    outStamp?.lat, outStamp?.lng, outStamp?.address,
+  ];
+}
+
+enum AttendanceStatus { ready, checkedIn }
 enum BreakStatus { none, onBreak }
 
 class AttendanceState extends Equatable {
-  final AttendanceStatus status;
-  final BreakStatus breakStatus;
-  final bool geoRequired;
-  final GeofenceSite? currentSite;
-  final bool fabVisible;
-  final Duration workDuration;
-  final Duration breakDuration;
-  final Duration totalWorkDuration; // إجمالي ساعات العمل (مع الاستراحات)
-  final Duration pureWorkDuration; // إجمالي ساعات العمل (بدون استراحات)
+  final AttendanceStatus status;        // ready / checkedIn
+  final BreakStatus breakStatus;        // none / onBreak
+  final bool isCheckedIn;
+  final bool isOnBreak;
   final DateTime? checkInAt;
-  final DateTime? lastBreakStart; // وقت بداية آخر استراحة
-  final Position? lastPosition;
+  final DateTime? lastBreakStart;
+  final Duration workDuration;
+  final Duration totalWorkDuration;
+  final Duration pureWorkDuration;
+  final Duration breakDuration;
+  final Position? lastPosition;         // geolocator Position
   final String? lastAddress;
   final String? errorMessage;
+  final List<AttendanceSession> sessions;
 
   const AttendanceState({
     this.status = AttendanceStatus.ready,
     this.breakStatus = BreakStatus.none,
-    this.geoRequired = true,
-    this.currentSite,
-    this.fabVisible = true,
-    this.workDuration = Duration.zero,
-    this.breakDuration = Duration.zero,
-    this.totalWorkDuration = Duration.zero,
-    this.pureWorkDuration = Duration.zero,
+    this.isCheckedIn = false,
+    this.isOnBreak = false,
     this.checkInAt,
     this.lastBreakStart,
+    this.workDuration = Duration.zero,
+    this.totalWorkDuration = Duration.zero,
+    this.pureWorkDuration = Duration.zero,
+    this.breakDuration = Duration.zero,
     this.lastPosition,
     this.lastAddress,
     this.errorMessage,
+    this.sessions = const [],
   });
-
-  bool get canCheckIn => geoRequired ? currentSite != null : true;
-  bool get isCheckedIn => status == AttendanceStatus.checkedIn;
-  bool get isOnBreak => breakStatus == BreakStatus.onBreak;
 
   AttendanceState copyWith({
     AttendanceStatus? status,
     BreakStatus? breakStatus,
-    bool? geoRequired,
-    GeofenceSite? currentSite,
-    bool? fabVisible,
+    bool? isCheckedIn,
+    bool? isOnBreak,
+    DateTime? checkInAt,
+    bool clearCheckInAt = false,
+
+    DateTime? lastBreakStart,
+    bool clearLastBreakStart = false,
+
     Duration? workDuration,
-    Duration? breakDuration,
     Duration? totalWorkDuration,
     Duration? pureWorkDuration,
-    DateTime? checkInAt,
-    DateTime? lastBreakStart,
+    Duration? breakDuration,
+
     Position? lastPosition,
+    bool clearLastPosition = false,
+
     String? lastAddress,
+    bool clearLastAddress = false,
+
     String? errorMessage,
-  }) => AttendanceState(
-        status: status ?? this.status,
-        breakStatus: breakStatus ?? this.breakStatus,
-        geoRequired: geoRequired ?? this.geoRequired,
-        currentSite: currentSite ?? this.currentSite,
-        fabVisible: fabVisible ?? this.fabVisible,
-        workDuration: workDuration ?? this.workDuration,
-        breakDuration: breakDuration ?? this.breakDuration,
-        totalWorkDuration: totalWorkDuration ?? this.totalWorkDuration,
-        pureWorkDuration: pureWorkDuration ?? this.pureWorkDuration,
-        checkInAt: checkInAt ?? this.checkInAt,
-        lastBreakStart: lastBreakStart ?? this.lastBreakStart,
-        lastPosition: lastPosition ?? this.lastPosition,
-        lastAddress: lastAddress ?? this.lastAddress,
-        errorMessage: errorMessage ?? this.errorMessage,
-      );
+    bool clearErrorMessage = false,
+    List<AttendanceSession>? sessions,
+  }) {
+    return AttendanceState(
+      status: status ?? this.status,
+      breakStatus: breakStatus ?? this.breakStatus,
+      isCheckedIn: isCheckedIn ?? this.isCheckedIn,
+      isOnBreak: isOnBreak ?? this.isOnBreak,
+      checkInAt: clearCheckInAt ? null : (checkInAt ?? this.checkInAt),
+      lastBreakStart: clearLastBreakStart ? null : (lastBreakStart ?? this.lastBreakStart),
+      workDuration: workDuration ?? this.workDuration,
+      totalWorkDuration: totalWorkDuration ?? this.totalWorkDuration,
+      pureWorkDuration: pureWorkDuration ?? this.pureWorkDuration,
+      breakDuration: breakDuration ?? this.breakDuration,
+      lastPosition: clearLastPosition ? null : (lastPosition ?? this.lastPosition),
+      lastAddress: clearLastAddress ? null : (lastAddress ?? this.lastAddress),
+      errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      sessions: sessions ?? this.sessions,
+    );
+  }
 
   @override
   List<Object?> get props => [
-        status, breakStatus, geoRequired, currentSite, fabVisible,
-        workDuration, breakDuration, totalWorkDuration, pureWorkDuration,
-        checkInAt, lastBreakStart, lastPosition, lastAddress, errorMessage
-      ];
+    status, breakStatus, isCheckedIn, isOnBreak,
+    checkInAt, lastBreakStart,
+    workDuration, totalWorkDuration, pureWorkDuration, breakDuration,
+    // lastPosition,  // <- اشطبه من المقارنة (كائن كبير)
+    lastAddress, errorMessage,
+    sessions,
+  ];
 }
-
-

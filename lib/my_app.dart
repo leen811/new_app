@@ -22,8 +22,10 @@ import 'Data/Repositories/profile_repository.dart';
 import 'Data/Repositories/assistant_repository.dart';
 import 'Data/Repositories/digital_twin_repository.dart';
 import 'Data/Repositories/perf360_repository.dart';
-import 'Data/Repositories/training_repository.dart';
+import 'Data/Repositories/training_repository.dart'; 
 import 'Data/Repositories/settings_repository.dart';
+import 'Bloc/attendance/attendance_bloc.dart';
+import 'Bloc/attendance/attendance_event.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -115,8 +117,44 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<IPerf360Repository>.value(value: _perf360Repository),
           RepositoryProvider<ISettingsRepository>.value(value: _settingsRepository),
         ],
-        child: BlocProvider(
-          create: (_) => AuthBloc(),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => AuthBloc(),
+            ),
+            BlocProvider(
+              create: (context) {
+                try {
+                  final bloc = AttendanceBloc(
+                    attendanceRepository: context.read<IAttendanceRepository>(),
+                    geofenceRepository: context.read<IGeofenceRepository>(),
+                    policyRepository: context.read<IPolicyRepository>(),
+                    locationSource: context.read<ILocationSource>(),
+                  );
+                  // تأجيل التهيئة لتجنب المشاكل
+                  Future.microtask(() {
+                    try {
+                      if (!bloc.isClosed) {
+                        bloc.add(AttendanceInitRequested());
+                      }
+                    } catch (e) {
+                      print('❌ Error initializing AttendanceBloc: $e');
+                    }
+                  });
+                  return bloc;
+                } catch (e) {
+                  print('❌ Error creating AttendanceBloc: $e');
+                  // إرجاع BLoC فارغ في حالة الخطأ
+                  return AttendanceBloc(
+                    attendanceRepository: _attendanceRepository,
+                    geofenceRepository: _geofenceRepository,
+                    policyRepository: _policyRepository,
+                    locationSource: _locationSource,
+                  );
+                }
+              },
+            ),
+          ],
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'إدارة الشركات',
