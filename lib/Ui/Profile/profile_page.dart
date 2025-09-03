@@ -14,15 +14,38 @@ import 'widgets/section_group.dart';
 import 'widgets/section_tile.dart';
 import '../../Core/Navigation/app_routes.dart';
 import '../Common/coming_soon/coming_soon.dart';
-import '../Common/press_fx.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientMixin {
+  late final ProfileBloc _bloc;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = ProfileBloc(context.read<IProfileRepository>())
+      ..add(ProfileOpened());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) =>
-          ProfileBloc(ctx.read<IProfileRepository>())..add(ProfileOpened()),
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    return BlocProvider.value(
+      value: _bloc,
       child: const _Body(),
     );
   }
@@ -58,31 +81,10 @@ class _Body extends StatelessWidget {
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading) {
-            return ListView(
-              children: [
-                Container(
-                  height: 160,
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  height: 200,
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Color(0xFFE6EAF2)),
-                  ),
-                ),
-              ],
-            );
+            return const _ProfileLoadingSkeleton();
           }
           if (state is ProfileError) {
-            return Center(child: Text(state.message));
+            return _ProfileErrorView(message: state.message);
           }
           final s = state as ProfileSuccess;
           return NotificationListener<ScrollNotification>(
@@ -249,6 +251,98 @@ class _Body extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _ProfileLoadingSkeleton extends StatelessWidget {
+  const _ProfileLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        const SizedBox(height: 12),
+        // Header skeleton
+        Container(
+          height: 160,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Performance card skeleton
+        Container(
+          height: 120,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Section groups skeleton
+        ...List.generate(3, (index) => 
+          Container(
+            height: 200,
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _ProfileErrorView extends StatelessWidget {
+  final String message;
+
+  const _ProfileErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<ProfileBloc>().add(ProfileOpened());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
       ),
     );
   }

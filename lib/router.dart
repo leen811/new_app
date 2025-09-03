@@ -16,6 +16,7 @@ import 'Ui/Profile/Payroll/payroll_deductions_page.dart';
 import 'Ui/Settings/general_settings_page.dart';
 import 'Ui/Attendance/attendance_page.dart';
 import 'Ui/Leave/leave_management_page.dart';
+import 'Ui/RewardsStore/rewards_store_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
 
@@ -23,6 +24,9 @@ import 'Core/Navigation/app_routes.dart';
 bool isTopLevelRoute(String? name) => const {
   '/', '/shell', '/home', '/chat', '/digital-twin', '/tasks', '/profile',
 }.contains(name);
+
+// Global key to preserve HomeShell state
+final _homeShellKey = GlobalKey<HomeShellState>();
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -41,7 +45,7 @@ GoRouter buildRouter() {
         pageBuilder: (context, state) {
           final q = state.uri.queryParameters;
           final initialIndex = int.tryParse(q['tab'] ?? '') ?? 0;
-          return _swipePage(HomeShell(initialIndex: initialIndex));
+          return _swipePage(HomeShell(key: _homeShellKey, initialIndex: initialIndex));
         },
       ),
       GoRoute(
@@ -115,6 +119,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/leave',
         pageBuilder: (context, state) => _swipePage(const LeaveManagementPage()),
+      ),
+      GoRoute(
+        path: '/rewards',
+        pageBuilder: (context, state) => _swipePage(const RewardsStorePage()),
       ),
     ],
   );

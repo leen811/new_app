@@ -30,7 +30,7 @@ class SummaryGradientCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+          colors: [Color(0xFF2E3A8C), Color(0xFF6A3FA0), Color(0xFFF76B1C)],
         ),
       ),
       child: Padding(
