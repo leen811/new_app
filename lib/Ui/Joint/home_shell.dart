@@ -17,16 +17,39 @@ class HomeShell extends StatefulWidget {
   const HomeShell({super.key, this.initialIndex = 0});
   final int initialIndex;
   @override
-  State<HomeShell> createState() => _HomeShellState();
+  State<HomeShell> createState() => HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class HomeShellState extends State<HomeShell> with AutomaticKeepAliveClientMixin {
   int _index = 0;
+  late final List<Widget> _pages;
+  Role? _lastRole;
+  
+  @override
+  bool get wantKeepAlive => true;
+  
+  // Method to update tab index from outside
+  void updateTabIndex(int newIndex) {
+    if (_index != newIndex) {
+      setState(() {
+        _index = newIndex;
+      });
+    }
+  }
   
   @override
   void initState() {
     super.initState();
     _index = widget.initialIndex;
+    
+    // إنشاء الصفحات مرة واحدة فقط
+    _pages = [
+      HomeFactory.build(Role.employee), // سنحدث هذا في didChangeDependencies
+      const CompanyChatPage(),
+      const AssistantPage(),
+      const TasksPage(),
+      const ProfilePage(),
+    ];
   }
   
   @override
@@ -36,6 +59,8 @@ class _HomeShellState extends State<HomeShell> {
       setState(() => _index = widget.initialIndex);
     }
   }
+  
+
 
   /// تغيير التبويب فوري بدون أنيميشن
   void _onTabChanged(int index) {
@@ -48,56 +73,38 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-        try {
-          final role = state is AuthRoleState ? state.role : Role.guest;
-          final pages = [
-            HomeFactory.build(role),
-            const CompanyChatPage(),
-            const AssistantPage(),
-            const TasksPage(),
-            const ProfilePage(),
-          ];
-          return Scaffold(
-            body: Stack(
-              children: [
-                // IndexedStack للتبويبات بدون سحب/أنيميشن
-                IndexedStack(index: _index, children: pages),
-                TickerMode(
-                  enabled: ModalRoute.of(context)?.isCurrent ?? true,
-                  child: (_index != 2) ? const AttendanceFABs() : const SizedBox.shrink(),
-                ),
-              ],
-            ),
-            bottomNavigationBar: CustomBottomNavBar(
-              currentIndex: _index,
-              onItemSelected: _onTabChanged,
-            ),
-          );
-        } catch (e) {
-          print('❌ Error in HomeShell: $e');
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  const SizedBox(height: 16),
-                  const Text('حدث خطأ في عرض الصفحة'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: const Text('إعادة المحاولة'),
-                  ),
-                ],
-              ),
-            ),
-          );
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // تحديث الصفحة الرئيسية عند تغيير الدور
+        if (state is AuthRoleState) {
+          final newRole = state.role;
+          if (_lastRole != newRole) {
+            _lastRole = newRole;
+            _pages[0] = HomeFactory.build(newRole);
+            setState(() {}); // تحديث UI فقط عند تغيير الدور
+          }
         }
       },
+      child: PageStorage(
+        bucket: PageStorageBucket(),
+        child: Scaffold(
+        body: Stack(
+          children: [
+            // IndexedStack للتبويبات بدون سحب/أنيميشن
+            IndexedStack(index: _index, children: _pages),
+            TickerMode(
+              enabled: ModalRoute.of(context)?.isCurrent ?? true,
+              child: (_index != 2) ? const AttendanceFABs() : const SizedBox.shrink(),
+            ),
+          ],
+        ),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: _index,
+          onItemSelected: _onTabChanged,
+        ),
+        ),
+      ),
     );
   }
 }

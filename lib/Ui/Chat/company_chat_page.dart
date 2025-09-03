@@ -12,10 +12,34 @@ import 'widgets/new_group_dialog.dart';
 import 'widgets/new_chat_dialog.dart';
 import '../Common/press_fx.dart';
 
-class CompanyChatPage extends StatelessWidget {
+class CompanyChatPage extends StatefulWidget {
   const CompanyChatPage({super.key});
+
+  @override
+  State<CompanyChatPage> createState() => _CompanyChatPageState();
+}
+
+class _CompanyChatPageState extends State<CompanyChatPage> with AutomaticKeepAliveClientMixin {
+  late final ChatListBloc _bloc;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = ChatListBloc(context.read<IChatRepository>())..add(ChatListFetched());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -46,8 +70,8 @@ class CompanyChatPage extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: BlocProvider(
-        create: (ctx) => ChatListBloc(ctx.read<IChatRepository>())..add(ChatListFetched()),
+      body: BlocProvider.value(
+        value: _bloc,
         child: const _ChatListView(),
       ),
     );

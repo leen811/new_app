@@ -27,6 +27,7 @@ const String settingsGeneralRoute = '/settings/general';
 const String settingsChangePasswordRoute = '/settings/security/change-password';
 const String legalTermsRoute = '/legal/terms';
 const String payrollDeductionsRoute = '/profile/payroll-deductions';
+const String rewardsStoreRoute = '/rewards';
 
 /// تعريف التبويبات الرئيسية (Top-Level)
 bool isTopLevelRoute(String? name) => const {
@@ -45,6 +46,7 @@ extension AppRoutesExt on BuildContext {
   void goSettingsChangePassword() => GoRouter.of(this).push(settingsChangePasswordRoute);
   void goLegalTerms() => GoRouter.of(this).push(legalTermsRoute);
   void goPayrollDeductions() => GoRouter.of(this).push(payrollDeductionsRoute);
+  void goRewardsStore() => GoRouter.of(this).push(rewardsStoreRoute);
 }
 
 /// إدارة المسارات للتنقل الكلاسيكي (Navigator)

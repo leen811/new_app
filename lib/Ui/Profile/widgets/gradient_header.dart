@@ -14,7 +14,7 @@ class GradientHeader extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
-          colors: [Color(0xFF6D28D9), Color(0xFFDB2777), Color(0xFF2563EB)],
+          colors: [Color(0xFF2E3A8C), Color(0xFF6A3FA0), Color(0xFFF76B1C)],
         ),
       ),
       child: Padding(

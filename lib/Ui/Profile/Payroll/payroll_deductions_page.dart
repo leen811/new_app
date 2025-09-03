@@ -18,8 +18,28 @@ import '_widgets/card_breakdown.dart';
 import '_widgets/detail_item_card.dart';
 import '_widgets/history_item_card.dart';
 
-class PayrollDeductionsPage extends StatelessWidget {
+class PayrollDeductionsPage extends StatefulWidget {
   const PayrollDeductionsPage({super.key});
+
+  @override
+  State<PayrollDeductionsPage> createState() => _PayrollDeductionsPageState();
+}
+
+class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
+  late final PayrollDeductionsBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = PayrollDeductionsBloc(MockPayrollRepository())
+      ..add(const PayrollLoad(month: 2, year: 2024));
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,19 +57,16 @@ class PayrollDeductionsPage extends StatelessWidget {
           elevation: 0,
         ),
         backgroundColor: Colors.white,
-        body: BlocProvider(
-          create: (_) => PayrollDeductionsBloc(MockPayrollRepository())
-            ..add(const PayrollLoad(month: 2, year: 2024)),
+        body: BlocProvider.value(
+          value: _bloc,
           child: BlocBuilder<PayrollDeductionsBloc, PayrollDeductionsState>(
             builder: (context, state) {
               if (state is PayrollLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const _PayrollLoadingSkeleton();
               }
 
               if (state is PayrollError) {
-                return Center(
-                  child: Text('حدث خطأ: ${state.message}', style: GoogleFonts.cairo()),
-                );
+                return _PayrollErrorView(message: state.message);
               }
 
               if (state is PayrollLoaded) {
@@ -328,6 +345,132 @@ class PayrollDeductionsPage extends StatelessWidget {
         Text(title, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF334155))),
         Text(value, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF334155))),
       ],
+    );
+  }
+}
+
+class _PayrollLoadingSkeleton extends StatelessWidget {
+  const _PayrollLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        // Top actions skeleton
+        SliverToBoxAdapter(
+          child: Container(
+            height: 60,
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        
+        // Summary card skeleton
+        SliverToBoxAdapter(
+          child: Container(
+            height: 120,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        
+        // Tabs skeleton
+        SliverToBoxAdapter(
+          child: Container(
+            height: 50,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+        ),
+        
+        // Content skeleton
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => Container(
+              height: 100,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            childCount: 5,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PayrollErrorView extends StatelessWidget {
+  final String message;
+
+  const _PayrollErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: const Color(0xFF64748B),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'حدث خطأ',
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: GoogleFonts.cairo(
+                fontSize: 14,
+                color: const Color(0xFF64748B),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                context.read<PayrollDeductionsBloc>().add(const PayrollLoad(month: 2, year: 2024));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2563EB),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'إعادة المحاولة',
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

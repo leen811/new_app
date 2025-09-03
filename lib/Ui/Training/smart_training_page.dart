@@ -1,17 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../Bloc/training/training_bloc.dart';
 import '../../Bloc/training/training_event.dart';
 import '../../Bloc/training/training_state.dart';
 import '../../Data/Repositories/training_repository.dart';
 import '../../Core/Navigation/app_routes.dart';
 
-class SmartTrainingPage extends StatelessWidget {
+class SmartTrainingPage extends StatefulWidget {
   const SmartTrainingPage({super.key});
+
+  @override
+  State<SmartTrainingPage> createState() => _SmartTrainingPageState();
+}
+
+class _SmartTrainingPageState extends State<SmartTrainingPage> {
+  late final TrainingBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = TrainingBloc(context.read<ITrainingRepository>())
+      ..add(TrainingOpened());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => TrainingBloc(ctx.read<ITrainingRepository>())..add(TrainingOpened()),
+    return BlocProvider.value(
+      value: _bloc,
       child: const _Body(),
     );
   }
@@ -29,7 +51,19 @@ class _Body extends StatelessWidget {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0))),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color(0xFF1A1A1A),
+          ),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          }, 
+        ),
         title: Column(children: const [
           Text('التدريب الذكي', style: TextStyle(color: Colors.black)),
           SizedBox(height: 2),
@@ -39,9 +73,11 @@ class _Body extends StatelessWidget {
       ),
       body: BlocBuilder<TrainingBloc, TrainingState>(builder: (context, state) {
         if (state is TrainingLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const _SmartTrainingLoadingSkeleton();
         }
-        if (state is TrainingError) return Center(child: Text(state.message));
+        if (state is TrainingError) {
+          return _SmartTrainingErrorView(message: state.message);
+        }
         final s = state as TrainingSuccess;
         return ListView(
           padding: const EdgeInsets.only(bottom: 16),
@@ -114,6 +150,112 @@ class _SkillRow extends StatelessWidget {
         LayoutBuilder(builder: (context, cns) => AnimatedContainer(duration: const Duration(milliseconds: 700), curve: Curves.easeOutCubic, width: cns.maxWidth * current, height: 10, decoration: BoxDecoration(color: const Color(0xFF2F56D9), borderRadius: BorderRadius.circular(999)))),
       ]),
     ]);
+  }
+}
+
+class _SmartTrainingLoadingSkeleton extends StatelessWidget {
+  const _SmartTrainingLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 16),
+      children: [
+        const SizedBox(height: 12),
+        // Section title skeleton
+        Container(
+          height: 20,
+          width: 120,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Alert cards skeleton
+        ...List.generate(2, (index) => 
+          Container(
+            height: 120,
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Skills section title skeleton
+        Container(
+          height: 20,
+          width: 150,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Skills skeleton
+        ...List.generate(3, (index) => 
+          Container(
+            height: 60,
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SmartTrainingErrorView extends StatelessWidget {
+  final String message;
+
+  const _SmartTrainingErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<TrainingBloc>().add(TrainingOpened());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
+    );
   }
 }
 

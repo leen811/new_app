@@ -22,28 +22,52 @@ import 'widgets/task_card.dart';
 import 'widgets/challenge_card.dart';
 import 'widgets/team_progress_row.dart';
 
-class TasksTabPage extends StatelessWidget {
+class TasksTabPage extends StatefulWidget {
   const TasksTabPage({super.key});
+
+  @override
+  State<TasksTabPage> createState() => _TasksTabPageState();
+}
+
+class _TasksTabPageState extends State<TasksTabPage> with AutomaticKeepAliveClientMixin {
+  late final TasksTabBloc _tasksTabBloc;
+  late final DailyTasksBloc _dailyTasksBloc;
+  late final ChallengesBloc _challengesBloc;
+  late final TeamProgressBloc _teamProgressBloc;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _tasksTabBloc = TasksTabBloc(context.read<ITasksRepository>())
+      ..add(TasksOverviewRequested())
+      ..add(const TasksTabChanged(0));
+    _dailyTasksBloc = DailyTasksBloc(context.read<ITasksRepository>())
+      ..add(DailyTasksFetch());
+    _challengesBloc = ChallengesBloc(context.read<ITasksRepository>());
+    _teamProgressBloc = TeamProgressBloc(context.read<ITasksRepository>());
+  }
+
+  @override
+  void dispose() {
+    _tasksTabBloc.close();
+    _dailyTasksBloc.close();
+    _challengesBloc.close();
+    _teamProgressBloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (ctx) => TasksTabBloc(ctx.read<ITasksRepository>())
-            ..add(TasksOverviewRequested())
-            ..add(const TasksTabChanged(0)),
-        ),
-        BlocProvider(
-          create: (ctx) =>
-              DailyTasksBloc(ctx.read<ITasksRepository>())
-                ..add(DailyTasksFetch()),
-        ),
-        BlocProvider(
-          create: (ctx) => ChallengesBloc(ctx.read<ITasksRepository>()),
-        ),
-        BlocProvider(
-          create: (ctx) => TeamProgressBloc(ctx.read<ITasksRepository>()),
-        ),
+        BlocProvider.value(value: _tasksTabBloc),
+        BlocProvider.value(value: _dailyTasksBloc),
+        BlocProvider.value(value: _challengesBloc),
+        BlocProvider.value(value: _teamProgressBloc),
       ],
       child: const _TasksBody(),
     );
@@ -87,18 +111,14 @@ class _TasksBody extends StatelessWidget {
             SliverToBoxAdapter(
               child: BlocBuilder<TasksTabBloc, TasksTabState>(
                 builder: (context, state) {
-                  final overview = state is TasksTabSuccess
-                      ? state.overview
-                      : null;
-                  if (overview == null) {
-                    return const SizedBox(
-                      height: 160,
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    );
+                  if (state is TasksTabLoading) {
+                    return const _TasksLoadingSkeleton();
+                  } else if (state is TasksTabError) {
+                    return _TasksErrorView(message: state.message);
+                  } else if (state is TasksTabSuccess && state.overview != null) {
+                    return KpiRow(data: state.overview!);
                   }
-                  return KpiRow(data: overview);
+                  return const _TasksLoadingSkeleton();
                 },
               ),
             ),
@@ -596,6 +616,82 @@ class _TeamTab extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _TasksLoadingSkeleton extends StatelessWidget {
+  const _TasksLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 160,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
+}
+
+class _TasksErrorView extends StatelessWidget {
+  final String message;
+
+  const _TasksErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 160,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE6EAF2)),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 32,
+              color: const Color(0xFF64748B),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'حدث خطأ',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 12,
+                color: const Color(0xFF64748B),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
+                context.read<TasksTabBloc>().add(TasksOverviewRequested());
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(80, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              child: const Text('إعادة المحاولة', style: TextStyle(fontSize: 12)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

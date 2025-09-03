@@ -3,18 +3,40 @@ import 'widgets/weekly_line_chart.dart';
 import 'widgets/daily_line_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../Bloc/twin/digital_twin_bloc.dart';
 import '../../Bloc/twin/digital_twin_event.dart';
 import '../../Bloc/twin/digital_twin_state.dart';
 import '../../Data/Repositories/digital_twin_repository.dart';
 import '../Common/press_fx.dart';
 
-class DigitalTwinPage extends StatelessWidget {
+class DigitalTwinPage extends StatefulWidget {
   const DigitalTwinPage({super.key});
+
+  @override
+  State<DigitalTwinPage> createState() => _DigitalTwinPageState();
+}
+
+class _DigitalTwinPageState extends State<DigitalTwinPage> {
+  late final DigitalTwinBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = DigitalTwinBloc(context.read<IDigitalTwinRepository>())
+      ..add(TwinOpened());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => DigitalTwinBloc(ctx.read<IDigitalTwinRepository>())..add(TwinOpened()),
+    return BlocProvider.value(
+      value: _bloc,
       child: const _Body(),
     );
   }
@@ -32,6 +54,19 @@ class _Body extends StatelessWidget {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color(0xFF1A1A1A),
+          ),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          }, 
+        ),
         title: Column(children: const [
           Text('التوأم الرقمي', style: TextStyle(color: Colors.black)),
           SizedBox(height: 2),
@@ -51,9 +86,11 @@ class _Body extends StatelessWidget {
       body: BlocBuilder<DigitalTwinBloc, DigitalTwinState>(
         builder: (context, state) {
           if (state is TwinLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const _DigitalTwinLoadingSkeleton();
           }
-          if (state is TwinError) return Center(child: Text(state.message));
+          if (state is TwinError) {
+            return _DigitalTwinErrorView(message: state.message);
+          }
           final s = state as TwinSuccess;
           return NotificationListener<ScrollNotification>(
             onNotification: (n) {
@@ -256,6 +293,113 @@ class _InsightsPlaceholder extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(height: 160, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE6EAF2))), child: const Center(child: Text('سيتم إضافة رؤى ذكية قريبًا', style: TextStyle(color: Color(0xFF667085))))),
+    );
+  }
+}
+
+class _DigitalTwinLoadingSkeleton extends StatelessWidget {
+  const _DigitalTwinLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        const SizedBox(height: 12),
+        // KPI Grid skeleton
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: GridView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.3,
+            ),
+            children: List.generate(6, (index) => 
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Segmented tabs skeleton
+        Container(
+          height: 50,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Content skeleton
+        ...List.generate(3, (index) => 
+          Container(
+            height: 120,
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _DigitalTwinErrorView extends StatelessWidget {
+  final String message;
+
+  const _DigitalTwinErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<DigitalTwinBloc>().add(TwinOpened());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
     );
   }
 }

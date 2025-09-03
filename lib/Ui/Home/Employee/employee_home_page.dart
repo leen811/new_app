@@ -16,15 +16,38 @@ import '_widgets/quick_action_tile.dart';
 import '_widgets/today_list_section.dart';
 import '_widgets/achievement_item.dart';
 
-class EmployeeHomePage extends StatelessWidget {
+class EmployeeHomePage extends StatefulWidget {
   const EmployeeHomePage({super.key});
 
   @override
+  State<EmployeeHomePage> createState() => _EmployeeHomePageState();
+}
+
+class _EmployeeHomePageState extends State<EmployeeHomePage> with AutomaticKeepAliveClientMixin {
+  late final EmployeeHomeBloc _bloc;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = EmployeeHomeBloc(
+      repository: EmployeeHomeRepository(),
+    )..add(const EmployeeHomeLoaded());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => EmployeeHomeBloc(
-        repository: EmployeeHomeRepository(),
-      )..add(const EmployeeHomeLoaded()),
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    return BlocProvider.value(
+      value: _bloc,
       child: const _EmployeeHomeView(),
     );
   }

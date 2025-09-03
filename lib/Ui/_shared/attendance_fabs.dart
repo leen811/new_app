@@ -304,8 +304,8 @@ class _AttendanceFABsState extends State<AttendanceFABs>
                 ),
               ],
             ),
-            child: Icon(
-              isOnBreak ? Icons.timer_off_rounded : Icons.local_cafe_rounded,
+            child: const Icon(
+              Icons.local_cafe_rounded,
               size: 18,
               color: Colors.white,
             ),

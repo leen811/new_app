@@ -7,14 +7,37 @@ import '../../Bloc/assistant/assistant_event.dart';
 import '../../Bloc/assistant/assistant_state.dart';
 import '../../Data/Repositories/assistant_repository.dart';
 
-class AssistantPage extends StatelessWidget {
+class AssistantPage extends StatefulWidget {
   const AssistantPage({super.key});
+
+  @override
+  State<AssistantPage> createState() => _AssistantPageState();
+}
+
+class _AssistantPageState extends State<AssistantPage> with AutomaticKeepAliveClientMixin {
+  late final AssistantBloc _bloc;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = AssistantBloc(context.read<IAssistantRepository>())
+      ..add(AssistantOpened());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) =>
-          AssistantBloc(ctx.read<IAssistantRepository>())
-            ..add(AssistantOpened()),
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    return BlocProvider.value(
+      value: _bloc,
       child: const _Body(),
     );
   }
@@ -93,6 +116,12 @@ class _Body extends StatelessWidget {
                   child: RepaintBoundary(
                     child: BlocBuilder<AssistantBloc, AssistantState>(
                       builder: (context, state) {
+                        if (state.loading) {
+                          return const _AssistantLoadingSkeleton();
+                        }
+                        if (!state.connected) {
+                          return const _AssistantErrorView(message: 'فقدان الاتصال بالمساعد الذكي');
+                        }
                         final items = <Widget>[];
                         for (var i = 0; i < state.messages.length; i++) {
                           final m = state.messages[i];
@@ -236,5 +265,151 @@ class _Body extends StatelessWidget {
     final h = t.hour.toString().padLeft(2, '0');
     final m = t.minute.toString().padLeft(2, '0');
     return '$h:$m';
+  }
+}
+
+class _AssistantLoadingSkeleton extends StatelessWidget {
+  const _AssistantLoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      children: [
+        // Assistant message skeleton
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            constraints: const BoxConstraints(maxWidth: 300),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 16,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 16,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // User message skeleton
+        Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            constraints: const BoxConstraints(maxWidth: 300),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                height: 16,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ),
+        // Quick actions skeleton
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: List.generate(3, (index) => 
+            Container(
+              height: 32,
+              width: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AssistantErrorView extends StatelessWidget {
+  final String message;
+
+  const _AssistantErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.white.withOpacity(0.8),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'حدث خطأ',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AssistantBloc>().add(AssistantOpened());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF2F56D9),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

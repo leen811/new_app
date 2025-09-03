@@ -11,13 +11,32 @@ import '_widgets/leave_request_form.dart';
 import '_widgets/leave_history_section.dart';
 import '_widgets/permission_history_section.dart';
 
-class LeaveManagementPage extends StatelessWidget {
+class LeaveManagementPage extends StatefulWidget {
   const LeaveManagementPage({super.key});
 
   @override
+  State<LeaveManagementPage> createState() => _LeaveManagementPageState();
+}
+
+class _LeaveManagementPageState extends State<LeaveManagementPage> {
+  late final LeaveBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = LeaveBloc()..add(const LeaveDataLoaded());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LeaveBloc()..add(const LeaveDataLoaded()),
+    return BlocProvider.value(
+      value: _bloc,
       child: const _LeaveManagementView(),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../Bloc/perf360/perf360_bloc.dart';
 import '../../Bloc/perf360/perf360_event.dart';
 import '../../Bloc/perf360/perf360_state.dart';
@@ -11,12 +12,33 @@ import 'tabs/analytics_tab.dart';
 import 'package:animations/animations.dart';
 import '../Common/press_fx.dart';
 
-class Perf360Page extends StatelessWidget {
+class Perf360Page extends StatefulWidget {
   const Perf360Page({super.key});
+
+  @override
+  State<Perf360Page> createState() => _Perf360PageState();
+}
+
+class _Perf360PageState extends State<Perf360Page> {
+  late final Perf360Bloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = Perf360Bloc(context.read<IPerf360Repository>())
+      ..add(Perf360Opened());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => Perf360Bloc(ctx.read<IPerf360Repository>())..add(Perf360Opened()),
+    return BlocProvider.value(
+      value: _bloc,
       child: Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -24,7 +46,19 @@ class Perf360Page extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0))).withPressFX(),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color(0xFF1A1A1A),
+          ),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          }, 
+        ),
         centerTitle: true,
         title: Column(children: const [
           Text('نظام تقييم الأداء 360 درجة', style: TextStyle(color: Colors.black)),
@@ -33,8 +67,12 @@ class Perf360Page extends StatelessWidget {
         bottom: const PreferredSize(preferredSize: Size.fromHeight(1), child: Divider(height: 1, color: Color(0xFFE6EAF2))),
       ),
       body: BlocBuilder<Perf360Bloc, Perf360State>(builder: (context, state) {
-        if (state is Perf360Loading) return const Center(child: CircularProgressIndicator());
-        if (state is Perf360Error) return Center(child: Text(state.message));
+        if (state is Perf360Loading) {
+          return const _Perf360LoadingSkeleton();
+        }
+        if (state is Perf360Error) {
+          return _Perf360ErrorView(message: state.message);
+        }
         final s = state as Perf360Success;
         final tabs = [const OverviewTab(), const NewEvalTab(), const ResultsTab(), const AnalyticsTab()];
         return Column(children: [
@@ -115,6 +153,118 @@ class _PerfTabs extends StatelessWidget {
           })),
         ]);
       }),
+    );
+  }
+}
+
+class _Perf360LoadingSkeleton extends StatelessWidget {
+  const _Perf360LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Header skeleton
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+          child: Column(
+            children: [
+              Container(
+                height: 20,
+                width: 200,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                height: 16,
+                width: 300,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, color: Color(0xFFE6EAF2)),
+        const SizedBox(height: 8),
+        // Tabs skeleton
+        Container(
+          height: 44,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Content skeleton
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(12),
+            children: List.generate(4, (index) => 
+              Container(
+                height: 120,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Perf360ErrorView extends StatelessWidget {
+  final String message;
+
+  const _Perf360ErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<Perf360Bloc>().add(Perf360Opened());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -38,42 +38,52 @@ class AttendancePage extends StatefulWidget {
 class _AttendancePageState extends State<AttendancePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabs;
+  late final AttendanceBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _tabs = TabController(length: 4, vsync: this);
+    _bloc = AttendanceBloc(
+      attendanceRepository: context.read(),
+      geofenceRepository: context.read(),
+      policyRepository: context.read(),
+      locationSource: context.read(),
+    )..add(AttendanceInitRequested());
   }
 
   @override
   void dispose() {
     _tabs.dispose();
+    _bloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(
+    return BlocProvider.value(
+      value: _bloc,
+      child: Scaffold(
         backgroundColor: const Color(0xFFF7F8FA),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
-          onPressed: () => context.go('/'),
-        ),
-        title: const Text(
-          'الحضور والانصراف',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF7F8FA),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
+            onPressed: () => context.go('/'),
           ),
+          title: const Text(
+            'الحضور والانصراف',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: BlocListener<AttendanceBloc, AttendanceState>(
+        body: BlocListener<AttendanceBloc, AttendanceState>(
         // بنسمع فقط للتغيّرات اللي لازم تعمل سناك
         listenWhen: (p, n) =>
             p.errorMessage != n.errorMessage ||
@@ -124,6 +134,11 @@ class _AttendancePageState extends State<AttendancePage>
               p.checkInAt != n.checkInAt ||
               p.lastAddress != n.lastAddress,
           builder: (context, state) {
+            // لا توجد حالات تحميل أو خطأ منفصلة في AttendanceState
+            // نستخدم errorMessage للتحقق من الأخطاء
+            if (state.errorMessage != null) {
+              return _AttendanceErrorView(message: state.errorMessage!);
+            }
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -198,7 +213,8 @@ class _AttendancePageState extends State<AttendancePage>
           },
         ),
       ),
-      // الأزرار العائمة موجودة في HomeShell فقط لتجنب التضارب
+        // الأزرار العائمة موجودة في HomeShell فقط لتجنب التضارب
+      ),
     );
   }
 
@@ -1011,5 +1027,53 @@ class _AttendancePageState extends State<AttendancePage>
       print('❌ Error formatting duration: $e');
       return '00:00:00';
     }
+  }
+}
+
+
+class _AttendanceErrorView extends StatelessWidget {
+  final String message;
+
+  const _AttendanceErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: const Color(0xFF64748B),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'حدث خطأ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: const Color(0xFF64748B),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<AttendanceBloc>().add(AttendanceInitRequested());
+            },
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
+    );
   }
 }
