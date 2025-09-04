@@ -19,6 +19,7 @@ import 'Ui/Leave/leave_management_page.dart';
 import 'Ui/RewardsStore/rewards_store_page.dart';
 import 'Ui/Dashboard/HR/hr_dashboard_page.dart';
 import 'Ui/Dashboard/Manager/manager_dashboard_page.dart';
+import 'Ui/Dashboard/TeamLead/team_lead_dashboard_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
 
@@ -117,6 +118,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/manager/dashboard',
         pageBuilder: (context, state) => _swipePage(const ManagerDashboardPage()),
+      ),
+      GoRoute(
+        path: '/team-lead/dashboard',
+        pageBuilder: (context, state) => _swipePage(const TeamLeadDashboardPage()),
       ),
       GoRoute(
         path: assistantRoute,

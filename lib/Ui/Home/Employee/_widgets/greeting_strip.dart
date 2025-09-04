@@ -8,7 +8,6 @@ import '../../../../Data/Models/role.dart';
 import '../../../Common/action_menu_sheet.dart';
 import '../../../Common/action_menu_item.dart';
 import '../../../Common/press_fx.dart';
-import '../../../Dashboard/TeamLead/team_lead_dashboard_page.dart';
 
 class GreetingStrip extends StatelessWidget {
   const GreetingStrip({super.key});
@@ -105,7 +104,7 @@ class GreetingStrip extends StatelessWidget {
         if (role == Role.teamLeader) {
           onPressed = () => _openTeamLeadDashboard(context);
         } else if (role == Role.manager) {
-          onPressed = () => context.go('/manager/dashboard');
+          onPressed = () => context.push('/manager/dashboard');
         } else {
           // لجميع الأدوار الأخرى (hr, sysAdmin, finance)
           onPressed = () => context.go('/hr/dashboard');
@@ -131,11 +130,7 @@ class GreetingStrip extends StatelessWidget {
   }
   
   void _openTeamLeadDashboard(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const TeamLeadDashboardPage(),
-      ),
-    );
+    context.push('/team-lead/dashboard');
   }
 }
 

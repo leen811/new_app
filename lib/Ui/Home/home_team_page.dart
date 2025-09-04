@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../Core/Widgets/glass_card.dart';
 import '../Core/Theme/tokens.dart';
-import '../Team/Home/team_dashboard_entry_button.dart';
+import '../Common/dashboard_entry_button.dart';
+import '../../Data/Models/role.dart';
 
 class HomeTeamPage extends StatelessWidget {
   const HomeTeamPage({super.key});
@@ -13,7 +14,7 @@ class HomeTeamPage extends StatelessWidget {
       child: Column(
         children: [
           // زر لوحة القيادة في أعلى الصفحة
-          const TeamDashboardEntryButton(),
+          const DashboardEntryButton(allow: {Role.teamLeader, Role.sysAdmin}),
           
           // المحتوى الأصلي
           const Expanded(

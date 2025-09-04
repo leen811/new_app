@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../Core/Widgets/glass_card.dart';
 import '../Core/Theme/tokens.dart';
-import '../Manager/Home/manager_dashboard_entry_button.dart';
+import '../Common/dashboard_entry_button.dart';
+import '../../Data/Models/role.dart';
 
 class HomeManagerPage extends StatelessWidget {
   const HomeManagerPage({super.key});
@@ -13,7 +14,7 @@ class HomeManagerPage extends StatelessWidget {
       child: Column(
         children: [
           // زر لوحة القيادة في أعلى الصفحة
-          const ManagerDashboardEntryButton(),
+          const DashboardEntryButton(allow: {Role.manager, Role.sysAdmin}),
           
           // المحتوى الأصلي
           const Expanded(
