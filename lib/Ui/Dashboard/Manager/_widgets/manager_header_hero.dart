@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../Common/press_fx.dart';
+import '../../../../Presentation/Common/navigation/safe_close.dart';
+import '../../../../Presentation/Common/navigation/routes_constants.dart';
 
 /// رأس اللوحة مع العنوان والوصف
 class ManagerHeaderHero extends StatelessWidget {
@@ -40,7 +42,7 @@ class ManagerHeaderHero extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => safeClose(context, fallbackRoute: RoutesConstants.kRolesRoute),
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -66,25 +68,9 @@ class ManagerHeaderHero extends StatelessWidget {
           
           const SizedBox(height: 5),
           
-          // الأيقونة
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withOpacity(0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.grid_view_rounded,
-              color: Color(0xFF3B82F6),
-              size: 24,
-            ),
-          ),
-          
-          const SizedBox(height: 12),
-          
           // العنوان الرئيسي متعدد الأسطر
           const Text(
-            'لوحة\nتحكّم\nالإدارة',
+            'لوحة تحكّم الإدارة',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,

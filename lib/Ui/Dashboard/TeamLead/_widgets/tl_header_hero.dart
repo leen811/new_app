@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../Common/press_fx.dart';
+import '../../../../Presentation/Common/navigation/safe_close.dart';
+import '../../../../Presentation/Common/navigation/routes_constants.dart';
 
 /// رأس اللوحة مع العنوان والوصف
 class TlHeaderHero extends StatelessWidget {
@@ -40,7 +42,7 @@ class TlHeaderHero extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => safeClose(context, fallbackRoute: RoutesConstants.kRolesRoute),
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
                       padding: const EdgeInsets.all(8),

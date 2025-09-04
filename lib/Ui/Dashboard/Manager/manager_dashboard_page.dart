@@ -7,7 +7,6 @@ import '../../../Data/Repositories/manager_dashboard_repository.dart';
 import '_widgets/manager_header_hero.dart';
 import '_widgets/manager_kpi_card.dart';
 import '_widgets/manager_section_tile.dart';
-import '_widgets/manager_quick_tabs.dart';
 import '_widgets/manager_activity_feed.dart';
 import '../../Common/press_fx.dart';
 
@@ -19,39 +18,8 @@ class ManagerDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Color(0xFF1F2937),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'لوحة تحكّم الإدارة',
-          style: TextStyle(
-            color: Color(0xFF1F2937),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.menu_rounded,
-              color: Color(0xFF6B7280),
-            ),
-            onPressed: () {
-              // يمكن إضافة قائمة هنا لاحقاً
-            },
-          ),
-        ],
-      ),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: TextDirection.ltr,
         child: BlocProvider(
           create: (_) => ManagerDashboardBloc(repository: MockManagerDashboardRepository())
             ..add(const ManagerLoad()),
@@ -98,13 +66,6 @@ class ManagerDashboardPage extends StatelessWidget {
                   // رأس اللوحة
                   const SliverToBoxAdapter(
                     child: ManagerHeaderHero(),
-                  ),
-                  
-                  // التبويبات السريعة
-                  const SliverToBoxAdapter(
-                    child: ManagerQuickTabs(
-                      labels: ['التقارير', 'تحليلات الذكاء الاصطناعي'],
-                    ),
                   ),
                   
                   // شبكة مؤشرات الأداء الرئيسية
