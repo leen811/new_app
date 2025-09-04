@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'action_menu_item.dart';
+import 'press_fx.dart';
 
 class ActionMenuSheet extends StatelessWidget {
   final List<ActionMenuItem> items;
@@ -38,7 +39,7 @@ class ActionMenuSheet extends StatelessWidget {
                     backgroundColor: const Color(0xFFF1F5F9),
                     shape: const CircleBorder(),
                   ),
-                ),
+                ).withPressFX(),
                 
                 const Spacer(),
                 

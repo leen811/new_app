@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../Data/Models/kpi_overview.dart';
+import '../../Common/press_fx.dart';
 
 class KpiRow extends StatelessWidget {
   const KpiRow({super.key, required this.data});
@@ -59,7 +60,11 @@ class _KpiCard extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        // يمكن إضافة تفاعل هنا لاحقاً
+      },
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -106,6 +111,7 @@ class _KpiCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+      ),
+    ).withPressFX();
   }
 }

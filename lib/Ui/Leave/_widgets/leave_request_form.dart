@@ -5,6 +5,7 @@ import '../../../Data/Models/leave_models.dart';
 import '../../../Bloc/leave/leave_bloc.dart';
 import '../../../Bloc/leave/leave_event.dart';
 import '../../../Bloc/leave/leave_state.dart';
+import '../../Common/press_fx.dart';
 
 class LeaveRequestForm extends StatefulWidget {
   const LeaveRequestForm({super.key});
@@ -241,7 +242,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                   ],
                 ),
               ),
-            ),
+            ).withPressFX(),
             const SizedBox(height: 16),
             
             // تاريخ النهاية
@@ -270,7 +271,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                   ],
                 ),
               ),
-            ),
+            ).withPressFX(),
             const SizedBox(height: 16),
             
             // سبب الإجازة
@@ -374,7 +375,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                               ),
                             ],
                           ),
-                  ),
+                  ).withPressFX(),
                 );
               },
             ),

@@ -14,6 +14,7 @@ import '../../Ui/Perf360/perf360_page.dart';
 import '../../Ui/Profile/PersonalInfo/personal_info_page.dart';
 import '../../Ui/Profile/Payroll/payroll_deductions_page.dart';
 import '../../Ui/Settings/general_settings_page.dart';
+import '../../Ui/Dashboard/HR/hr_dashboard_page.dart';
 import '../Motion/swipe_transitions.dart';
 
 // تعريف المسارات
@@ -28,6 +29,7 @@ const String settingsChangePasswordRoute = '/settings/security/change-password';
 const String legalTermsRoute = '/legal/terms';
 const String payrollDeductionsRoute = '/profile/payroll-deductions';
 const String rewardsStoreRoute = '/rewards';
+const String hrDashboardRoute = '/hr/dashboard';
 
 /// تعريف التبويبات الرئيسية (Top-Level)
 bool isTopLevelRoute(String? name) => const {
@@ -47,6 +49,7 @@ extension AppRoutesExt on BuildContext {
   void goLegalTerms() => GoRouter.of(this).push(legalTermsRoute);
   void goPayrollDeductions() => GoRouter.of(this).push(payrollDeductionsRoute);
   void goRewardsStore() => GoRouter.of(this).push(rewardsStoreRoute);
+  void goHrDashboard() => GoRouter.of(this).push(hrDashboardRoute);
 }
 
 /// إدارة المسارات للتنقل الكلاسيكي (Navigator)
@@ -101,6 +104,8 @@ class AppRoutes {
         return const GeneralSettingsPage();
       case '/profile/payroll-deductions':
         return const PayrollDeductionsPage();
+      case '/hr/dashboard':
+        return const HrDashboardPage();
       default:
         return _UnknownRoutePage(routeName: settings.name ?? '');
     }

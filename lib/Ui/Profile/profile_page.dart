@@ -14,6 +14,7 @@ import 'widgets/section_group.dart';
 import 'widgets/section_tile.dart';
 import '../../Core/Navigation/app_routes.dart';
 import '../Common/coming_soon/coming_soon.dart';
+import '../Common/press_fx.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -244,7 +245,7 @@ class _Body extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
+                  ).withPressFX(),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -341,7 +342,7 @@ class _ProfileErrorView extends StatelessWidget {
               context.read<ProfileBloc>().add(ProfileOpened());
             },
             child: const Text('إعادة المحاولة'),
-          ),
+          ).withPressFX(),
         ],
       ),
     );

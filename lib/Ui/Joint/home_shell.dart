@@ -42,9 +42,9 @@ class HomeShellState extends State<HomeShell> with AutomaticKeepAliveClientMixin
     super.initState();
     _index = widget.initialIndex;
     
-    // إنشاء الصفحات مرة واحدة فقط
+    // إنشاء الصفحات مع الدور الافتراضي
     _pages = [
-      HomeFactory.build(Role.employee), // سنحدث هذا في didChangeDependencies
+      HomeFactory.build(Role.employee), // سيتم تحديثه عند تغيير الدور
       const CompanyChatPage(),
       const AssistantPage(),
       const TasksPage(),
@@ -77,11 +77,14 @@ class HomeShellState extends State<HomeShell> with AutomaticKeepAliveClientMixin
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         // تحديث الصفحة الرئيسية عند تغيير الدور
+        print('🔍 AuthBloc state changed: $state');
         if (state is AuthRoleState) {
           final newRole = state.role;
+          print('🔍 New role: $newRole, Last role: $_lastRole');
           if (_lastRole != newRole) {
             _lastRole = newRole;
             _pages[0] = HomeFactory.build(newRole);
+            print('🔍 Updated home page for role: $newRole');
             setState(() {}); // تحديث UI فقط عند تغيير الدور
           }
         }

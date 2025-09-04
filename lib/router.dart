@@ -17,6 +17,7 @@ import 'Ui/Settings/general_settings_page.dart';
 import 'Ui/Attendance/attendance_page.dart';
 import 'Ui/Leave/leave_management_page.dart';
 import 'Ui/RewardsStore/rewards_store_page.dart';
+import 'Ui/Dashboard/HR/hr_dashboard_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
 
@@ -107,6 +108,10 @@ GoRouter buildRouter() {
       GoRoute(
         path: perf360Route,
         pageBuilder: (context, state) => _swipePage(const Perf360Page()),
+      ),
+      GoRoute(
+        path: '/hr/dashboard',
+        pageBuilder: (context, state) => _swipePage(const HrDashboardPage()),
       ),
       GoRoute(
         path: assistantRoute,

@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Bloc/TeamLead/team_lead_bloc.dart';
+import '../../../Bloc/TeamLead/team_lead_event.dart';
+import '../../../Bloc/TeamLead/team_lead_state.dart';
+import '../../../Data/Repositories/team_lead_repository.dart';
+import '_widgets/tl_header_hero.dart';
+import '_widgets/tl_kpi_card.dart';
+import '_widgets/tl_section_tile.dart';
+import '_widgets/tl_team_performance.dart';
+import '../../Common/press_fx.dart';
+
+class TeamLeadDashboardPage extends StatelessWidget {
+  const TeamLeadDashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Directionality(
+        textDirection: TextDirection.ltr,
+        child: BlocProvider(
+          create: (_) => TeamLeadBloc(MockTeamLeadRepository())..add(const TLLoad()),
+          child: BlocBuilder<TeamLeadBloc, TeamLeadState>(
+            builder: (context, state) {
+              if (state is TLLoading || state is TLInitial) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              
+              if (state is TLError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        state.message,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<TeamLeadBloc>().add(const TLLoad());
+                        },
+                        child: const Text('إعادة المحاولة'),
+                      ).withPressFX(),
+                    ],
+                  ),
+                );
+              }
+              
+              final loadedState = state as TLLoaded;
+              
+              return CustomScrollView(
+                slivers: [
+                  // رأس اللوحة
+                  const SliverToBoxAdapter(
+                    child: TlHeaderHero(),
+                  ),
+                  
+                  // شبكة مؤشرات الأداء الرئيسية
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+                    sliver: SliverGrid.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.4,
+                      children: loadedState.data.kpis
+                          .map((kpi) => TlKpiCard(kpi: kpi))
+                          .toList(),
+                    ),
+                  ),
+                  
+                  // قائمة الأقسام
+                  SliverList.builder(
+                    itemCount: loadedState.data.sections.length,
+                    itemBuilder: (context, index) {
+                      return TlSectionTile(
+                        link: loadedState.data.sections[index],
+                      );
+                    },
+                  ),
+                  
+                  // أداء أعضاء الفريق
+                  SliverToBoxAdapter(
+                    child: TlTeamPerformance(list: loadedState.data.performance),
+                  ),
+                  
+                  // مساحة إضافية في النهاية
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 24),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -21,6 +21,7 @@ import 'widgets/segmented_tabs.dart';
 import 'widgets/task_card.dart';
 import 'widgets/challenge_card.dart';
 import 'widgets/team_progress_row.dart';
+import '../Common/press_fx.dart';
 
 class TasksTabPage extends StatefulWidget {
   const TasksTabPage({super.key});
@@ -194,7 +195,7 @@ class _DailyTab extends StatelessWidget {
               IconButton(
                 onPressed: () => _showAddTaskDialog(context),
                 icon: const Icon(Icons.add, color: Color(0xFF2F56D9)),
-              ),
+              ).withPressFX(),
             ],
           ),
         );
@@ -370,7 +371,7 @@ void _showAddTaskDialog(BuildContext context) {
                               onPressed: () => Navigator.pop(ctx),
                               icon: const Icon(Icons.close),
                               splashRadius: 20,
-                            ),
+                            ).withPressFX(),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -483,7 +484,7 @@ void _showAddTaskDialog(BuildContext context) {
                                 'إلغاء',
                                 style: TextStyle(color: darkBlue),
                               ),
-                            ),
+                            ).withPressFX(),
                             const SizedBox(width: 8),
                             Expanded(
                               child: AppButton(
@@ -688,7 +689,7 @@ class _TasksErrorView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
               child: const Text('إعادة المحاولة', style: TextStyle(fontSize: 12)),
-            ),
+            ).withPressFX(),
           ],
         ),
       ),
