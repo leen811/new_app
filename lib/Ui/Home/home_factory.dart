@@ -3,6 +3,7 @@ import '../../Data/Models/role.dart';
 import 'Employee/employee_home_page.dart';
 import 'home_hr_page.dart';
 import 'home_team_page.dart';
+import 'home_manager_page.dart';
 
 class HomeFactory {
   static Widget build(Role role) {
@@ -15,8 +16,10 @@ class HomeFactory {
       case Role.teamLeader:
         print('🏠 Building HomeTeamPage');
         return const HomeTeamPage();
-      case Role.employee:
       case Role.manager:
+        print('🏠 Building HomeManagerPage');
+        return const HomeManagerPage();
+      case Role.employee:
       case Role.finance:
       case Role.sysAdmin:
       case Role.guest:
