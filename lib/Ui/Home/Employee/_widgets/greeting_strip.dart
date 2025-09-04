@@ -7,6 +7,8 @@ import '../../../../Bloc/auth/auth_state.dart';
 import '../../../../Data/Models/role.dart';
 import '../../../Common/action_menu_sheet.dart';
 import '../../../Common/action_menu_item.dart';
+import '../../../Common/press_fx.dart';
+import '../../../Dashboard/TeamLead/team_lead_dashboard_page.dart';
 
 class GreetingStrip extends StatelessWidget {
   const GreetingStrip({super.key});
@@ -40,21 +42,7 @@ class GreetingStrip extends StatelessWidget {
                 children: [
                   // زر لوحة القيادة (يظهر فقط للأدوار الإدارية)
                   if (canSeeDashboard)
-                    OutlinedButton.icon(
-                      onPressed: () => context.go('/dashboard'),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(0, 28),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      icon: const Icon(Icons.dashboard_outlined, size: 16),
-                      label: Text(
-                        'لوحة القيادة',
-                        style: GoogleFonts.cairo(fontSize: 12),
-                      ),
-                    ),
+                    _buildDashboardButton(role),
                   
                   const Spacer(),
                   
@@ -108,6 +96,45 @@ class GreetingStrip extends StatelessWidget {
            role == Role.hr || 
            role == Role.finance;
   }
+  
+  Widget _buildDashboardButton(Role role) {
+    return Builder(
+      builder: (context) {
+        VoidCallback onPressed;
+        
+        if (role == Role.teamLeader) {
+          onPressed = () => _openTeamLeadDashboard(context);
+        } else {
+          // لجميع الأدوار الأخرى (hr, sysAdmin, manager, finance)
+          onPressed = () => context.go('/hr/dashboard');
+        }
+        
+        return OutlinedButton.icon(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(0, 28),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          icon: const Icon(Icons.dashboard_outlined, size: 16),
+          label: Text(
+            'لوحة التحكم',
+            style: GoogleFonts.cairo(fontSize: 12),
+          ),
+        ).withPressFX();
+      },
+    );
+  }
+  
+  void _openTeamLeadDashboard(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const TeamLeadDashboardPage(),
+      ),
+    );
+  }
 }
 
 class _MenuButton extends StatelessWidget {
@@ -131,7 +158,7 @@ class _MenuButton extends StatelessWidget {
         ),
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
-      ),
+      ).withPressFX(),
     );
   }
 
@@ -200,7 +227,7 @@ class _MenuButton extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('حسناً'),
-          ),
+          ).withPressFX(),
         ],
       ),
     );

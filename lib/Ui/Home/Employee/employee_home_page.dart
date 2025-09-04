@@ -15,6 +15,7 @@ import '_widgets/performance_card.dart';
 import '_widgets/quick_action_tile.dart';
 import '_widgets/today_list_section.dart';
 import '_widgets/achievement_item.dart';
+import '../../Common/press_fx.dart';
 
 class EmployeeHomePage extends StatefulWidget {
   const EmployeeHomePage({super.key});
@@ -372,7 +373,7 @@ class _ErrorView extends StatelessWidget {
               context.read<EmployeeHomeBloc>().add(const EmployeeHomeLoaded());
             },
             child: const Text('إعادة المحاولة'),
-          ),
+          ).withPressFX(),
         ],
       ),
     );

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../Data/Models/team_progress_item.dart';
+import '../../Common/press_fx.dart';
 
 class TeamProgressRow extends StatelessWidget {
   const TeamProgressRow({super.key, required this.item});
   final TeamProgressItem item;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        // يمكن إضافة تفاعل هنا لاحقاً
+      },
+      child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -58,6 +63,7 @@ class TeamProgressRow extends StatelessWidget {
           ),
         ],
       ),
-    );
+      ),
+    ).withPressFX();
   }
 }

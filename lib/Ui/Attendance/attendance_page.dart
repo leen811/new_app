@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../Bloc/attendance/attendance_bloc.dart';
 import '../../Bloc/attendance/attendance_state.dart';
 import '../../Bloc/attendance/attendance_event.dart';
+import '../Common/press_fx.dart';
 
 
 // ويدجت صغيرة تعرض الديورَيْشنات فقط
@@ -72,7 +73,7 @@ class _AttendancePageState extends State<AttendancePage>
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
             onPressed: () => context.go('/'),
-          ),
+          ).withPressFX(),
           title: const Text(
             'الحضور والانصراف',
             style: TextStyle(
@@ -1071,7 +1072,7 @@ class _AttendanceErrorView extends StatelessWidget {
               context.read<AttendanceBloc>().add(AttendanceInitRequested());
             },
             child: const Text('إعادة المحاولة'),
-          ),
+          ).withPressFX(),
         ],
       ),
     );

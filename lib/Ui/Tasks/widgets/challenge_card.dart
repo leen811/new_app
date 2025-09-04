@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../Data/Models/challenge_item.dart';
+import '../../Common/press_fx.dart';
 
 class ChallengeCard extends StatelessWidget {
   const ChallengeCard({super.key, required this.item});
@@ -8,7 +9,11 @@ class ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final mePct = item.meProgress.toDouble();
     final teamPct = (item.teamProgress / item.total) * 100;
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        // يمكن إضافة تفاعل هنا لاحقاً
+      },
+      child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -67,7 +72,8 @@ class ChallengeCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+      ),
+    ).withPressFX();
   }
 
   Widget _progressBar({required String label, required double percent}) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import '../../Common/press_fx.dart';
 // Using built-in Material Icons to avoid symbol font rendering issues
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -212,7 +213,7 @@ class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
     final double finalScale = baseScale * bumpFactor * pressFactor;
     final Offset targetOffset = reduced ? Offset.zero : (widget.isActive ? const Offset(0, -0.06) : Offset.zero);
 
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         if (!reduced) {
@@ -222,8 +223,6 @@ class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
         }
         widget.onTap();
       },
-      splashColor: widget.activeColor.withOpacity(0.12),
-      highlightColor: widget.activeColor.withOpacity(0.08),
       child: SizedBox(
         height: double.infinity,
         child: Center(
@@ -256,7 +255,7 @@ class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
             ),
           ),
         ),
-      ),
+      ).withPressFX(),
     );
   }
 }
