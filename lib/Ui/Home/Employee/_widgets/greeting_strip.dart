@@ -104,8 +104,10 @@ class GreetingStrip extends StatelessWidget {
         
         if (role == Role.teamLeader) {
           onPressed = () => _openTeamLeadDashboard(context);
+        } else if (role == Role.manager) {
+          onPressed = () => context.go('/manager/dashboard');
         } else {
-          // لجميع الأدوار الأخرى (hr, sysAdmin, manager, finance)
+          // لجميع الأدوار الأخرى (hr, sysAdmin, finance)
           onPressed = () => context.go('/hr/dashboard');
         }
         
