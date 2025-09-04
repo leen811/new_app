@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../Bloc/auth/auth_bloc.dart';
 import '../../Bloc/auth/auth_state.dart';
 import '../../Data/Models/role.dart';
+import '../../Presentation/Common/navigation/routes_constants.dart';
 
 import 'press_fx.dart'; // إن وُجد الامتداد withPressFX
 
@@ -58,24 +59,24 @@ class DashboardEntryButton extends StatelessWidget {
   }
 
   void _openDashboardForRole(BuildContext context, Role role) {
-    String? route;
+    String? routeName;
     switch (role) {
       case Role.manager:
       case Role.sysAdmin: // بإمكانك لاحقًا تخصيص sysAdmin
-        route = '/manager/dashboard';
+        routeName = RoutesConstants.kManagerDashboardRouteName;
         break;
       case Role.teamLeader:
-        route = '/team-lead/dashboard';
+        routeName = RoutesConstants.kTeamLeadDashboardRouteName;
         break;
       case Role.hr:
-        route = '/hr/dashboard';
+        routeName = RoutesConstants.kHrDashboardRouteName;
         break;
       default:
-        route = null;
+        routeName = null;
     }
 
-    if (route != null) {
-      context.push(route);
+    if (routeName != null) {
+      context.pushNamed(routeName);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لا توجد لوحة متاحة لهذا الدور.')),

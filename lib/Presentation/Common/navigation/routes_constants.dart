@@ -11,6 +11,17 @@ class RoutesConstants {
   static const String kTeamLeadDashboardRoute = '/team-lead/dashboard';
   static const String kHrDashboardRoute = '/hr/dashboard';
   
+  // أسماء المسارات للتنقل بـ pushNamed
+  static const String kAttendanceRouteName = 'attendance';
+  static const String kLeaveRouteName = 'leave';
+  static const String kRewardsRouteName = 'rewards';
+  static const String kDigitalTwinRouteName = 'digital-twin';
+  static const String kSmartTrainingRouteName = 'smart-training';
+  static const String kPerformance360RouteName = 'performance-360';
+  static const String kHrDashboardRouteName = 'hr-dashboard';
+  static const String kManagerDashboardRouteName = 'manager-dashboard';
+  static const String kTeamLeadDashboardRouteName = 'team-lead-dashboard';
+  
   // مسارات أخرى
   static const String kLoginRoute = '/login';
   static const String kSplashRoute = '/splash';
