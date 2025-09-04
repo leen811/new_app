@@ -69,10 +69,12 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: digitalTwinRoute,
+        name: 'digital-twin',
         pageBuilder: (context, state) => _swipePage(const DigitalTwinPage()),
       ),
       GoRoute(
         path: smartTrainingRoute,
+        name: 'smart-training',
         pageBuilder: (context, state) => _swipePage(const SmartTrainingPage()),
       ),
       GoRoute(
@@ -109,18 +111,22 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: perf360Route,
+        name: 'performance-360',
         pageBuilder: (context, state) => _swipePage(const Perf360Page()),
       ),
       GoRoute(
         path: '/hr/dashboard',
+        name: 'hr-dashboard',
         pageBuilder: (context, state) => _swipePage(const HrDashboardPage()),
       ),
       GoRoute(
         path: '/manager/dashboard',
+        name: 'manager-dashboard',
         pageBuilder: (context, state) => _swipePage(const ManagerDashboardPage()),
       ),
       GoRoute(
         path: '/team-lead/dashboard',
+        name: 'team-lead-dashboard',
         pageBuilder: (context, state) => _swipePage(const TeamLeadDashboardPage()),
       ),
       GoRoute(
@@ -129,14 +135,17 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: '/attendance',
+        name: 'attendance',
         pageBuilder: (context, state) => _swipePage(const AttendancePage()),
       ),
       GoRoute(
         path: '/leave',
+        name: 'leave',
         pageBuilder: (context, state) => _swipePage(const LeaveManagementPage()),
       ),
       GoRoute(
         path: '/rewards',
+        name: 'rewards',
         pageBuilder: (context, state) => _swipePage(const RewardsStorePage()),
       ),
     ],

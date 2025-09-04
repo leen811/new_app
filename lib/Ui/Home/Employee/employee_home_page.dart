@@ -7,6 +7,7 @@ import '../../../Bloc/EmployeeHome/employee_home_bloc.dart';
 import '../../../Bloc/EmployeeHome/employee_home_event.dart';
 import '../../../Bloc/EmployeeHome/employee_home_state.dart';
 import '../../../Data/Repositories/employee_home_repository.dart';
+import '../../../Presentation/Common/navigation/routes_constants.dart';
 import '_widgets/greeting_strip.dart';
 import '_widgets/work_hours_card.dart';
 import '_widgets/energy_progress_card.dart';
@@ -168,21 +169,21 @@ class _HomeContent extends StatelessWidget {
                       description: 'تسجيل الدخول والخروج',
                       icon: Icons.schedule,
                       iconBackgroundColor: const Color(0xFF60A5FA),
-                      onTap: () => context.go('/attendance'),
+                      onTap: () => context.pushNamed(RoutesConstants.kAttendanceRouteName),
                     ),
                     QuickActionTile(
                       title: 'الاستئذان وطلب الإجازات',
                       description: 'قدّم طلب إجازة أو استئذان جديد',
                       icon: Icons.beach_access,
                       iconBackgroundColor: const Color(0xFF34D399),
-                      onTap: () => context.go('/leave'),
+                      onTap: () => context.pushNamed(RoutesConstants.kLeaveRouteName),
                     ),
                     QuickActionTile(
                       title: 'متجر المكافآت',
                       description: 'اشترِ نقاطك',
                       icon: Icons.card_giftcard,
                       iconBackgroundColor: const Color(0xFFA78BFA),
-                      onTap: () => context.go('/rewards'),
+                      onTap: () => context.pushNamed(RoutesConstants.kRewardsRouteName),
                     ),
                   ],
                 ),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../Bloc/auth/auth_bloc.dart';
 import '../../../../Bloc/auth/auth_state.dart';
 import '../../../../Data/Models/role.dart';
+import '../../../../Presentation/Common/navigation/routes_constants.dart';
 import '../../../Common/action_menu_sheet.dart';
 import '../../../Common/action_menu_item.dart';
 import '../../../Common/press_fx.dart';
@@ -104,10 +105,10 @@ class GreetingStrip extends StatelessWidget {
         if (role == Role.teamLeader) {
           onPressed = () => _openTeamLeadDashboard(context);
         } else if (role == Role.manager) {
-          onPressed = () => context.push('/manager/dashboard');
+          onPressed = () => context.pushNamed(RoutesConstants.kManagerDashboardRouteName);
         } else {
           // لجميع الأدوار الأخرى (hr, sysAdmin, finance)
-          onPressed = () => context.push('/hr/dashboard');
+          onPressed = () => context.pushNamed(RoutesConstants.kHrDashboardRouteName);
         }
         
         return OutlinedButton.icon(
@@ -130,7 +131,7 @@ class GreetingStrip extends StatelessWidget {
   }
   
   void _openTeamLeadDashboard(BuildContext context) {
-    context.push('/team-lead/dashboard');
+    context.pushNamed(RoutesConstants.kTeamLeadDashboardRouteName);
   }
 }
 
@@ -165,7 +166,7 @@ class _MenuButton extends StatelessWidget {
         title: "متجر المكافآت",
         icon: Icons.card_giftcard_outlined,
         color: const Color(0xFFF59E0B),
-        onTap: () => context.go("/rewards"),
+        onTap: () => context.pushNamed(RoutesConstants.kRewardsRouteName),
       ),
       ActionMenuItem(
         title: "إشعارات الإيميل",
@@ -183,7 +184,7 @@ class _MenuButton extends StatelessWidget {
         title: "طلبات الإجازة",
         icon: Icons.event_available_outlined,
         color: const Color(0xFF38BDF8),
-        onTap: () => context.go("/leave"),
+        onTap: () => context.pushNamed(RoutesConstants.kLeaveRouteName),
       ),
       ActionMenuItem(
         title: "مؤشرات الأداء",
@@ -195,19 +196,19 @@ class _MenuButton extends StatelessWidget {
         title: "تقييم 360",
         icon: Icons.emoji_events_outlined,
         color: const Color(0xFFF97316),
-        onTap: () => context.go("/performance-360"),
+        onTap: () => context.pushNamed(RoutesConstants.kPerformance360RouteName),
       ),
       ActionMenuItem(
         title: "التوأم الرقمي",
         icon: Icons.memory_outlined,
         color: const Color(0xFFEC4899),
-        onTap: () => context.go("/digital-twin"),
+        onTap: () => context.pushNamed(RoutesConstants.kDigitalTwinRouteName),
       ),
       ActionMenuItem(
         title: "التدريب الذكي",
         icon: Icons.school_outlined,
         color: const Color(0xFF06B6D4),
-        onTap: () => context.go("/smart-training"),
+        onTap: () => context.pushNamed(RoutesConstants.kSmartTrainingRouteName),
       ),
     ];
 
