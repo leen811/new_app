@@ -107,7 +107,7 @@ class GreetingStrip extends StatelessWidget {
           onPressed = () => context.push('/manager/dashboard');
         } else {
           // لجميع الأدوار الأخرى (hr, sysAdmin, finance)
-          onPressed = () => context.go('/hr/dashboard');
+          onPressed = () => context.push('/hr/dashboard');
         }
         
         return OutlinedButton.icon(
