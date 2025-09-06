@@ -4,11 +4,13 @@ import '../../../Bloc/Manager/manager_dashboard_bloc.dart';
 import '../../../Bloc/Manager/manager_dashboard_event.dart';
 import '../../../Bloc/Manager/manager_dashboard_state.dart';
 import '../../../Data/Repositories/manager_dashboard_repository.dart';
+import '../../../Data/Models/manager_dashboard_models.dart';
 import '_widgets/manager_header_hero.dart';
 import '_widgets/manager_kpi_card.dart';
 import '_widgets/manager_section_tile.dart';
 import '_widgets/manager_activity_feed.dart';
 import '../../Common/press_fx.dart';
+import '../../Employees/employees_page.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -86,9 +88,22 @@ class ManagerDashboardPage extends StatelessWidget {
                   SliverList.builder(
                     itemCount: loadedState.data.sections.length,
                     itemBuilder: (context, index) {
-                      return ManagerSectionTile(
-                        link: loadedState.data.sections[index],
+                      final link = loadedState.data.sections[index];
+                      final onTap = link.title == 'إدارة الموظفين'
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const EmployeesPage(),
+                                ),
+                              )
+                          : link.onTap;
+                      final overridden = SectionLink(
+                        title: link.title,
+                        subtitle: link.subtitle,
+                        icon: link.icon,
+                        color: link.color,
+                        onTap: onTap,
                       );
+                      return ManagerSectionTile(link: overridden);
                     },
                   ),
                   
