@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../Data/Models/manager_dashboard_models.dart';
 import '../../../Common/press_fx.dart';
+import '../../../Attendance/attendance_list_page.dart';
 
 /// بطاقة مؤشر الأداء الرئيسي
 class ManagerKpiCard extends StatelessWidget {
@@ -23,9 +24,12 @@ class ManagerKpiCard extends StatelessWidget {
           ),
         ],
       ),
-      child: GestureDetector(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // يمكن إضافة تفاعل هنا لاحقاً
+          if (kpi.label == 'إجمالي الموظفين') {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AttendanceListPage()));
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(12),

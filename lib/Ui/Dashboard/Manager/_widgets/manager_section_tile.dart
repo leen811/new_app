@@ -38,68 +38,69 @@ class ManagerSectionTile extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
-            children: [
-              // سهم التنقل
-              const Icon(
-                Icons.chevron_left,
-                color: Color(0xFF6B7280),
-                size: 20,
-              ),
-              
-              const SizedBox(width: 12),
-              
-              // المحتوى النصي
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // العنوان
-                    Text(
-                      link.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1F2937),
+              children: [
+                // سهم التنقل
+                const Icon(
+                  Icons.chevron_left,
+                  color: Color(0xFF6B7280),
+                  size: 20,
+                ),
+                
+                const SizedBox(width: 12),
+                
+                // المحتوى النصي
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // العنوان
+                      Text(
+                        link.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1F2937),
+                        ),
+                        textAlign: TextAlign.right,
                       ),
-                      textAlign: TextAlign.right,
-                    ),
-                    
-                    const SizedBox(height: 4),
-                    
-                    // الوصف
-                    Text(
-                      link.subtitle,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF6B7280),
-                        height: 1.3,
+                      
+                      const SizedBox(height: 4),
+                      
+                      // الوصف
+                      Text(
+                        link.subtitle,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6B7280),
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      textAlign: TextAlign.right,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              
-              const SizedBox(width: 12),
-              
-              // الأيقونة في كبسولة ملونة
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: link.color.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
+                
+                const SizedBox(width: 12),
+                
+                // الأيقونة في كبسولة ملونة
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: link.color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    link.icon,
+                    color: link.color,
+                    size: 24,
+                  ),
                 ),
-                child: Icon(
-                  link.icon,
-                  color: link.color,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ).withPressFX(),
+              ],
+            ),
+          ).withPressFX(),
+        ),
       ),
     );
   }
