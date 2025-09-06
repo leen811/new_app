@@ -23,18 +23,21 @@ class ManagerSectionTile extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: GestureDetector(
-        onTap: link.onTap ?? () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('قريبًا'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: link.onTap ?? () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('قريبًا'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
             children: [
               // سهم التنقل
               const Icon(
@@ -96,8 +99,8 @@ class ManagerSectionTile extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ).withPressFX(),
+        ).withPressFX(),
+      ),
     );
   }
 }

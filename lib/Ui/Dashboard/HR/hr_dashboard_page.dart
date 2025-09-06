@@ -4,10 +4,12 @@ import '../../../Bloc/HRDashboard/hr_dashboard_bloc.dart';
 import '../../../Bloc/HRDashboard/hr_dashboard_event.dart';
 import '../../../Bloc/HRDashboard/hr_dashboard_state.dart';
 import '../../../Data/Repositories/hr_dashboard_repository.dart';
+import '../../../Data/Models/hr_dashboard_models.dart';
 import '_widgets/hr_header_hero.dart';
 import '_widgets/hr_kpi_card.dart';
 import '_widgets/hr_section_tile.dart';
 import '../../Common/press_fx.dart';
+import '../../Employees/employees_page.dart';
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -86,9 +88,22 @@ class HrDashboardPage extends StatelessWidget {
                   SliverList.builder(
                     itemCount: loadedState.data.sections.length,
                     itemBuilder: (context, index) {
-                      return HrSectionTile(
-                        link: loadedState.data.sections[index],
+                      final link = loadedState.data.sections[index];
+                      final onTap = link.title == 'إدارة الموظفين'
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const EmployeesPage(),
+                                ),
+                              )
+                          : link.onTap;
+                      final overridden = SectionLink(
+                        title: link.title,
+                        subtitle: link.subtitle,
+                        icon: link.icon,
+                        color: link.color,
+                        onTap: onTap,
                       );
+                      return HrSectionTile(link: overridden);
                     },
                   ),
                   
