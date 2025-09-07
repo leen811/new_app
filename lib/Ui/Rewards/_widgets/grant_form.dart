@@ -57,12 +57,38 @@ class _GrantFormState extends State<GrantForm> {
         children: [
           Row(children: const [Icon(Icons.redeem_outlined), SizedBox(width: 8), Text('منح توكينز للموظف', style: TextStyle(fontWeight: FontWeight.w800))]),
           const SizedBox(height: 12),
-          // اختيار الموظف
-          DropdownButtonFormField<String>(
-            value: _employeeId,
-            decoration: const InputDecoration(labelText: 'اختر الموظف'),
-            items: s.balances.map((e) => DropdownMenuItem(value: e.id, child: Text(e.name))).toList(),
-            onChanged: (v) => setState(() => _employeeId = v),
+          // اختيار الموظف (DropdownMenu حديث)
+          DropdownMenu<String>(
+            initialSelection: _employeeId,
+            onSelected: (v) => setState(() => _employeeId = v),
+            label: const Text('اختر الموظف'),
+            textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            menuStyle: MenuStyle(
+              shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              surfaceTintColor: const MaterialStatePropertyAll(Colors.white),
+              backgroundColor: const MaterialStatePropertyAll(Colors.white),
+            ),
+            inputDecorationTheme: const InputDecorationTheme(
+              filled: true,
+              fillColor: Color(0xFFF8FAFF),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFF2563EB)),
+              ),
+            ),
+            dropdownMenuEntries: [
+              for (final e in s.balances)
+                DropdownMenuEntry<String>(value: e.id, label: e.name, leadingIcon: const Icon(Icons.person_rounded)),
+            ],
           ),
           const SizedBox(height: 12),
           // عدد التوكينز

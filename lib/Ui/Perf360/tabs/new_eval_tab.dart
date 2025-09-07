@@ -52,19 +52,54 @@ class _FormCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: const [Icon(Icons.star_border), SizedBox(width: 6), Text('تقييم جديد', style: TextStyle(fontWeight: FontWeight.w800))]),
         const SizedBox(height: 12),
-        DropdownButtonFormField<String>(
-          value: kindLabel(s.form.kind),
-          items: kinds.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-          onChanged: (v) => context.read<Perf360Bloc>().add(Perf360FormKindChanged(toKey(v!))),
-          decoration: const InputDecoration(labelText: 'نوع التقييم'),
+        DropdownMenu<String>(
+          initialSelection: kindLabel(s.form.kind),
+          onSelected: (v) { if (v != null) context.read<Perf360Bloc>().add(Perf360FormKindChanged(toKey(v))); },
+          label: const Text('نوع التقييم'),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          inputDecorationTheme: const InputDecorationTheme(
+            filled: true,
+            fillColor: Color(0xFFF8FAFF),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFF2563EB)),
+            ),
+          ),
+          dropdownMenuEntries: kinds.map((e) => DropdownMenuEntry<String>(value: e, label: e, leadingIcon: const Icon(Icons.tune_rounded))).toList(),
         ),
         const SizedBox(height: 12),
         if (s.form.kind != 'self')
-          DropdownButtonFormField<String>(
-            value: s.form.targetId,
-            items: s.peers.map((u) => DropdownMenuItem(value: u.id, child: Text(u.name))).toList(),
-            onChanged: (v) => context.read<Perf360Bloc>().add(Perf360FormTargetChanged(v!)),
-            decoration: const InputDecoration(labelText: 'اختر الشخص المراد تقييمه'),
+          DropdownMenu<String>(
+            initialSelection: s.form.targetId,
+            onSelected: (v) { if (v != null) context.read<Perf360Bloc>().add(Perf360FormTargetChanged(v)); },
+            label: const Text('اختر الشخص المراد تقييمه'),
+            inputDecorationTheme: const InputDecorationTheme(
+              filled: true,
+              fillColor: Color(0xFFF8FAFF),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFF2563EB)),
+              ),
+            ),
+            dropdownMenuEntries: s.peers.map((u) => DropdownMenuEntry<String>(value: u.id, label: u.name, leadingIcon: const Icon(Icons.person_rounded))).toList(),
           ),
         const SizedBox(height: 12),
         const Text('التقييم العام', style: TextStyle(fontWeight: FontWeight.w700)),
