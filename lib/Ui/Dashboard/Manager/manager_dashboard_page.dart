@@ -99,13 +99,15 @@ class ManagerDashboardPage extends StatelessWidget {
                               )
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
-                              : link.title == 'تقارير الحضور'
-                                  ? () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => const AttendanceListPage(),
-                                        ),
-                                      )
-                                  : link.onTap;
+                              : link.title == 'تقييم الأداء'
+                                  ? () => context.goPerf360()
+                                  : link.title == 'تقارير الحضور'
+                                      ? () => Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => const AttendanceListPage(),
+                                            ),
+                                          )
+                                      : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

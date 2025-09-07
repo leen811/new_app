@@ -11,6 +11,8 @@ import 'Ui/DigitalTwin/digital_twin_page.dart';
 import 'Ui/Training/smart_training_page.dart';
 import 'Ui/Training/courses_page.dart';
 import 'Ui/Perf360/perf360_page.dart';
+import 'Ui/Perf360/perf360_admin_page.dart';
+import 'Presentation/Common/navigation/routes_constants.dart';
 import 'Ui/Profile/PersonalInfo/personal_info_page.dart';
 import 'Ui/Profile/Payroll/payroll_deductions_page.dart';
 import 'Ui/Settings/general_settings_page.dart';
@@ -114,6 +116,11 @@ GoRouter buildRouter() {
         path: perf360Route,
         name: 'performance-360',
         pageBuilder: (context, state) => _swipePage(const Perf360Page()),
+      ),
+      GoRoute(
+        path: '/admin/performance-360',
+        name: RoutesConstants.kPerf360AdminRouteName,
+        pageBuilder: (context, state) => _swipePage(const Perf360AdminPage()),
       ),
       GoRoute(
         path: '/hr/dashboard',

@@ -12,6 +12,8 @@ import '../../Common/press_fx.dart';
 import '../../Employees/employees_page.dart';
 import '../../Attendance/attendance_list_page.dart';
 import '../../../Core/Navigation/app_routes.dart';
+import 'package:go_router/go_router.dart';
+import '../../../Presentation/Common/navigation/routes_constants.dart';
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -99,13 +101,15 @@ class HrDashboardPage extends StatelessWidget {
                               )
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
-                              : link.title == 'تقارير الحضور'
-                                  ? () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => const AttendanceListPage(),
-                                        ),
-                                      )
-                                  : link.onTap;
+                              : link.title == 'تقييم الأداء'
+                                  ? () => GoRouter.of(context).pushNamed(RoutesConstants.kPerf360AdminRouteName)
+                                  : link.title == 'تقارير الحضور'
+                                      ? () => Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => const AttendanceListPage(),
+                                            ),
+                                          )
+                                      : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

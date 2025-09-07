@@ -18,6 +18,7 @@ class RoutesConstants {
   static const String kDigitalTwinRouteName = 'digital-twin';
   static const String kSmartTrainingRouteName = 'smart-training';
   static const String kPerformance360RouteName = 'performance-360';
+  static const String kPerf360AdminRouteName = 'perf360-admin';
   static const String kHrDashboardRouteName = 'hr-dashboard';
   static const String kManagerDashboardRouteName = 'manager-dashboard';
   static const String kTeamLeadDashboardRouteName = 'team-lead-dashboard';

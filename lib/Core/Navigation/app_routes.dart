@@ -11,6 +11,7 @@ import '../../Ui/DigitalTwin/digital_twin_page.dart';
 import '../../Ui/Training/smart_training_page.dart';
 import '../../Ui/Training/courses_page.dart';
 import '../../Ui/Perf360/perf360_page.dart';
+import '../../Ui/Perf360/perf360_admin_page.dart';
 import '../../Ui/Profile/PersonalInfo/personal_info_page.dart';
 import '../../Ui/Profile/Payroll/payroll_deductions_page.dart';
 import '../../Ui/Settings/general_settings_page.dart';
@@ -24,6 +25,7 @@ const String smartTrainingRoute = '/smart-training';
 const String smartTrainingCoursesRoute = '/smart-training/courses';
 const String assistantRoute = '/assistant';
 const String perf360Route = '/performance-360';
+const String perf360AdminRoute = '/admin/performance-360';
 const String profilePersonalInfoRoute = '/profile/personal-info';
 const String settingsGeneralRoute = '/settings/general';
 const String settingsChangePasswordRoute = '/settings/security/change-password';
@@ -45,6 +47,7 @@ extension AppRoutesExt on BuildContext {
   void goSmartTrainingCourses() => GoRouter.of(this).push(smartTrainingCoursesRoute);
   void goAssistant() => GoRouter.of(this).go('/?tab=2');
   void goPerf360() => GoRouter.of(this).push(perf360Route);
+  void goPerf360Admin() => GoRouter.of(this).push(perf360AdminRoute);
   void goProfilePersonalInfo() => GoRouter.of(this).push(profilePersonalInfoRoute);
   void goSettingsGeneral() => GoRouter.of(this).push(settingsGeneralRoute);
   void goSettingsChangePassword() => GoRouter.of(this).push(settingsChangePasswordRoute);
@@ -101,6 +104,8 @@ class AppRoutes {
         return const CoursesPage();
       case '/perf360':
         return const Perf360Page();
+      case '/admin/performance-360':
+        return const Perf360AdminPage();
       case '/profile/personal-info':
         return const PersonalInfoPage();
       case '/settings/general':
