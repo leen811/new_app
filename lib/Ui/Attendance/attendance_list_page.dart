@@ -117,25 +117,38 @@ class _PresenceFilter extends StatelessWidget {
   const _PresenceFilter({required this.value, required this.onChanged});
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonHideUnderline(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE6E9F0)),
+    return DropdownMenu<String>(
+      initialSelection: value,
+      onSelected: (v) { if (v != null) onChanged(v); },
+      label: const Text('التواجد'),
+      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+      menuStyle: MenuStyle(
+        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        surfaceTintColor: const MaterialStatePropertyAll(Colors.white),
+        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: true,
+        fillColor: Color(0xFFF8FAFF),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFFE6E9F0)),
         ),
-        child: DropdownButton<String>(
-          value: value,
-          icon: const Icon(Icons.keyboard_arrow_down_rounded),
-          items: const [
-            DropdownMenuItem(value: 'all', child: Text('الكل')),
-            DropdownMenuItem(value: 'present', child: Text('حاضرون')),
-            DropdownMenuItem(value: 'absent', child: Text('غير حاضرون')),
-          ],
-          onChanged: (v) { if (v != null) onChanged(v); },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFF2563EB)),
         ),
       ),
+      dropdownMenuEntries: const [
+        DropdownMenuEntry(value: 'all', label: 'الكل', leadingIcon: Icon(Icons.filter_alt_rounded)),
+        DropdownMenuEntry(value: 'present', label: 'حاضرون', leadingIcon: Icon(Icons.verified_rounded)),
+        DropdownMenuEntry(value: 'absent', label: 'غير حاضرون', leadingIcon: Icon(Icons.pause_circle_rounded)),
+      ],
     );
   }
 }
@@ -148,21 +161,34 @@ class _DepartmentFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     // قائمة افتراضية للأقسام
     const departments = ['جميع الأقسام', 'التكنولوجيا', 'التسويق', 'المبيعات', 'الموارد البشرية', 'التصميم'];
-    return DropdownButtonHideUnderline(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE6E9F0)),
+    return DropdownMenu<String>(
+      initialSelection: departments.contains(value) ? value : 'جميع الأقسام',
+      onSelected: (v) { if (v != null) onChanged(v); },
+      label: const Text('القسم'),
+      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+      menuStyle: MenuStyle(
+        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        surfaceTintColor: const MaterialStatePropertyAll(Colors.white),
+        backgroundColor: const MaterialStatePropertyAll(Colors.white),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: true,
+        fillColor: Color(0xFFF8FAFF),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFFE6E9F0)),
         ),
-        child: DropdownButton<String>(
-          value: departments.contains(value) ? value : 'جميع الأقسام',
-          icon: const Icon(Icons.keyboard_arrow_down_rounded),
-          items: departments.map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
-          onChanged: (v) { if (v != null) onChanged(v); },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: Color(0xFF2563EB)),
         ),
       ),
+      dropdownMenuEntries: departments.map((d) => DropdownMenuEntry(value: d, label: d, leadingIcon: const Icon(Icons.apartment_rounded))).toList(),
     );
   }
 }

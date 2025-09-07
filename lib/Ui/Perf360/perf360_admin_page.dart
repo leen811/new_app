@@ -191,16 +191,36 @@ class _AssignmentsCard extends StatelessWidget {
             children: [
               const Text('القسم:'),
               const SizedBox(width: 8),
-              DropdownButton<String>(
-                value: departments.contains(department)
-                    ? department
-                    : 'جميع الأقسام',
-                items: departments
-                    .map((d) => DropdownMenuItem(value: d, child: Text(d)))
-                    .toList(),
-                onChanged: (v) {
-                  if (v != null) onChangeDepartment(v);
-                },
+              Expanded(
+                child: DropdownMenu<String>(
+                  initialSelection: departments.contains(department) ? department : 'جميع الأقسام',
+                  onSelected: (v) { if (v != null) onChangeDepartment(v); },
+                  label: const Text('القسم'),
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  menuStyle: MenuStyle(
+                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    surfaceTintColor: const MaterialStatePropertyAll(Colors.white),
+                    backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                  ),
+                  inputDecorationTheme: const InputDecorationTheme(
+                    filled: true,
+                    fillColor: Color(0xFFF8FAFF),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(color: Color(0xFFE6EAF2)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(color: Color(0xFF2563EB)),
+                    ),
+                  ),
+                  dropdownMenuEntries: departments.map((d) => DropdownMenuEntry(value: d, label: d, leadingIcon: const Icon(Icons.apartment_rounded))).toList(),
+                ),
               ),
             ],
           ),

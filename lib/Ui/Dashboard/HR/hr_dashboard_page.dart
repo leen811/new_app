@@ -15,6 +15,7 @@ import '../../../Core/Navigation/app_routes.dart';
 import 'package:go_router/go_router.dart';
 import '../../../Presentation/Common/navigation/routes_constants.dart';
 import '../../Rewards/rewards_page.dart';
+import '../../Leaves/leaves_admin_page.dart';
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -116,7 +117,13 @@ class HrDashboardPage extends StatelessWidget {
                                                   builder: (_) => const RewardsPage(),
                                                 ),
                                               )
-                                      : link.onTap;
+                                          : link.title == 'طلبات الإجازة'
+                                              ? () => Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) => const LeavesAdminPage(),
+                                                    ),
+                                                  )
+                                              : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

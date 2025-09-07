@@ -62,18 +62,37 @@ class _EmployeesFiltersBarState extends State<EmployeesFiltersBar> {
             ),
           ),
           const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _filters.contains(widget.filterLabel) ? widget.filterLabel : _filters.first,
-                borderRadius: BorderRadius.circular(12),
-                items: _filters.map((f) => DropdownMenuItem<String>(value: f, child: Text(f))).toList(),
-                onChanged: (v) {
-                  if (v != null) widget.onFilter(v);
-                },
+          DropdownMenu<String>(
+            initialSelection: _filters.contains(widget.filterLabel) ? widget.filterLabel : _filters.first,
+            onSelected: (v) { if (v != null) widget.onFilter(v); },
+            label: const Text('الكل'),
+            textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            menuStyle: MenuStyle(
+              shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              surfaceTintColor: const MaterialStatePropertyAll(Colors.white),
+              backgroundColor: const MaterialStatePropertyAll(Colors.white),
+            ),
+            inputDecorationTheme: const InputDecorationTheme(
+              filled: true,
+              fillColor: Color(0xFFF8FAFF),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFE6E9F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFF2563EB)),
               ),
             ),
+            dropdownMenuEntries: [
+              for (final f in _filters)
+                DropdownMenuEntry<String>(value: f, label: f, leadingIcon: const Icon(Icons.filter_alt_rounded)),
+            ],
           ),
         ],
       ),
