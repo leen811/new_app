@@ -13,6 +13,7 @@ import '../../Common/press_fx.dart';
 import '../../Employees/employees_page.dart';
 import '../../Attendance/attendance_list_page.dart';
 import '../../../Core/Navigation/app_routes.dart';
+import '../../Rewards/rewards_page.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -107,7 +108,13 @@ class ManagerDashboardPage extends StatelessWidget {
                                               builder: (_) => const AttendanceListPage(),
                                             ),
                                           )
-                                      : link.onTap;
+                                      : link.title == 'إدارة المكافآت'
+                                          ? () => Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (_) => const RewardsPage(),
+                                                ),
+                                              )
+                                          : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

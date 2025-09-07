@@ -54,6 +54,12 @@ class MockHrDashboardRepository implements HrDashboardRepository {
         color: const Color(0xFF2563EB),
       ),
       SectionLink(
+        title: 'إدارة المكافآت',
+        subtitle: 'إدارة نظام النقاط والمكافآت',
+        icon: Icons.card_giftcard_rounded,
+        color: const Color(0xFFF59E0B),
+      ),
+      SectionLink(
         title: 'إدارة الرواتب',
         subtitle: 'إدارة شاملة لرواتب ومكافآت الموظفين',
         icon: Icons.article_rounded,
