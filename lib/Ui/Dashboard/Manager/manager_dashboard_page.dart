@@ -14,6 +14,8 @@ import '../../Employees/employees_page.dart';
 import '../../Attendance/attendance_list_page.dart';
 import '../../../Core/Navigation/app_routes.dart';
 import '../../Rewards/rewards_page.dart';
+import '../../../Core/Motion/swipe_transitions.dart';
+import '_widgets/manager_skeleton.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -31,9 +33,7 @@ class ManagerDashboardPage extends StatelessWidget {
           child: BlocBuilder<ManagerDashboardBloc, ManagerDashboardState>(
             builder: (context, state) {
               if (state is ManagerLoading || state is ManagerInitial) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const ManagerSkeleton();
               }
               
               if (state is ManagerError) {
@@ -93,27 +93,15 @@ class ManagerDashboardPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final link = loadedState.data.sections[index];
                       final onTap = link.title == 'إدارة الموظفين'
-                          ? () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const EmployeesPage(),
-                                ),
-                              )
+                          ? () => context.pushSwipe(const EmployeesPage())
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
                               : link.title == 'تقييم الأداء'
                                   ? () => context.goPerf360()
                                   : link.title == 'تقارير الحضور'
-                                      ? () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => const AttendanceListPage(),
-                                            ),
-                                          )
+                                      ? () => context.pushSwipe(const AttendanceListPage())
                                       : link.title == 'إدارة المكافآت'
-                                          ? () => Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (_) => const RewardsPage(),
-                                                ),
-                                              )
+                                          ? () => context.pushSwipe(const RewardsPage())
                                           : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,

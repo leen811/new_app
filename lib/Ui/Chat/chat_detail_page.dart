@@ -89,7 +89,22 @@ class _Body extends StatelessWidget {
           child: BlocBuilder<ChatDetailBloc, ChatDetailState>(
             builder: (context, state) {
               if (state is ChatDetailLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return ListView(
+                  children: List.generate(8, (i) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Align(
+                      alignment: i.isEven ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 260),
+                        height: 20 + (i % 3) * 10,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  )),
+                );
               }
               if (state is ChatDetailError) {
                 return Center(child: Text(state.message));

@@ -553,7 +553,16 @@ class _ChallengesTab extends StatelessWidget {
           context.read<ChallengesBloc>().add(ChallengesFetch());
         }
         if (state is ChallengesLoading)
-          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 24),
+            itemCount: 4,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, i) => Container(
+              height: 120,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16)),
+            ),
+          );
         if (state is ChallengesError) return Center(child: Text(state.message));
         if (state is ChallengesEmpty)
           return const Center(child: Text('لا توجد تحديات'));
@@ -591,7 +600,16 @@ class _TeamTab extends StatelessWidget {
           context.read<TeamProgressBloc>().add(TeamProgressFetch());
         }
         if (state is TeamProgressLoading)
-          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 24),
+            itemCount: 6,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, i) => Container(
+              height: 72,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)),
+            ),
+          );
         if (state is TeamProgressError)
           return Center(child: Text(state.message));
         if (state is TeamProgressEmpty)

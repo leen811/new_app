@@ -6,6 +6,7 @@ import '../../Bloc/AttendanceList/attendance_list_event.dart';
 import '../../Bloc/AttendanceList/attendance_list_state.dart';
 import 'employee_attendance_page.dart';
 import '_widgets/employee_presence_tile.dart';
+import '../../Core/Motion/swipe_transitions.dart';
 
 class AttendanceListPage extends StatelessWidget {
   const AttendanceListPage({super.key});
@@ -29,7 +30,27 @@ class AttendanceListPage extends StatelessWidget {
           child: BlocBuilder<AttendanceListBloc, AttendanceListState>(
             builder: (context, state) {
               if (state is AttendanceListLoading || state is AttendanceListInitial) {
-                return const Center(child: CircularProgressIndicator());
+                return ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                      child: Container(height: 44, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Row(children: [
+                        Expanded(child: Container(height: 44, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)))),
+                        const SizedBox(width: 8),
+                        Expanded(child: Container(height: 44, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)))),
+                      ]),
+                    ),
+                    ...List.generate(8, (i) => Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: Container(height: 72, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16))),
+                    )),
+                    const SizedBox(height: 24),
+                  ],
+                );
               }
               if (state is AttendanceListError) {
                 return Center(child: Text(state.message));
@@ -94,9 +115,9 @@ class AttendanceListPage extends StatelessWidget {
                         final it = s.list[i];
                         return EmployeePresenceTile(
                           item: it,
-                          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => EmployeeAttendancePage(employeeId: it.id, name: it.name, avatarUrl: it.avatarUrl),
-                          )),
+                          onTap: () => context.pushSwipe(
+                            EmployeeAttendancePage(employeeId: it.id, name: it.name, avatarUrl: it.avatarUrl),
+                          ),
                         );
                       },
                     ),

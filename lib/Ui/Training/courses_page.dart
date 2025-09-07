@@ -42,7 +42,21 @@ class _Body extends StatelessWidget {
       body: BlocBuilder<CoursesBloc, CoursesState>(
         builder: (context, state) {
           if (state is CoursesLoading)
-            return const Center(child: CircularProgressIndicator());
+            return ListView(
+              children: [
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(height: 40, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12))),
+                ),
+                const SizedBox(height: 12),
+                ...List.generate(6, (i) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Container(height: 260, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16))),
+                )),
+                const SizedBox(height: 24),
+              ],
+            );
           if (state is CoursesError) return Center(child: Text(state.message));
           final s = state as CoursesSuccess;
           final categories = const [

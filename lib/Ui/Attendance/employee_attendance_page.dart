@@ -34,7 +34,20 @@ class EmployeeAttendancePage extends StatelessWidget {
           child: BlocBuilder<EmpAttendanceBloc, EmpAttendanceState>(
             builder: (context, state) {
               if (state is EmpLoading || state is EmpInitial) {
-                return const Center(child: CircularProgressIndicator());
+                return ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                  children: const [
+                    _SkeletonBar(),
+                    SizedBox(height: 12),
+                    _SkeletonTabs(),
+                    SizedBox(height: 12),
+                    _SkeletonRow(),
+                    SizedBox(height: 10),
+                    _SkeletonRow(),
+                    SizedBox(height: 10),
+                    _SkeletonRow(),
+                  ],
+                );
               }
               if (state is EmpError) {
                 return Center(child: Text(state.message));
@@ -196,6 +209,34 @@ class _WeekNavBar extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SkeletonBar extends StatelessWidget {
+  const _SkeletonBar();
+  @override
+  Widget build(BuildContext context) => Container(height: 44, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)));
+}
+
+class _SkeletonTabs extends StatelessWidget {
+  const _SkeletonTabs();
+  @override
+  Widget build(BuildContext context) => Container(height: 40, decoration: BoxDecoration(color: const Color(0xFFF3F6FC), borderRadius: BorderRadius.circular(12)));
+}
+
+class _SkeletonRow extends StatelessWidget {
+  const _SkeletonRow();
+  @override
+  Widget build(BuildContext context) => Row(children: const [
+        Expanded(child: _SkeletonCard()),
+        SizedBox(width: 12),
+        Expanded(child: _SkeletonCard()),
+      ]);
+}
+
+class _SkeletonCard extends StatelessWidget {
+  const _SkeletonCard();
+  @override
+  Widget build(BuildContext context) => Container(height: 64, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16)));
 }
 
 
