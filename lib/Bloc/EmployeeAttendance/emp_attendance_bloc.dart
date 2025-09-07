@@ -14,15 +14,21 @@ class EmpAttendanceBloc extends Bloc<EmpAttendanceEvent, EmpAttendanceState> {
   }
 
   Future<void> _onLoadWeek(EmpLoadWeek event, Emitter<EmpAttendanceState> emit) async {
-    emit(const EmpLoading());
+    // لا تُظهر شاشة تحميل كاملة عند التبديل بين الأسابيع،
+    // أظهر التحميل فقط إذا لم تكن هناك بيانات سابقة
+    if (state is EmpInitial) {
+      emit(const EmpLoading());
+    }
     try {
       final week = await repository.fetchEmployeeWeek(employeeId: event.employeeId, anchor: event.anchor, range: event.range);
       // اختر اليوم الحالي داخل الأسبوع إن أمكن
       final today = DateTime.now();
       int index = week.days.indexWhere((d) => _isSameDate(d.day, today));
       if (index < 0) index = 0;
+      // احتفظ بالتبويب الحالي ان وُجد
+      final previousTabIndex = state is EmpLoaded ? (state as EmpLoaded).tabIndex : 0;
       final overview = _computeOverview(week);
-      emit(EmpLoaded(employeeId: event.employeeId, anchor: event.anchor, range: event.range, selectedIndex: index, tabIndex: 0, week: week, overview: overview));
+      emit(EmpLoaded(employeeId: event.employeeId, anchor: event.anchor, range: event.range, selectedIndex: index, tabIndex: previousTabIndex, week: week, overview: overview));
     } catch (e) {
       emit(EmpError(e.toString()));
     }
@@ -31,7 +37,8 @@ class EmpAttendanceBloc extends Bloc<EmpAttendanceEvent, EmpAttendanceState> {
   Future<void> _onChangeRange(EmpChangeRange event, Emitter<EmpAttendanceState> emit) async {
     if (state is EmpLoaded) {
       final s = state as EmpLoaded;
-      add(EmpLoadWeek(employeeId: s.employeeId, anchor: s.anchor, range: event.range));
+      // اجعل مرساة الأسبوع بداية الفترة لضمان توحيد العرض في Overview و Work Hours
+      add(EmpLoadWeek(employeeId: s.employeeId, anchor: event.range.start, range: event.range));
     }
   }
 

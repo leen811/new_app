@@ -66,7 +66,7 @@ class MockHrDashboardRepository implements HrDashboardRepository {
         color: const Color(0xFFFF6D00),
       ),
       SectionLink(
-        title: 'التقارير والإحصائيات',
+        title: 'تقارير الحضور',
         subtitle: 'تقارير مفصلة وإحصائيات الموارد البشرية',
         icon: Icons.stacked_bar_chart_rounded,
         color: const Color(0xFF9333EA),

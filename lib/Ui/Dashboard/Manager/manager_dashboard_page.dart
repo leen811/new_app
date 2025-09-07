@@ -11,6 +11,8 @@ import '_widgets/manager_section_tile.dart';
 import '_widgets/manager_activity_feed.dart';
 import '../../Common/press_fx.dart';
 import '../../Employees/employees_page.dart';
+import '../../Attendance/attendance_list_page.dart';
+import '../../../Core/Navigation/app_routes.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -95,7 +97,15 @@ class ManagerDashboardPage extends StatelessWidget {
                                   builder: (_) => const EmployeesPage(),
                                 ),
                               )
-                          : link.onTap;
+                          : link.title == 'إدارة الرواتب'
+                              ? () => context.goPayrollAdmin()
+                              : link.title == 'تقارير الحضور'
+                                  ? () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => const AttendanceListPage(),
+                                        ),
+                                      )
+                                  : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

@@ -56,7 +56,7 @@ class MockManagerDashboardRepository implements IManagerDashboardRepository {
           color: Color(0xFF10B981), // أخضر
         ),
         SectionLink(
-          title: 'التقارير والإحصائيات',
+          title: 'تقارير الحضور',
           subtitle: 'تقارير مفصّلة وإحصائيات المؤسسة',
           icon: Icons.stacked_bar_chart_rounded,
           color: Color(0xFF8B5CF6), // بنفسجي

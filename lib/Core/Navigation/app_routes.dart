@@ -15,6 +15,7 @@ import '../../Ui/Profile/PersonalInfo/personal_info_page.dart';
 import '../../Ui/Profile/Payroll/payroll_deductions_page.dart';
 import '../../Ui/Settings/general_settings_page.dart';
 import '../../Ui/Dashboard/HR/hr_dashboard_page.dart';
+import '../../Ui/PayrollAdmin/payroll_admin_page.dart';
 import '../Motion/swipe_transitions.dart';
 
 // تعريف المسارات
@@ -30,6 +31,7 @@ const String legalTermsRoute = '/legal/terms';
 const String payrollDeductionsRoute = '/profile/payroll-deductions';
 const String rewardsStoreRoute = '/rewards';
 const String hrDashboardRoute = '/hr/dashboard';
+const String payrollAdminRoute = '/admin/payroll';
 
 /// تعريف التبويبات الرئيسية (Top-Level)
 bool isTopLevelRoute(String? name) => const {
@@ -50,6 +52,7 @@ extension AppRoutesExt on BuildContext {
   void goPayrollDeductions() => GoRouter.of(this).push(payrollDeductionsRoute);
   void goRewardsStore() => GoRouter.of(this).push(rewardsStoreRoute);
   void goHrDashboard() => GoRouter.of(this).push(hrDashboardRoute);
+  void goPayrollAdmin() => GoRouter.of(this).push(payrollAdminRoute);
 }
 
 /// إدارة المسارات للتنقل الكلاسيكي (Navigator)
@@ -106,6 +109,8 @@ class AppRoutes {
         return const PayrollDeductionsPage();
       case '/hr/dashboard':
         return const HrDashboardPage();
+      case '/admin/payroll':
+        return const PayrollAdminPage();
       default:
         return _UnknownRoutePage(routeName: settings.name ?? '');
     }
