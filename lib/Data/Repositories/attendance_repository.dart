@@ -33,10 +33,41 @@ class MockAttendanceDataRepository implements AttendanceDataRepository {
   @override
   Future<EmployeeWeekAttendance> fetchEmployeeWeek({required String employeeId, required DateTime anchor, DateTimeRange? range}) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    // احسب بداية الأسبوع (السبت)
-    final weekday = anchor.weekday; // 1=Mon..7=Sun
-    final weekStart = DateTime(anchor.year, anchor.month, anchor.day).subtract(Duration(days: weekday));
+    // إذا تم تمرير Range نستخدمه كما هو ونبني جميع الأيام ضمنه
+    if (range != null) {
+      final start = DateTime(range.start.year, range.start.month, range.start.day);
+      final end = DateTime(range.end.year, range.end.month, range.end.day);
+      final totalDays = end.difference(start).inDays + 1;
+      final days = <EmployeeDayAttendance>[];
+      for (int i = 0; i < totalDays; i++) {
+        final day = start.add(Duration(days: i));
+        List<AttendanceSession> sessions = [];
+        if (i % 2 == 0) {
+          sessions.add(AttendanceSession(
+            inAt: DateTime(day.year, day.month, day.day, 8, 15),
+            outAt: DateTime(day.year, day.month, day.day, 17, 5),
+            inLocation: 'HQ بوابة A',
+            outLocation: 'HQ موقف B',
+            note: 'خروج مبكر 5د',
+          ));
+        }
+        if (i == 2 || i == 5) {
+          sessions.add(AttendanceSession(
+            inAt: DateTime(day.year, day.month, day.day, 19, 0),
+            outAt: DateTime(day.year, day.month, day.day, 21, 15),
+            inLocation: 'منزل',
+            outLocation: 'منزل',
+            note: 'عمل إضافي',
+          ));
+        }
+        days.add(EmployeeDayAttendance(day, sessions));
+      }
+      return EmployeeWeekAttendance(start, days);
+    }
 
+    // احسب بداية الأسبوع (الأحد) عندما لا يوجد Range
+    final weekday = anchor.weekday; // 1=Mon..7=Sun
+    final weekStart = DateTime(anchor.year, anchor.month, anchor.day).subtract(Duration(days: weekday % 7));
     List<EmployeeDayAttendance> days = [];
     for (int i = 0; i < 7; i++) {
       final day = weekStart.add(Duration(days: i));

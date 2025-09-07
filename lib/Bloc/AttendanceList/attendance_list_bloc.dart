@@ -13,7 +13,13 @@ class AttendanceListBloc extends Bloc<LoadPresence, AttendanceListState> {
     emit(const AttendanceListLoading());
     try {
       final list = await repository.fetchTodayPresence(query: event.query, department: event.department);
-      emit(AttendanceListLoaded(list: list, query: event.query ?? '', department: event.department ?? 'جميع الأقسام'));
+      // فلترة حسب الحضور
+      final filtered = switch (event.presence) {
+        'present' => list.where((e) => e.isCheckedIn).toList(),
+        'absent' => list.where((e) => !e.isCheckedIn).toList(),
+        _ => list,
+      };
+      emit(AttendanceListLoaded(list: filtered, query: event.query ?? '', department: event.department ?? 'جميع الأقسام', presence: event.presence));
     } catch (e) {
       emit(AttendanceListError(e.toString()));
     }

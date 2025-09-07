@@ -29,7 +29,6 @@ class DayWorkRow extends StatelessWidget {
       breaks += s.breaksMinutes;
     }
 
-    // لا نخلي النت سالب في حال كان البريك أكبر بالغلط
     final netMinutes = (gross - breaks).clamp(0, 24 * 60 * 2); // سقف احتياطي
     final net = Duration(minutes: netMinutes);
     final overtimeMin = (net.inMinutes - shiftMinutes) > 0
@@ -63,13 +62,13 @@ class DayWorkRow extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // رأس اليوم (اسم اليوم + التاريخ) بعرض البطاقة
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // كبسولة اليوم (اختصار + تاريخ صغير)
                 _DayChip(date: day.day),
+                // صف القيم التفصيلية لليوم
                 const SizedBox(width: 6),
-                // الدخول
+
                 Expanded(
                   child: _ValueWithLabel(
                     value: _inStr(day.sessions),
@@ -77,7 +76,6 @@ class DayWorkRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // البريك
                 Expanded(
                   child: _ValueWithLabel(
                     value: _fmtH(Duration(minutes: breaks)),
@@ -85,7 +83,6 @@ class DayWorkRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // الخروج
                 Expanded(
                   child: _ValueWithLabel(
                     value: _outStr(day.sessions),
@@ -93,7 +90,6 @@ class DayWorkRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // أوفر تايم
                 Expanded(
                   child: _ValueWithLabel(
                     value: _fmtH(Duration(minutes: overtimeMin)),
@@ -101,7 +97,6 @@ class DayWorkRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // إجمالي الساعات (قيمة + عنوان تحتها)
                 SizedBox(
                   width: 56,
                   child: _ValueWithLabel(
@@ -111,21 +106,24 @@ class DayWorkRow extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                decoration: BoxDecoration(
-                  color: badgeColor.withOpacity(.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            const SizedBox(height: 8),
+            const Divider(height: 1, thickness: 0.6),
+            const SizedBox(height: 8),
+            // حالة الحضور كقسم ضمن نفس البطاقة (مكتمل/جزئي/غائب)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: badgeColor.withOpacity(.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
                 child: Text(
                   badgeText,
                   style: TextStyle(
                     color: badgeColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 10,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -186,11 +184,19 @@ class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Sun..Sat
-    final dayShort = const ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-        [(DateTime(date.year, date.month, date.day).weekday) % 7];
+    final dayShort = const [
+      'Sun',
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat',
+    ][(DateTime(date.year, date.month, date.day).weekday) % 7];
 
     final now = DateTime.now();
-    final isToday = now.year == date.year && now.month == date.month && now.day == date.day;
+    final isToday =
+        now.year == date.year && now.month == date.month && now.day == date.day;
 
     // عطلة السعودية: جمعة/سبت
     final isFriSat = date.weekday == 5 || date.weekday == 6;
@@ -224,7 +230,18 @@ class _DayChip extends StatelessWidget {
 
   String _monthShort(int m) {
     const months = [
-      'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[(m - 1) % 12];
   }

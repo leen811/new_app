@@ -20,6 +20,7 @@ import 'Ui/RewardsStore/rewards_store_page.dart';
 import 'Ui/Dashboard/HR/hr_dashboard_page.dart';
 import 'Ui/Dashboard/Manager/manager_dashboard_page.dart';
 import 'Ui/Dashboard/TeamLead/team_lead_dashboard_page.dart';
+import 'Ui/PayrollAdmin/payroll_admin_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
 
@@ -147,6 +148,11 @@ GoRouter buildRouter() {
         path: '/rewards',
         name: 'rewards',
         pageBuilder: (context, state) => _swipePage(const RewardsStorePage()),
+      ),
+      GoRoute(
+        path: '/admin/payroll',
+        name: 'payroll-admin',
+        pageBuilder: (context, state) => _swipePage(const PayrollAdminPage()),
       ),
     ],
   );

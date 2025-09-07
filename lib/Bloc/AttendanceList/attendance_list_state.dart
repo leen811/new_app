@@ -14,9 +14,10 @@ class AttendanceListLoaded extends AttendanceListState {
   final List<EmployeePresence> list;
   final String query;
   final String department;
-  const AttendanceListLoaded({required this.list, required this.query, required this.department});
+  final String presence; // 'all' | 'present' | 'absent'
+  const AttendanceListLoaded({required this.list, required this.query, required this.department, this.presence = 'all'});
   @override
-  List<Object?> get props => [list, query, department];
+  List<Object?> get props => [list, query, department, presence];
 }
 
 class AttendanceListError extends AttendanceListState {

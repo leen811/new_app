@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   late final ITrainingRepository _trainingRepository;
   late final IPerf360Repository _perf360Repository;
   late final ISettingsRepository _settingsRepository;
+  // لا نحتفظ بنسخة ثابتة من GoRouter أثناء التطوير لضمان تطبيق المسارات الجديدة بعد Hot Reload
   late final _router = buildRouter();
 
   @override
