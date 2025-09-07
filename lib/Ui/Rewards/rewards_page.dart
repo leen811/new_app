@@ -15,6 +15,7 @@ import '_widgets/group_rewards_card.dart';
 import '_widgets/skeleton_rewards.dart';
 import 'StoreAdmin/store_admin_page.dart';
 import '../../Bloc/auth/auth_state.dart';
+import '../../Core/Motion/swipe_transitions.dart';
 import '../../Bloc/auth/auth_bloc.dart';
 import '../../Data/Models/role.dart';
 
@@ -74,7 +75,7 @@ class RewardsPage extends StatelessWidget {
                           return SizedBox(
                             width: double.infinity,
                             child: FilledButton.icon(
-                              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StoreAdminPage())),
+                              onPressed: () => context.pushSwipe(const StoreAdminPage()),
                               icon: const Icon(Icons.store_rounded),
                               label: const Text('ادارة متجر المكافات'),
                               style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),

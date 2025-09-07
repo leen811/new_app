@@ -7,6 +7,7 @@ import '../../Data/Repositories/employees_repository.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '_widgets/filters_bar.dart';
+import '_widgets/skeleton_employees.dart';
 import '_widgets/kpi_small_card.dart';
 import '_widgets/employee_card.dart';
 
@@ -56,7 +57,7 @@ class EmployeesPage extends StatelessWidget {
             child: BlocBuilder<EmployeesBloc, EmployeesState>(
               builder: (ctx, st) {
                 if (st is EmployeesLoading || st is EmployeesInitial) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const EmployeesSkeleton();
                 }
                 if (st is EmployeesError) {
                   return Center(child: Text(st.message));

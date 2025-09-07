@@ -11,6 +11,7 @@ import '_widgets/summary_stat_card.dart';
 import '_widgets/employees_filters_bar.dart';
 import '_widgets/employee_payroll_card.dart';
 import '_widgets/segmented_tabs.dart';
+import '_widgets/skeleton_payroll.dart';
 
 class PayrollAdminPage extends StatelessWidget {
   const PayrollAdminPage({super.key});
@@ -36,7 +37,7 @@ class PayrollAdminPage extends StatelessWidget {
         child: BlocBuilder<PayrollAdminBloc, AdminPayrollState>(
           builder: (ctx, st) {
             if (st is AdminPayrollLoading || st is AdminPayrollInitial) {
-              return const Center(child: CircularProgressIndicator());
+              return const PayrollSkeleton();
             }
             if (st is AdminPayrollError) {
               return Center(child: Text(st.message));

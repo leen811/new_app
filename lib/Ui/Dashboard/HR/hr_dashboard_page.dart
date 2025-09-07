@@ -16,6 +16,8 @@ import 'package:go_router/go_router.dart';
 import '../../../Presentation/Common/navigation/routes_constants.dart';
 import '../../Rewards/rewards_page.dart';
 import '../../Leaves/leaves_admin_page.dart';
+import '../../../Core/Motion/swipe_transitions.dart';
+import '_widgets/hr_skeleton.dart';
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -33,9 +35,7 @@ class HrDashboardPage extends StatelessWidget {
           child: BlocBuilder<HrDashboardBloc, HrDashboardState>(
             builder: (context, state) {
               if (state is HRLoading || state is HRInitial) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const HrSkeleton();
               }
               
               if (state is HRError) {
@@ -96,33 +96,17 @@ class HrDashboardPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final link = loadedState.data.sections[index];
                       final onTap = link.title == 'إدارة الموظفين'
-                          ? () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const EmployeesPage(),
-                                ),
-                              )
+                          ? () => context.pushSwipe(const EmployeesPage())
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
                               : link.title == 'تقييم الأداء'
                                   ? () => GoRouter.of(context).pushNamed(RoutesConstants.kPerf360AdminRouteName)
                                   : link.title == 'تقارير الحضور'
-                                      ? () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => const AttendanceListPage(),
-                                            ),
-                                          )
+                                      ? () => context.pushSwipe(const AttendanceListPage())
                                       : link.title == 'إدارة المكافآت'
-                                          ? () => Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (_) => const RewardsPage(),
-                                                ),
-                                              )
+                                          ? () => context.pushSwipe(const RewardsPage())
                                           : link.title == 'طلبات الإجازة'
-                                              ? () => Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                      builder: (_) => const LeavesAdminPage(),
-                                                    ),
-                                                  )
+                                              ? () => context.pushSwipe(const LeavesAdminPage())
                                               : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,

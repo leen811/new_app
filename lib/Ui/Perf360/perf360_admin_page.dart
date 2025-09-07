@@ -48,7 +48,19 @@ class _Perf360AdminPageState extends State<Perf360AdminPage> {
         title: const Text('إدارة تقييم الأداء 360'),
       ),
       body: loading || summary == null || items == null || settings == null
-          ? const Center(child: CircularProgressIndicator())
+          ? ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              children: [
+                Container(height: 120, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16))),
+                const SizedBox(height: 12),
+                Container(height: 200, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(16))),
+                const SizedBox(height: 12),
+                ...List.generate(5, (i) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Container(height: 72, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12))),
+                )),
+              ],
+            )
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView(
