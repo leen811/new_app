@@ -24,6 +24,7 @@ import 'Data/Repositories/digital_twin_repository.dart';
 import 'Data/Repositories/perf360_repository.dart';
 import 'Data/Repositories/training_repository.dart'; 
 import 'Data/Repositories/settings_repository.dart';
+import 'Data/Repositories/meetings_repository.dart';
 import 'Bloc/attendance/attendance_bloc.dart';
 import 'Bloc/attendance/attendance_event.dart';
 
@@ -51,6 +52,7 @@ class _MyAppState extends State<MyApp> {
   late final ITrainingRepository _trainingRepository;
   late final IPerf360Repository _perf360Repository;
   late final ISettingsRepository _settingsRepository;
+  late final MeetingsRepository _meetingsRepository;
   // لا نحتفظ بنسخة ثابتة من GoRouter أثناء التطوير لضمان تطبيق المسارات الجديدة بعد Hot Reload
   late final _router = buildRouter();
 
@@ -74,6 +76,7 @@ class _MyAppState extends State<MyApp> {
     _trainingRepository = TrainingRepository(_api.dio);
     _perf360Repository = Perf360Repository(_api.dio);
     _settingsRepository = SettingsRepository(_api.dio);
+    _meetingsRepository = MockMeetingsRepository();
   }
 
   @override
@@ -117,6 +120,7 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<ITrainingRepository>.value(value: _trainingRepository),
           RepositoryProvider<IPerf360Repository>.value(value: _perf360Repository),
           RepositoryProvider<ISettingsRepository>.value(value: _settingsRepository),
+          RepositoryProvider<MeetingsRepository>.value(value: _meetingsRepository),
         ],
         child: MultiBlocProvider(
           providers: [

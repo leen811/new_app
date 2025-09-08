@@ -15,6 +15,7 @@ class RoutesConstants {
   static const String kAttendanceRouteName = 'attendance';
   static const String kLeaveRouteName = 'leave';
   static const String kRewardsRouteName = 'rewards';
+  static const String kMyMeetingsRouteName = 'my-meetings';
   static const String kDigitalTwinRouteName = 'digital-twin';
   static const String kSmartTrainingRouteName = 'smart-training';
   static const String kPerformance360RouteName = 'performance-360';

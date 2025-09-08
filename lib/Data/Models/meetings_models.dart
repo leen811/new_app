@@ -105,3 +105,34 @@ class MeetingsKpis extends Equatable {
 }
 
 
+// --- Rooms & Availability Models ---
+
+class MeetingRoom extends Equatable {
+  final String id;
+  final String name;
+  final int? capacity;
+  final String? location;
+  const MeetingRoom({required this.id, required this.name, this.capacity, this.location});
+  @override
+  List<Object?> get props => [id, name, capacity, location];
+}
+
+class RoomAvailability extends Equatable {
+  final String roomId;
+  final DateTime start;
+  final DateTime end;
+  final bool isFree;
+  final List<(DateTime from, DateTime to)> conflicts;
+  const RoomAvailability({required this.roomId, required this.start, required this.end, required this.isFree, required this.conflicts});
+  @override
+  List<Object?> get props => [roomId, start, end, isFree, conflicts];
+}
+
+class SlotSuggestion extends Equatable {
+  final DateTime start;
+  final DateTime end;
+  const SlotSuggestion(this.start, this.end);
+  @override
+  List<Object?> get props => [start, end];
+}
+

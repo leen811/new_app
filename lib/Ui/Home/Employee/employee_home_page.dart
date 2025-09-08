@@ -158,6 +158,13 @@ class _HomeContent extends StatelessWidget {
                   mainAxisSpacing: 12,
                   children: [
                     QuickActionTile(
+                      title: 'اجتماعاتي',
+                      description: 'اليوم والقادمة والمكتملة',
+                      icon: Icons.video_chat_rounded,
+                      iconBackgroundColor: const Color(0xFF60A5FA),
+                      onTap: () => context.pushNamed(RoutesConstants.kMyMeetingsRouteName),
+                    ),
+                    QuickActionTile(
                       title: 'المهام اليومية',
                       description: 'مهامك وتحدياتك',
                       icon: Icons.track_changes,
