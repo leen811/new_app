@@ -134,13 +134,12 @@ class _EditSheetState extends State<_EditSheet> {
                     items: const [
                       DropdownMenuItem(value: MeetingType.online, child: Text('عن بُعد')),
                       DropdownMenuItem(value: MeetingType.onsite, child: Text('في الموقع')),
-                      DropdownMenuItem(value: MeetingType.hybrid, child: Text('هجين')),
                     ],
                     onChanged: (v) => setState(() => _type = v ?? _type),
                     decoration: const InputDecoration(hintText: 'نوع الاجتماع'),
                   ),
                   const SizedBox(height: 8),
-                  TextField(controller: _placeOrLink, decoration: InputDecoration(hintText: _type == MeetingType.online ? 'الرابط' : _type == MeetingType.onsite ? 'المكان' : 'المكان/الرابط')),
+                  TextField(controller: _placeOrLink, decoration: InputDecoration(hintText: _type == MeetingType.online ? 'الرابط' : 'المكان')),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: _platform,

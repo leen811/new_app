@@ -47,4 +47,32 @@ class MeetingDelete extends MeetingsEvent {
   List<Object?> get props => [id];
 }
 
+// --- Scheduling Sheet Events ---
+class ScheduleInit extends MeetingsEvent {
+  const ScheduleInit();
+}
+
+class ScheduleRoomChanged extends MeetingsEvent {
+  final String roomId;
+  const ScheduleRoomChanged(this.roomId);
+  @override
+  List<Object?> get props => [roomId];
+}
+
+class ScheduleDateTimeChanged extends MeetingsEvent {
+  final DateTime start;
+  final int durationMinutes;
+  const ScheduleDateTimeChanged(this.start, this.durationMinutes);
+  @override
+  List<Object?> get props => [start, durationMinutes];
+}
+
+class ScheduleCheckAvailability extends MeetingsEvent {
+  const ScheduleCheckAvailability();
+}
+
+class ScheduleRequestSuggestions extends MeetingsEvent {
+  const ScheduleRequestSuggestions();
+}
+
 
