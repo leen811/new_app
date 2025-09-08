@@ -9,6 +9,8 @@ import '_widgets/tl_kpi_card.dart';
 import '_widgets/tl_section_tile.dart';
 import '_widgets/tl_team_performance.dart';
 import '../../Common/press_fx.dart';
+import '../../TeamLeader/team_management_page.dart';
+import '../../../Data/Models/team_lead_models.dart';
 
 class TeamLeadDashboardPage extends StatelessWidget {
   const TeamLeadDashboardPage({super.key});
@@ -84,9 +86,22 @@ class TeamLeadDashboardPage extends StatelessWidget {
                   SliverList.builder(
                     itemCount: loadedState.data.sections.length,
                     itemBuilder: (context, index) {
-                      return TlSectionTile(
-                        link: loadedState.data.sections[index],
+                      final link = loadedState.data.sections[index];
+                      final onTap = link.title == 'إدارة الفريق'
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const TeamManagementPage(),
+                                ),
+                              )
+                          : link.onTap;
+                      final overridden = SectionLink(
+                        title: link.title,
+                        subtitle: link.subtitle,
+                        icon: link.icon,
+                        color: link.color,
+                        onTap: onTap,
                       );
+                      return TlSectionTile(link: overridden);
                     },
                   ),
                   

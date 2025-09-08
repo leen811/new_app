@@ -61,21 +61,24 @@ class EmployeeCard extends StatelessWidget {
               const SizedBox(width: 20),
               // الاسم والوظيفة بمحاذاة يمين
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      emp.name,
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${emp.roleTitle}\n${emp.department}',
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(color: Color(0xFF6B7280), height: 1.2),
-                    ),
-                  ],
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        emp.name,
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${emp.roleTitle}\n${emp.department}',
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(color: Color(0xFF6B7280), height: 1.2),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -96,14 +99,17 @@ class EmployeeCard extends StatelessWidget {
           const SizedBox(height: 12),
           const Divider(height: 1, color: Color(0xFFEEF1F6)),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _StatColumn(label: 'تقييم', value: emp.rating.toStringAsFixed(1)),
-              _StatColumn(label: 'قيمة', value: emp.value.toString()),
-              _StatColumn(label: 'حضور', value: '${emp.attendancePct}%'),
-              _StatColumn(label: 'النقاط', value: emp.points.toString()),
-            ],
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _StatColumn(label: 'تقييم', value: emp.rating.toStringAsFixed(1)),
+                _StatColumn(label: 'قيمة', value: emp.value.toString()),
+                _StatColumn(label: 'حضور', value: '${emp.attendancePct}%'),
+                _StatColumn(label: 'النقاط', value: emp.points.toString()),
+              ],
+            ),
           ),
         ],
       ),
