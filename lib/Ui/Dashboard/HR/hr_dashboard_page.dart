@@ -18,6 +18,7 @@ import '../../Rewards/rewards_page.dart';
 import '../../Leaves/leaves_admin_page.dart';
 import '../../../Core/Motion/swipe_transitions.dart';
 import '_widgets/hr_skeleton.dart';
+import '../../Meetings/meetings_page.dart';
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -99,15 +100,17 @@ class HrDashboardPage extends StatelessWidget {
                           ? () => context.pushSwipe(const EmployeesPage())
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
-                              : link.title == 'تقييم الأداء'
-                                  ? () => GoRouter.of(context).pushNamed(RoutesConstants.kPerf360AdminRouteName)
-                                  : link.title == 'تقارير الحضور'
-                                      ? () => context.pushSwipe(const AttendanceListPage())
-                                      : link.title == 'إدارة المكافآت'
-                                          ? () => context.pushSwipe(const RewardsPage())
-                                          : link.title == 'طلبات الإجازة'
-                                              ? () => context.pushSwipe(const LeavesAdminPage())
-                                              : link.onTap;
+                          : link.title == 'تقييم الأداء'
+                              ? () => GoRouter.of(context).pushNamed(RoutesConstants.kPerf360AdminRouteName)
+                          : link.title == 'تقارير الحضور'
+                              ? () => context.pushSwipe(const AttendanceListPage())
+                          : link.title == 'إدارة المكافآت'
+                              ? () => context.pushSwipe(const RewardsPage())
+                          : link.title == 'طلبات الإجازة'
+                              ? () => context.pushSwipe(const LeavesAdminPage())
+                          : link.title == 'الاجتماعات'
+                              ? () => context.pushSwipe(const MeetingsPage())
+                          : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

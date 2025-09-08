@@ -10,8 +10,11 @@ import '_widgets/tl_section_tile.dart';
 import '_widgets/tl_team_performance.dart';
 import '../../Common/press_fx.dart';
 import '../../TeamLeader/team_management_page.dart';
+import '../../Meetings/meetings_page.dart';
 import '../../TeamLeader/Tasks/team_tasks_page.dart';
 import '../../../Data/Models/team_lead_models.dart';
+import '../../../Core/Motion/swipe_transitions.dart';
+import 'package:go_router/go_router.dart';
 
 class TeamLeadDashboardPage extends StatelessWidget {
   const TeamLeadDashboardPage({super.key});
@@ -89,18 +92,18 @@ class TeamLeadDashboardPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final link = loadedState.data.sections[index];
                       final onTap = link.title == 'إدارة الفريق'
-                          ? () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const TeamManagementPage(),
-                                ),
-                              )
+                          ? () => context.pushSwipe(const TeamManagementPage())
+                          : link.title == 'تقييم الأداء'
+                              ? () {/* TODO: فتح صفحة تقارير الفريق عند توفرها */}
                           : link.title == 'إدارة المهام'
-                              ? () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const TeamTasksPage(),
-                                    ),
-                                  )
-                              : link.onTap;
+                              ? () => context.pushSwipe(const TeamTasksPage())
+                          : link.title == 'الاجتماعات'
+                              ? () => context.pushSwipe(const MeetingsPage())
+                          : link.title == 'التقارير'
+                              ? () {/* TODO: فتح صفحة تقارير الفريق عند توفرها */}
+                          : link.title == 'التدريب والتطوير'
+                              ? () {/* TODO: فتح صفحة تقارير الفريق عند توفرها */}
+                          : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,

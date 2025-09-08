@@ -16,6 +16,7 @@ import '../../../Core/Navigation/app_routes.dart';
 import '../../Rewards/rewards_page.dart';
 import '../../../Core/Motion/swipe_transitions.dart';
 import '_widgets/manager_skeleton.dart';
+import '../../Meetings/meetings_page.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -96,13 +97,15 @@ class ManagerDashboardPage extends StatelessWidget {
                           ? () => context.pushSwipe(const EmployeesPage())
                           : link.title == 'إدارة الرواتب'
                               ? () => context.goPayrollAdmin()
-                              : link.title == 'تقييم الأداء'
-                                  ? () => context.goPerf360()
-                                  : link.title == 'تقارير الحضور'
-                                      ? () => context.pushSwipe(const AttendanceListPage())
-                                      : link.title == 'إدارة المكافآت'
-                                          ? () => context.pushSwipe(const RewardsPage())
-                                          : link.onTap;
+                          : link.title == 'تقييم الأداء'
+                              ? () => context.goPerf360()
+                          : link.title == 'تقارير الحضور'
+                              ? () => context.pushSwipe(const AttendanceListPage())
+                          : link.title == 'إدارة المكافآت'
+                              ? () => context.pushSwipe(const RewardsPage())
+                          : link.title == 'الاجتماعات'
+                              ? () => context.pushSwipe(const MeetingsPage())
+                          : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,
