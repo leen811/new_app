@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../Data/Models/team_lead_models.dart';
-import '../../../Common/press_fx.dart';
 
 /// بلاطة قسم في لوحة قائد الفريق
 class TlSectionTile extends StatelessWidget {
@@ -23,19 +22,22 @@ class TlSectionTile extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: GestureDetector(
-        onTap: link.onTap ?? () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('قريبًا'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: link.onTap ?? () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('قريبًا'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
                 // سهم التنقل
                 const Icon(
                   Icons.chevron_left,
@@ -94,10 +96,11 @@ class TlSectionTile extends StatelessWidget {
                     size: 24,
                   ),
                 ),
-            ],
+              ],
+            ),
           ),
         ),
-      ).withPressFX(),
+      ),
     );
   }
 }
