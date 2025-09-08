@@ -160,6 +160,18 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'إدارة الشركات',
             theme: theme,
+            builder: (context, child) {
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  final focus = FocusScope.of(context);
+                  if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
+                    focus.unfocus();
+                  }
+                },
+                child: child,
+              );
+            },
             routerConfig: _router,
             locale: const Locale('ar'),
             supportedLocales: const [Locale('ar'), Locale('en')],

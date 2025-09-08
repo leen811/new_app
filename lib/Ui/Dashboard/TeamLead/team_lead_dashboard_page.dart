@@ -10,6 +10,7 @@ import '_widgets/tl_section_tile.dart';
 import '_widgets/tl_team_performance.dart';
 import '../../Common/press_fx.dart';
 import '../../TeamLeader/team_management_page.dart';
+import '../../TeamLeader/Tasks/team_tasks_page.dart';
 import '../../../Data/Models/team_lead_models.dart';
 
 class TeamLeadDashboardPage extends StatelessWidget {
@@ -93,7 +94,13 @@ class TeamLeadDashboardPage extends StatelessWidget {
                                   builder: (_) => const TeamManagementPage(),
                                 ),
                               )
-                          : link.onTap;
+                          : link.title == 'إدارة المهام'
+                              ? () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const TeamTasksPage(),
+                                    ),
+                                  )
+                              : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,
                         subtitle: link.subtitle,
