@@ -27,6 +27,8 @@ import 'Data/Repositories/settings_repository.dart';
 import 'Data/Repositories/meetings_repository.dart';
 import 'Bloc/attendance/attendance_bloc.dart';
 import 'Bloc/attendance/attendance_event.dart';
+import 'Bloc/locale/locale_cubit.dart';
+import 'l10n/l10n.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -101,8 +103,8 @@ class _MyAppState extends State<MyApp> {
       ),
     );
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
+    return BlocProvider(
+      create: (_) => LocaleCubit()..loadInitial(),
       child: MultiRepositoryProvider(
         providers: [
           RepositoryProvider<IAuthRepository>.value(value: _authRepository),
@@ -160,30 +162,35 @@ class _MyAppState extends State<MyApp> {
               },
             ),
           ],
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'إدارة الشركات',
-            theme: theme,
-            builder: (context, child) {
-              return GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  final focus = FocusScope.of(context);
-                  if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
-                    focus.unfocus();
-                  }
+          child: BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                onGenerateTitle: (ctx) => S.of(ctx).app_app_title,
+                theme: theme,
+                builder: (context, child) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      final focus = FocusScope.of(context);
+                      if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
+                        focus.unfocus();
+                      }
+                    },
+                    child: child,
+                  );
                 },
-                child: child,
+                routerConfig: _router,
+                locale: locale,
+                supportedLocales: const [Locale('ar'), Locale('en')],
+                localizationsDelegates: [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
               );
             },
-            routerConfig: _router,
-            locale: const Locale('ar'),
-            supportedLocales: const [Locale('ar'), Locale('en')],
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
           ),
         ),
       ),

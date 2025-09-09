@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../l10n/l10n.dart';
 
 class TopActionsRow extends StatelessWidget {
   final String monthLabel;
@@ -15,6 +16,7 @@ class TopActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Row(
@@ -26,7 +28,7 @@ class TopActionsRow extends StatelessWidget {
               onPressed: onExport,
               icon: const Icon(Icons.file_download_outlined, size: 18),
               label: Text(
-                'تصدير كشف الراتب',
+                s.profile_payroll_top_export,
                 style: GoogleFonts.cairo(fontSize: 14),
               ),
               style: OutlinedButton.styleFrom(
@@ -78,6 +80,7 @@ class TopActionsRow extends StatelessWidget {
   }
 
   void _showMonthYearPicker(BuildContext context) {
+    final s = S.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -86,7 +89,7 @@ class TopActionsRow extends StatelessWidget {
         
         return AlertDialog(
           title: Text(
-            'اختر الشهر والسنة',
+            s.profile_payroll_dialog_pick_month_title,
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -102,7 +105,7 @@ class TopActionsRow extends StatelessWidget {
                   DropdownButtonFormField<int>(
                     value: selectedMonth,
                     decoration: InputDecoration(
-                      labelText: 'الشهر',
+                      labelText: s.profile_payroll_field_month_label,
                       labelStyle: GoogleFonts.cairo(),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -143,7 +146,7 @@ class TopActionsRow extends StatelessWidget {
                   DropdownButtonFormField<int>(
                     value: selectedYear,
                     decoration: InputDecoration(
-                      labelText: 'السنة',
+                      labelText: s.profile_payroll_field_year_label,
                       labelStyle: GoogleFonts.cairo(),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -175,7 +178,7 @@ class TopActionsRow extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'إلغاء',
+                s.common_cancel,
                 style: GoogleFonts.cairo(),
               ),
             ),
@@ -192,7 +195,7 @@ class TopActionsRow extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'تأكيد',
+                s.common_confirm,
                 style: GoogleFonts.cairo(),
               ),
             ),

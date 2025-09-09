@@ -15,6 +15,7 @@ import 'widgets/section_tile.dart';
 import '../../Core/Navigation/app_routes.dart';
 import '../Common/coming_soon/coming_soon.dart';
 import '../Common/press_fx.dart';
+import '../../l10n/l10n.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -56,6 +57,7 @@ class _Body extends StatelessWidget {
   const _Body();
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -65,12 +67,12 @@ class _Body extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         title: Column(
-          children: const [
-            Text('الملف الشخصي', style: TextStyle(color: Colors.black)),
-            SizedBox(height: 2),
+          children: [
+            Text(s.profile_app_bar_title, style: const TextStyle(color: Colors.black)),
+            const SizedBox(height: 2),
             Text(
-              'إدارة ملفك الشخصي والإعدادات',
-              style: TextStyle(color: Color(0xFF667085), fontSize: 12),
+              s.profile_app_bar_subtitle,
+              style: const TextStyle(color: Color(0xFF667085), fontSize: 12),
             ),
           ],
         ),
@@ -87,7 +89,7 @@ class _Body extends StatelessWidget {
           if (state is ProfileError) {
             return _ProfileErrorView(message: state.message);
           }
-          final s = state as ProfileSuccess;
+          final success = state as ProfileSuccess;
           return NotificationListener<ScrollNotification>(
             onNotification: (n) {
               if (n is ScrollUpdateNotification) {
@@ -101,107 +103,107 @@ class _Body extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 const SizedBox(height: 12),
-                GradientHeader(user: s.user),
+                GradientHeader(user: success.user),
                 const SizedBox(height: 12),
-                PerformanceCard(perf: s.perf),
+                PerformanceCard(perf: success.perf),
                 const SizedBox(height: 12),
                 SectionGroup(
-                  title: 'الملف الشخصي',
+                  title: s.profile_section_profile_title,
                   tiles: [
                     SectionTile(
-                      title: 'المعلومات الشخصية',
-                      subtitle: 'عرض وتحديث بياناتك الشخصية',
+                      title: s.profile_section_profile_personal_info_title,
+                      subtitle: s.profile_section_profile_personal_info_subtitle,
                       trailingIcon: Icons.person_outline,
                       onTap: () => context.goProfilePersonalInfo(),
                     ),
                   ],
                 ),
                 SectionGroup(
-                  title: 'الذكاء الاصطناعي',
+                  title: s.profile_section_ai_title,
                   tiles: [
                     SectionTile(
-                      title: 'المساعد الذكي',
-                      subtitle: 'مساعد ذكي شخصي لتحسين أدائك',
+                      title: s.profile_section_ai_assistant_title,
+                      subtitle: s.profile_section_ai_assistant_subtitle,
                       trailingIcon: Icons.smart_toy_outlined,
                       onTap: () => context.goAssistant(),
                     ),
                     SectionTile(
-                      title: 'التوأم الرقمي',
-                      subtitle: 'نموذج رقمي متقدم لتحليل أدائك',
+                      title: s.profile_section_ai_digital_twin_title,
+                      subtitle: s.profile_section_ai_digital_twin_subtitle,
                       trailingIcon: Icons.memory_outlined,
                       onTap: () => context.goDigitalTwin(),
                     ),
-                    const SectionTile(
-                      title: 'التحليلات الذكية',
-                      subtitle: 'تحليلات متقدمة بالذكاء الاصطناعي',
+                    SectionTile(
+                      title: s.profile_section_ai_analytics_title,
+                      subtitle: s.profile_section_ai_analytics_subtitle,
                       trailingIcon: Icons.show_chart,
                     ),
                   ],
                 ),
                 SectionGroup(
-                  title: 'التطوير والتعلم',
+                  title: s.profile_section_learning_title,
                   tiles: [
                     SectionTile(
-                      title: 'التدريب الذكي',
-                      subtitle: 'برامج تدريب مخصصة وذكية',
+                      title: s.profile_section_learning_training_title,
+                      subtitle: s.profile_section_learning_training_subtitle,
                       trailingIcon: Icons.school_outlined,
                       onTap: () => context.goSmartTraining(),
                     ),
                     SectionTile(
-                      title: 'تقييم الأداء 360°',
-                      subtitle: 'تقييم شامل من جميع الزوايا',
+                      title: s.profile_section_learning_perf360_title,
+                      subtitle: s.profile_section_learning_perf360_subtitle,
                       trailingIcon: Icons.assessment_outlined,
                       onTap: () => context.goPerf360(),
                     ),
                     SectionTile(
-                      title: 'الإنجازات والشارات',
-                      subtitle: 'جميع إنجازاتك وشاراتك المكتسبة',
+                      title: s.profile_section_learning_achievements_title,
+                      subtitle: s.profile_section_learning_achievements_subtitle,
                       trailingIcon: Icons.emoji_events_outlined,
                       onTap: () => ComingSoon.show(
                         context,
-                        featureName: 'الإنجازات والشارات',
+                        featureName: s.profile_section_learning_achievements_title,
                         icon: Icons.emoji_events_rounded,
                       ),
                     ),
                   ],
                 ),
                 SectionGroup(
-                  title: 'الشؤون المالية',
+                  title: s.profile_section_financial_title,
                   tiles: [
                     SectionTile(
-                      title: 'خصومات الراتب والأسباب',
-                      subtitle: 'عرض خصومات راتبك والأسباب التفصيلية',
+                      title: s.profile_section_financial_payroll_deductions_title,
+                      subtitle: s.profile_section_financial_payroll_deductions_subtitle,
                       trailingIcon: Icons.receipt_long_outlined,
                       onTap: () => context.goPayrollDeductions(),
                     ),
                   ],
                 ),
                 SectionGroup(
-                  title: 'التواصل والإشعارات',
+                  title: s.profile_section_notifications_title,
                   tiles: [
                     SectionTile(
-                      title: 'إشعارات البريد الإلكتروني',
-                      subtitle: 'إدارة ومتابعة بريدك مع إمكانية الرد',
+                      title: s.profile_section_notifications_email_title,
+                      subtitle: s.profile_section_notifications_email_subtitle,
                       trailingIcon: Icons.mail_outline,
                       onTap: () => ComingSoon.show(
                         context,
-                        featureName: 'إشعارات البريد الإلكتروني',
+                        featureName: s.profile_section_notifications_email_title,
                         icon: Icons.mark_email_unread_rounded,
                       ),
                     ),
-                    const SectionTile(
-                      title: 'الإشعارات الذكية',
-                      subtitle: 'إدارة إعدادات الإشعارات المخصصة',
+                    SectionTile(
+                      title: s.profile_section_notifications_smart_title,
+                      subtitle: s.profile_section_notifications_smart_subtitle,
                       trailingIcon: Icons.notifications_none,
                     ),
                   ],
                 ),
                 SectionGroup(
-                  title: 'الإعدادات والتفضيلات',
+                  title: s.profile_section_settings_title,
                   tiles: [
                     SectionTile(
-                      title: 'الإعدادات العامة',
-                      subtitle: 'إعدادات التطبيق وتفضيلاتك الشخصية',
+                      title: s.profile_section_settings_general_title,
+                      subtitle: s.profile_section_settings_general_subtitle,
                       trailingIcon: Icons.settings_outlined,
                       onTap: () => context.goSettingsGeneral(),
                     ),
@@ -227,17 +229,17 @@ class _Body extends StatelessWidget {
                         vertical: 16,
                       ),
                       child: Row(
-                        children: const [
+                        children: [
                           Expanded(
                             child: Text(
-                              'تسجيل الخروج',
-                              style: TextStyle(
+                              s.profile_logout_label,
+                              style: const TextStyle(
                                 color: Color(0xFFB91C1C),
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
                             color: Color(0xFFB91C1C),
@@ -309,6 +311,7 @@ class _ProfileErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -320,19 +323,19 @@ class _ProfileErrorView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'حدث خطأ',
-            style: TextStyle(
+            s.common_error_title,
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF0F172A),
+              color: Color(0xFF0F172A),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
-              color: const Color(0xFF64748B),
+              color: Color(0xFF64748B),
             ),
             textAlign: TextAlign.center,
           ),
@@ -341,7 +344,7 @@ class _ProfileErrorView extends StatelessWidget {
             onPressed: () {
               context.read<ProfileBloc>().add(ProfileOpened());
             },
-            child: const Text('إعادة المحاولة'),
+            child: Text(s.common_retry),
           ).withPressFX(),
         ],
       ),

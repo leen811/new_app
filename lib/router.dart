@@ -26,6 +26,7 @@ import 'Ui/PayrollAdmin/payroll_admin_page.dart';
 import 'Ui/Meetings/employee_meetings_page.dart';
 import 'Core/Motion/app_motion.dart';
 import 'Core/Navigation/app_routes.dart';
+import 'l10n/l10n.dart';
 
 // تعريف التبويبات الرئيسية (Top-Level)
 bool isTopLevelRoute(String? name) => const {
@@ -99,19 +100,19 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: settingsChangePasswordRoute,
-        pageBuilder: (context, state) => _swipePage(const _PlaceholderPage(title: 'تغيير كلمة المرور')),
+        pageBuilder: (context, state) => _swipePage(_PlaceholderPage(titleBuilder: (ctx) => S.of(ctx).router_change_password_title)),
       ),
       GoRoute(
         path: legalTermsRoute,
-        pageBuilder: (context, state) => _swipePage(const _PlaceholderPage(title: 'اتفاقية الاستخدام')),
+        pageBuilder: (context, state) => _swipePage(_PlaceholderPage(titleBuilder: (ctx) => S.of(ctx).settings_general_nav_tos)),
       ),
       GoRoute(
         path: '/about/tos',
-        pageBuilder: (context, state) => _swipePage(const _PlaceholderPage(title: 'اتفاقية الاستخدام')),
+        pageBuilder: (context, state) => _swipePage(_PlaceholderPage(titleBuilder: (ctx) => S.of(ctx).settings_general_nav_tos)),
       ),
       GoRoute(
         path: '/about/privacy',
-        pageBuilder: (context, state) => _swipePage(const _PlaceholderPage(title: 'سياسة الخصوصية')),
+        pageBuilder: (context, state) => _swipePage(_PlaceholderPage(titleBuilder: (ctx) => S.of(ctx).settings_general_nav_privacy)),
       ),
       GoRoute(
         path: perf360Route,
@@ -196,13 +197,14 @@ CustomTransitionPage _swipePage(Widget child) {
 }
 
 class _PlaceholderPage extends StatelessWidget {
-  const _PlaceholderPage({required this.title});
-  final String title;
+  const _PlaceholderPage({required this.titleBuilder});
+  final String Function(BuildContext) titleBuilder;
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
-      appBar: AppBar(title: Align(alignment: Alignment.centerRight, child: Text(title))),
-      body: const Center(child: Text('قريباً')),
+      appBar: AppBar(title: Align(alignment: Alignment.centerRight, child: Text(titleBuilder(context)))),
+      body: Center(child: Text(s.common_coming_soon)),
     );
   }
 }

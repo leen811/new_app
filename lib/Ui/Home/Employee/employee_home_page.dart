@@ -17,6 +17,7 @@ import '_widgets/quick_action_tile.dart';
 import '_widgets/today_list_section.dart';
 import '_widgets/achievement_item.dart';
 import '../../Common/press_fx.dart';
+import '../../../l10n/l10n.dart';
 
 class EmployeeHomePage extends StatefulWidget {
   const EmployeeHomePage({super.key});
@@ -60,22 +61,19 @@ class _EmployeeHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
-        body: BlocBuilder<EmployeeHomeBloc, EmployeeHomeState>(
-          builder: (context, state) {
-            if (state is EmployeeHomeLoading) {
-              return const _LoadingSkeleton();
-            } else if (state is EmployeeHomeReady) {
-              return _HomeContent(snapshot: state.snapshot);
-            } else if (state is EmployeeHomeError) {
-              return _ErrorView(message: state.message);
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: BlocBuilder<EmployeeHomeBloc, EmployeeHomeState>(
+        builder: (context, state) {
+          if (state is EmployeeHomeLoading) {
+            return const _LoadingSkeleton();
+          } else if (state is EmployeeHomeReady) {
+            return _HomeContent(snapshot: state.snapshot);
+          } else if (state is EmployeeHomeError) {
+            return _ErrorView(message: state.message);
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -94,10 +92,11 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return CustomScrollView(
       slivers: [
         // Greeting Strip
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: GreetingStrip(),
         ),
         
@@ -141,7 +140,7 @@ class _HomeContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'الإجراءات السريعة',
+                  s.home_employee_quick_actions_title,
                   style: GoogleFonts.cairo(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -158,36 +157,36 @@ class _HomeContent extends StatelessWidget {
                   mainAxisSpacing: 12,
                   children: [
                     QuickActionTile(
-                      title: 'اجتماعاتي',
-                      description: 'اليوم والقادمة والمكتملة',
+                      title: s.home_employee_quick_meetings_title,
+                      description: s.home_employee_quick_meetings_subtitle,
                       icon: Icons.video_chat_rounded,
                       iconBackgroundColor: const Color(0xFF60A5FA),
                       onTap: () => context.pushNamed(RoutesConstants.kMyMeetingsRouteName),
                     ),
                     QuickActionTile(
-                      title: 'المهام اليومية',
-                      description: 'مهامك وتحدياتك',
+                      title: s.home_employee_quick_tasks_title,
+                      description: s.home_employee_quick_tasks_subtitle,
                       icon: Icons.track_changes,
                       iconBackgroundColor: const Color(0xFFFB923C),
                       onTap: () => context.go('/?tab=3'),
                     ),
                     QuickActionTile(
-                      title: 'الحضور والانصراف',
-                      description: 'تسجيل الدخول والخروج',
+                      title: s.home_employee_quick_attendance_title,
+                      description: s.home_employee_quick_attendance_subtitle,
                       icon: Icons.schedule,
                       iconBackgroundColor: const Color(0xFF60A5FA),
                       onTap: () => context.pushNamed(RoutesConstants.kAttendanceRouteName),
                     ),
                     QuickActionTile(
-                      title: 'الاستئذان وطلب الإجازات',
-                      description: 'قدّم طلب إجازة أو استئذان جديد',
+                      title: s.home_employee_quick_leaves_title,
+                      description: s.home_employee_quick_leaves_subtitle,
                       icon: Icons.beach_access,
                       iconBackgroundColor: const Color(0xFF34D399),
                       onTap: () => context.pushNamed(RoutesConstants.kLeaveRouteName),
                     ),
                     QuickActionTile(
-                      title: 'متجر المكافآت',
-                      description: 'اشترِ نقاطك',
+                      title: s.home_employee_quick_rewards_title,
+                      description: s.home_employee_quick_rewards_subtitle,
                       icon: Icons.card_giftcard,
                       iconBackgroundColor: const Color(0xFFA78BFA),
                       onTap: () => context.pushNamed(RoutesConstants.kRewardsRouteName),
@@ -223,7 +222,7 @@ class _HomeContent extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'الإنجازات الأخيرة وأوسمتك',
+                      s.home_employee_achievements_title,
                       style: GoogleFonts.cairo(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -348,6 +347,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -359,7 +359,7 @@ class _ErrorView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'حدث خطأ',
+            s.common_error_title,
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -380,7 +380,7 @@ class _ErrorView extends StatelessWidget {
             onPressed: () {
               context.read<EmployeeHomeBloc>().add(const EmployeeHomeLoaded());
             },
-            child: const Text('إعادة المحاولة'),
+            child: Text(s.common_retry),
           ).withPressFX(),
         ],
       ),

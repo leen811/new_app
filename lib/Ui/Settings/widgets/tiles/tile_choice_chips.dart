@@ -9,12 +9,12 @@ class TileChoiceChips extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         IconButton(onPressed: onExpand, icon: const Icon(Icons.unfold_more_rounded)).withPressFX(),
-        Expanded(child: Align(alignment: Alignment.centerRight, child: Text(title, textAlign: TextAlign.right, style: const TextStyle(fontWeight: FontWeight.w700)))),
+        Expanded(child: Align(alignment: Alignment.centerRight, child: Text(title, textAlign: TextAlign.right, style: const TextStyle(fontWeight: FontWeight.w700))))
       ]),
       const SizedBox(height: 6),
       Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.end, children: options.map((opt) {
-        final selected = opt.label == value;
-        return _chip(label: opt.label, icon: opt.icon, selected: selected, onTap: () => onChanged(opt.label));
+        final bool selected = opt.value == value;
+        return _chip(label: opt.label, icon: opt.icon, selected: selected, onTap: () => onChanged(opt.value));
       }).toList()),
     ]);
   }
@@ -42,10 +42,11 @@ class TileChoiceChips extends StatelessWidget {
 }
 
 class _ChoiceOpt {
-  const _ChoiceOpt(this.label, this.icon);
-  final String label; final IconData icon;
+  const _ChoiceOpt(this.label, this.icon, this.value);
+  final String label; final IconData icon; final String value;
 }
 
-List<_ChoiceOpt> choiceOptions(List<Map<String, dynamic>> maps) => maps.map((m) => _ChoiceOpt(m['label'] as String, m['icon'] as IconData)).toList();
+List<_ChoiceOpt> choiceOptions(List<Map<String, dynamic>> maps) =>
+    maps.map((m) => _ChoiceOpt(m['label'] as String, m['icon'] as IconData, (m['value'] as String?) ?? (m['label'] as String))).toList();
 
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../../Data/Models/payroll_models.dart';
+import '../../../../l10n/l10n.dart';
 
 class HistoryItemCard extends StatelessWidget {
   final PayrollHistoryEntry entry;
@@ -13,21 +14,17 @@ class HistoryItemCard extends StatelessWidget {
     this.onViewDetails,
   });
 
-  String _fmtAr(num v) => NumberFormat.decimalPattern('ar').format(v);
-  String _fmtDeduction(num v) => 'ريال ${_fmtAr(v)}-';
-  String _fmtAmount(num v) => 'ريال ${_fmtAr(v)}';
-
-  String _monthName(int m) {
-    const months = [
-      'يناير','فبراير','مارس','أبريل','مايو','يونيو',
-      'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'
-    ];
-    return months[m - 1];
+  String _fmtAr(BuildContext context, num v) {
+    final s = S.of(context);
+    return NumberFormat.decimalPattern(s.localeName).format(v);
   }
 
   @override
   Widget build(BuildContext context) {
-    final ratioPct = (entry.netRatio * 100).round(); // 81 مثلاً
+    final s = S.of(context);
+    final ratioPct = (entry.netRatio * 100).round();
+    final locale = s.localeName;
+    final monthLabel = DateFormat.MMMM(locale).format(DateTime(entry.year, entry.month, 1));
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -57,7 +54,7 @@ class HistoryItemCard extends StatelessWidget {
                     onPressed: onViewDetails,
                     icon: const Icon(Icons.visibility_outlined, size: 16),
                     label: Text(
-                      'عرض التفاصيل', 
+                      s.profile_payroll_history_view_details, 
                       style: GoogleFonts.cairo(
                         fontSize: 12, 
                         fontWeight: FontWeight.w600
@@ -72,7 +69,7 @@ class HistoryItemCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    '${_monthName(entry.month)} ${entry.year}',
+                    '$monthLabel ${entry.year}',
                     style: GoogleFonts.cairo(
                       fontSize: 13, 
                       fontWeight: FontWeight.w700, 
@@ -87,13 +84,13 @@ class HistoryItemCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _kv('الراتب الإجمالي', _fmtAmount(entry.grossSalary), const Color(0xFF0F172A)),
+                    child: _kv(context, s.profile_payroll_history_gross_salary, '${s.currency_sar} ${_fmtAr(context, entry.grossSalary)}', const Color(0xFF0F172A)),
                   ),
                   Expanded(
-                    child: _kv('الخصومات', _fmtDeduction(entry.totalDeductions), const Color(0xFFEF4444)),
+                    child: _kv(context, s.profile_payroll_history_deductions, '${s.currency_sar} ${_fmtAr(context, entry.totalDeductions)}-', const Color(0xFFEF4444)),
                   ),
                   Expanded(
-                    child: _kv('صافي الراتب', _fmtAmount(entry.netSalary), const Color(0xFF16A34A)),
+                    child: _kv(context, s.profile_payroll_history_net_salary, '${s.currency_sar} ${_fmtAr(context, entry.netSalary)}', const Color(0xFF16A34A)),
                   ),
                 ],
               ),
@@ -102,7 +99,7 @@ class HistoryItemCard extends StatelessWidget {
               // شريط النسبة
               Center(
                 child: Text(
-                  'نسبة صافي الراتب: %$ratioPct', 
+                  s.profile_payroll_history_net_ratio(ratioPct), 
                   style: GoogleFonts.cairo(
                     fontSize: 12, 
                     color: const Color(0xFF6B7280)
@@ -118,7 +115,7 @@ class HistoryItemCard extends StatelessWidget {
     );
   }
 
-  Widget _kv(String k, String v, Color vColor) {
+  Widget _kv(BuildContext context, String k, String v, Color vColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
