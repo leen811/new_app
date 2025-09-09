@@ -19,6 +19,7 @@ import '../../Leaves/leaves_admin_page.dart';
 import '../../../Core/Motion/swipe_transitions.dart';
 import '_widgets/hr_skeleton.dart';
 import '../../Meetings/meetings_page.dart';
+// removed duplicate import
 
 /// صفحة لوحة تحكم الموارد البشرية
 class HrDashboardPage extends StatelessWidget {
@@ -110,6 +111,8 @@ class HrDashboardPage extends StatelessWidget {
                               ? () => context.pushSwipe(const LeavesAdminPage())
                           : link.title == 'الاجتماعات'
                               ? () => context.pushSwipe(const MeetingsPage())
+                          : link.title == 'تحليلات Like for Like'
+                              ? () => GoRouter.of(context).pushNamed(RoutesConstants.kL4LRouteName)
                           : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,

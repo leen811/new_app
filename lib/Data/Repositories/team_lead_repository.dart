@@ -78,6 +78,12 @@ class MockTeamLeadRepository implements TeamLeadRepository {
         icon: Icons.psychology_rounded,
         color: const Color(0xFF16A34A),
       ),
+      SectionLink(
+        title: 'تحليلات Like for Like',
+        subtitle: 'KPIs & Visuals للمقارنة العادلة',
+        icon: Icons.insights_rounded,
+        color: const Color(0xFF2563EB),
+      ),
     ];
     
     final perf = [

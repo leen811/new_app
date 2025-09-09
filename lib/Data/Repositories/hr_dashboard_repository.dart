@@ -83,6 +83,12 @@ class MockHrDashboardRepository implements HrDashboardRepository {
         icon: Icons.brightness_high_rounded,
         color: const Color(0xFF2563EB),
       ),
+      SectionLink(
+        title: 'تحليلات Like for Like',
+        subtitle: 'KPIs & Visuals للمقارنة العادلة',
+        icon: Icons.insights_rounded,
+        color: const Color(0xFF2563EB),
+      ),
     ];
     
     return HrDashboardData(kpis: kpis, sections: sections);

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../Data/Models/team_lead_models.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../Presentation/Common/navigation/routes_constants.dart';
 
 /// بلاطة قسم في لوحة قائد الفريق
 class TlSectionTile extends StatelessWidget {
@@ -33,6 +35,11 @@ class TlSectionTile extends StatelessWidget {
                 duration: Duration(seconds: 2),
               ),
             );
+          },
+          onLongPress: () {
+            if (link.title == 'تحليلات Like for Like') {
+              GoRouter.of(context).pushNamed(RoutesConstants.kL4LRouteName);
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16),

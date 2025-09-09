@@ -293,5 +293,24 @@
   "profile_payroll_history_net_salary": "صافي الراتب",
   "@profile_payroll_history_net_salary": {"description": "وسم السجل: صافي الراتب"},
   "profile_payroll_history_net_ratio": "نسبة صافي الراتب: %{ratio}",
-  "@profile_payroll_history_net_ratio": {"description": "وسم السجل: نسبة صافي الراتب", "placeholders": {"ratio": {"type": "num"}}}
+  "@profile_payroll_history_net_ratio": {"description": "وسم السجل: نسبة صافي الراتب", "placeholders": {"ratio": {"type": "num"}}},
+
+  "l4l_title": "Like for Like (KPIs & Visuals)",
+  "@l4l_title": {"description": "عنوان صفحة L4L"},
+  "l4l_period_day": "اليوم",
+  "@l4l_period_day": {"description": "فترة L4L: اليوم"},
+  "l4l_period_week": "هذا الأسبوع",
+  "@l4l_period_week": {"description": "فترة L4L: الأسبوع"},
+  "l4l_period_month": "هذا الشهر",
+  "@l4l_period_month": {"description": "فترة L4L: الشهر"},
+  "l4l_period_year": "هذه السنة",
+  "@l4l_period_year": {"description": "فترة L4L: السنة"},
+  "l4l_compare_day_vs_ly": "اليوم ↔ نفس يوم الأسبوع من السنة الماضية",
+  "@l4l_compare_day_vs_ly": {"description": "مقارنة L4L: اليوم مقابل السنة الماضية"},
+  "l4l_compare_week_vs_prev": "الأسبوع ↔ الأسبوع السابق",
+  "@l4l_compare_week_vs_prev": {"description": "مقارنة L4L: الأسبوع مقابل السابق"},
+  "l4l_compare_month_vs_prev": "الشهر ↔ الشهر السابق",
+  "@l4l_compare_month_vs_prev": {"description": "مقارنة L4L: الشهر مقابل السابق"},
+  "l4l_compare_year_vs_ly": "السنة ↔ السنة الماضية",
+  "@l4l_compare_year_vs_ly": {"description": "مقارنة L4L: السنة مقابل الماضية"}
 }
