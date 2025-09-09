@@ -936,6 +936,60 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Net salary ratio: %{ratio}'**
   String profile_payroll_history_net_ratio(num ratio);
+
+  /// L4L: page title
+  ///
+  /// In en, this message translates to:
+  /// **'Like for Like (KPIs & Visuals)'**
+  String get l4l_title;
+
+  /// L4L period: day
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get l4l_period_day;
+
+  /// L4L period: week
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get l4l_period_week;
+
+  /// L4L period: month
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get l4l_period_month;
+
+  /// L4L period: year
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get l4l_period_year;
+
+  /// L4L compare: day vs last year
+  ///
+  /// In en, this message translates to:
+  /// **'Today vs same weekday last year'**
+  String get l4l_compare_day_vs_ly;
+
+  /// L4L compare: week vs previous
+  ///
+  /// In en, this message translates to:
+  /// **'Week vs previous week'**
+  String get l4l_compare_week_vs_prev;
+
+  /// L4L compare: month vs previous
+  ///
+  /// In en, this message translates to:
+  /// **'Month vs previous month'**
+  String get l4l_compare_month_vs_prev;
+
+  /// L4L compare: year vs last year
+  ///
+  /// In en, this message translates to:
+  /// **'Year vs last year'**
+  String get l4l_compare_year_vs_ly;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

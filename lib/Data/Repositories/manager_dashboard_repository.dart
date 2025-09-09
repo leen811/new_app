@@ -79,6 +79,12 @@ class MockManagerDashboardRepository implements IManagerDashboardRepository {
           icon: Icons.mail_rounded,
           color: Color(0xFF6366F1), // بنفسجي مزرق
         ),
+        SectionLink(
+          title: 'تحليلات Like for Like',
+          subtitle: 'KPIs & Visuals للمقارنة العادلة',
+          icon: Icons.insights_rounded,
+          color: Color(0xFF2563EB),
+        ),
       ],
       activities: [
         ActivityItem(

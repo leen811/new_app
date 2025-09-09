@@ -23,6 +23,10 @@ class RoutesConstants {
   static const String kHrDashboardRouteName = 'hr-dashboard';
   static const String kManagerDashboardRouteName = 'manager-dashboard';
   static const String kTeamLeadDashboardRouteName = 'team-lead-dashboard';
+  static const String kL4LRouteName = 'l4l-analytics';
+
+  // عناوين العرض
+  static const String kL4LDisplayTitle = 'Like for Like (KPIs & Visuals)';
   
   // مسارات أخرى
   static const String kLoginRoute = '/login';

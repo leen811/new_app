@@ -22,6 +22,7 @@ import 'Ui/RewardsStore/rewards_store_page.dart';
 import 'Ui/Dashboard/HR/hr_dashboard_page.dart';
 import 'Ui/Dashboard/Manager/manager_dashboard_page.dart';
 import 'Ui/Dashboard/TeamLead/team_lead_dashboard_page.dart';
+import 'Ui/Analytics/L4L/l4l_dashboard_page.dart';
 import 'Ui/PayrollAdmin/payroll_admin_page.dart';
 import 'Ui/Meetings/employee_meetings_page.dart';
 import 'Core/Motion/app_motion.dart';
@@ -138,6 +139,11 @@ GoRouter buildRouter() {
         path: '/team-lead/dashboard',
         name: 'team-lead-dashboard',
         pageBuilder: (context, state) => _swipePage(const TeamLeadDashboardPage()),
+      ),
+      GoRoute(
+        path: '/analytics/l4l',
+        name: RoutesConstants.kL4LRouteName,
+        pageBuilder: (context, state) => _swipePage(const L4LDashboardPage()),
       ),
       GoRoute(
         path: assistantRoute,

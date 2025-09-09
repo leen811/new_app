@@ -456,4 +456,32 @@ class SAr extends S {
   String profile_payroll_history_net_ratio(num ratio) {
     return 'نسبة صافي الراتب: %$ratio';
   }
+
+  @override
+  String get l4l_title => 'Like for Like (KPIs & Visuals)';
+
+  @override
+  String get l4l_period_day => 'اليوم';
+
+  @override
+  String get l4l_period_week => 'هذا الأسبوع';
+
+  @override
+  String get l4l_period_month => 'هذا الشهر';
+
+  @override
+  String get l4l_period_year => 'هذه السنة';
+
+  @override
+  String get l4l_compare_day_vs_ly =>
+      'اليوم ↔ نفس يوم الأسبوع من السنة الماضية';
+
+  @override
+  String get l4l_compare_week_vs_prev => 'الأسبوع ↔ الأسبوع السابق';
+
+  @override
+  String get l4l_compare_month_vs_prev => 'الشهر ↔ الشهر السابق';
+
+  @override
+  String get l4l_compare_year_vs_ly => 'السنة ↔ السنة الماضية';
 }

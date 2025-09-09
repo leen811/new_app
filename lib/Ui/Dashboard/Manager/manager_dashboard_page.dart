@@ -17,6 +17,8 @@ import '../../Rewards/rewards_page.dart';
 import '../../../Core/Motion/swipe_transitions.dart';
 import '_widgets/manager_skeleton.dart';
 import '../../Meetings/meetings_page.dart';
+import '../../../Presentation/Common/navigation/routes_constants.dart';
+import 'package:go_router/go_router.dart';
 
 /// صفحة لوحة تحكم الإدارة
 class ManagerDashboardPage extends StatelessWidget {
@@ -105,6 +107,8 @@ class ManagerDashboardPage extends StatelessWidget {
                               ? () => context.pushSwipe(const RewardsPage())
                           : link.title == 'الاجتماعات'
                               ? () => context.pushSwipe(const MeetingsPage())
+                          : link.title == 'تحليلات Like for Like'
+                              ? () => GoRouter.of(context).pushNamed(RoutesConstants.kL4LRouteName)
                           : link.onTap;
                       final overridden = SectionLink(
                         title: link.title,

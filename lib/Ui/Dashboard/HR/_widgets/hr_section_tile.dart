@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../Data/Models/hr_dashboard_models.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../Presentation/Common/navigation/routes_constants.dart';
 import '../../../Common/press_fx.dart';
 
 /// بلاطة قسم في لوحة HR
@@ -33,6 +35,11 @@ class HrSectionTile extends StatelessWidget {
                 duration: Duration(seconds: 2),
               ),
             );
+          },
+          onLongPress: () {
+            if (link.title == 'تحليلات Like for Like') {
+              GoRouter.of(context).pushNamed(RoutesConstants.kL4LRouteName);
+            }
           },
           borderRadius: BorderRadius.circular(16),
           child: Padding(

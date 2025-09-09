@@ -156,28 +156,22 @@ class _HomeContent extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    QuickActionTile(
-                      title: s.home_employee_quick_meetings_title,
-                      description: s.home_employee_quick_meetings_subtitle,
-                      icon: Icons.video_chat_rounded,
-                      iconBackgroundColor: const Color(0xFF60A5FA),
-                      onTap: () => context.pushNamed(RoutesConstants.kMyMeetingsRouteName),
-                    ),
-                    QuickActionTile(
-                      title: s.home_employee_quick_tasks_title,
-                      description: s.home_employee_quick_tasks_subtitle,
-                      icon: Icons.track_changes,
-                      iconBackgroundColor: const Color(0xFFFB923C),
-                      onTap: () => context.go('/?tab=3'),
-                    ),
-                    QuickActionTile(
+                      QuickActionTile(
                       title: s.home_employee_quick_attendance_title,
                       description: s.home_employee_quick_attendance_subtitle,
                       icon: Icons.schedule,
                       iconBackgroundColor: const Color(0xFF60A5FA),
                       onTap: () => context.pushNamed(RoutesConstants.kAttendanceRouteName),
                     ),
-                    QuickActionTile(
+                           QuickActionTile(
+                      title: s.home_employee_quick_tasks_title,
+                      description: s.home_employee_quick_tasks_subtitle,
+                      icon: Icons.track_changes,
+                      iconBackgroundColor: const Color(0xFFFB923C),
+                      onTap: () => context.go('/?tab=3'),
+                    ),
+                  
+                         QuickActionTile(
                       title: s.home_employee_quick_leaves_title,
                       description: s.home_employee_quick_leaves_subtitle,
                       icon: Icons.beach_access,
@@ -185,10 +179,20 @@ class _HomeContent extends StatelessWidget {
                       onTap: () => context.pushNamed(RoutesConstants.kLeaveRouteName),
                     ),
                     QuickActionTile(
+                      title: s.home_employee_quick_meetings_title,
+                      description: s.home_employee_quick_meetings_subtitle,
+                      icon: Icons.video_chat_rounded,
+                      iconBackgroundColor: const Color(0xFFA78BFA),
+                      onTap: () => context.pushNamed(RoutesConstants.kMyMeetingsRouteName),
+                    ),
+                
+                  
+               
+                    QuickActionTile(
                       title: s.home_employee_quick_rewards_title,
                       description: s.home_employee_quick_rewards_subtitle,
                       icon: Icons.card_giftcard,
-                      iconBackgroundColor: const Color(0xFFA78BFA),
+                      iconBackgroundColor: const Color.fromARGB(255, 246, 186, 21),
                       onTap: () => context.pushNamed(RoutesConstants.kRewardsRouteName),
                     ),
                   ],

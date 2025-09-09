@@ -15,6 +15,8 @@ import '../../TeamLeader/Tasks/team_tasks_page.dart';
 import '../../../Data/Models/team_lead_models.dart';
 import '../../../Core/Motion/swipe_transitions.dart';
 import '../../../l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import '../../../Presentation/Common/navigation/routes_constants.dart';
 
 class TeamLeadDashboardPage extends StatelessWidget {
   const TeamLeadDashboardPage({super.key});
@@ -102,6 +104,8 @@ class TeamLeadDashboardPage extends StatelessWidget {
                             ? () {/* TODO: فتح صفحة تقارير الفريق عند توفرها */}
                         : link.title == 'التدريب والتطوير'
                             ? () {/* TODO: فتح صفحة تقارير الفريق عند توفرها */}
+                        : link.title == 'تحليلات Like for Like'
+                            ? () => GoRouter.of(context).pushNamed(RoutesConstants.kL4LRouteName)
                         : link.onTap;
                     final overridden = SectionLink(
                       title: link.title,

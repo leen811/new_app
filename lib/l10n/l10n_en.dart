@@ -463,4 +463,31 @@ class SEn extends S {
   String profile_payroll_history_net_ratio(num ratio) {
     return 'Net salary ratio: %$ratio';
   }
+
+  @override
+  String get l4l_title => 'Like for Like (KPIs & Visuals)';
+
+  @override
+  String get l4l_period_day => 'Today';
+
+  @override
+  String get l4l_period_week => 'This week';
+
+  @override
+  String get l4l_period_month => 'This month';
+
+  @override
+  String get l4l_period_year => 'This year';
+
+  @override
+  String get l4l_compare_day_vs_ly => 'Today vs same weekday last year';
+
+  @override
+  String get l4l_compare_week_vs_prev => 'Week vs previous week';
+
+  @override
+  String get l4l_compare_month_vs_prev => 'Month vs previous month';
+
+  @override
+  String get l4l_compare_year_vs_ly => 'Year vs last year';
 }

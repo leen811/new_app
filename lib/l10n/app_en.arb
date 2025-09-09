@@ -293,5 +293,24 @@
   "profile_payroll_history_net_salary": "Net salary",
   "@profile_payroll_history_net_salary": {"description": "History label: net salary"},
   "profile_payroll_history_net_ratio": "Net salary ratio: %{ratio}",
-  "@profile_payroll_history_net_ratio": {"description": "History label: net ratio", "placeholders": {"ratio": {"type": "num"}}}
+  "@profile_payroll_history_net_ratio": {"description": "History label: net ratio", "placeholders": {"ratio": {"type": "num"}}},
+
+  "l4l_title": "Like for Like (KPIs & Visuals)",
+  "@l4l_title": {"description": "L4L: page title"},
+  "l4l_period_day": "Today",
+  "@l4l_period_day": {"description": "L4L period: day"},
+  "l4l_period_week": "This week",
+  "@l4l_period_week": {"description": "L4L period: week"},
+  "l4l_period_month": "This month",
+  "@l4l_period_month": {"description": "L4L period: month"},
+  "l4l_period_year": "This year",
+  "@l4l_period_year": {"description": "L4L period: year"},
+  "l4l_compare_day_vs_ly": "Today vs same weekday last year",
+  "@l4l_compare_day_vs_ly": {"description": "L4L compare: day vs last year"},
+  "l4l_compare_week_vs_prev": "Week vs previous week",
+  "@l4l_compare_week_vs_prev": {"description": "L4L compare: week vs previous"},
+  "l4l_compare_month_vs_prev": "Month vs previous month",
+  "@l4l_compare_month_vs_prev": {"description": "L4L compare: month vs previous"},
+  "l4l_compare_year_vs_ly": "Year vs last year",
+  "@l4l_compare_year_vs_ly": {"description": "L4L compare: year vs last year"}
 }
