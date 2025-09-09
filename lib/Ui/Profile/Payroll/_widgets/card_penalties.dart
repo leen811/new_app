@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:new_app/Data/Models/payroll_models.dart';
+import '../../../../l10n/l10n.dart';
 
 class CardPenalties extends StatelessWidget {
   final List<DeductionItem> items;
@@ -15,7 +16,8 @@ class CardPenalties extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberFormat = NumberFormat.decimalPattern("ar");
+    final s = S.of(context);
+    final numberFormat = NumberFormat.decimalPattern(s.localeName);
     
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -41,7 +43,7 @@ class CardPenalties extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'خصومات الجزاءات',
+                  s.profile_payroll_penalties_title,
                   style: GoogleFonts.cairo(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -64,7 +66,7 @@ class CardPenalties extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'ريال ${numberFormat.format(item.amount)}',
+                    '${s.currency_sar} ${numberFormat.format(item.amount)}',
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,

@@ -13,6 +13,8 @@ import 'widgets/tiles/tile_choice_chips.dart';
 import 'widgets/pickers/language_picker_sheet.dart';
 import 'widgets/pickers/theme_picker_sheet.dart';
 import '../Common/press_fx.dart';
+import '../../Bloc/locale/locale_cubit.dart';
+import '../../l10n/l10n.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
   const GeneralSettingsPage({super.key});
@@ -30,12 +32,13 @@ class _Body extends StatelessWidget {
   const _Body();
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Align(
+        title: Align(
           alignment: Alignment.centerRight,
-          child: Text('الإعدادات العامة', textAlign: TextAlign.right),
+          child: Text(s.settings_general_app_bar_title, textAlign: TextAlign.right),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -48,9 +51,9 @@ class _Body extends StatelessWidget {
           listener: (context, state) {
             if (state.saveOk) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم حفظ التغييرات'),
-                  backgroundColor: Color(0xFF16A34A),
+                SnackBar(
+                  content: Text(s.settings_general_snackbar_saved_success),
+                  backgroundColor: const Color(0xFF16A34A),
                 ),
               );
             }
@@ -80,8 +83,10 @@ class _Body extends StatelessWidget {
             }
             final m = state.model!;
             final bloc = context.read<SettingsBloc>();
+            final localeCubit = context.read<LocaleCubit>();
+            String currentCode = m.language == s.settings_general_language_english ? 'en' : 'ar';
             return Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: Directionality.of(context),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 keyboardDismissBehavior:
@@ -93,33 +98,45 @@ class _Body extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SectionHeader(title: 'المظهر واللغة'),
+                          SectionHeader(title: s.settings_general_section_appearance_language),
                           const SizedBox(height: 12),
                           TileChoiceChips(
-                            title: 'اللغة',
-                            value: m.language,
-                            options: choiceOptions(const [
-                              {'label': 'العربية', 'icon': Icons.language},
-                              {'label': 'English', 'icon': Icons.translate},
+                            title: s.settings_general_label_language,
+                            value: m.language, // display label stored in model
+                            options: choiceOptions([
+                              {'label': s.settings_general_language_arabic, 'icon': Icons.language},
+                              {'label': s.settings_general_language_english, 'icon': Icons.translate},
                             ]),
-                            onChanged: (v) {
-                              bloc.add(OptionChanged('language', v));
+                            onChanged: (display) async {
+                              bloc.add(OptionChanged('language', display));
                               bloc.add(SaveRequested());
+                              final code = display == s.settings_general_language_english ? 'en' : 'ar';
+                              if (code == 'ar') {
+                                await localeCubit.setArabic();
+                              } else {
+                                await localeCubit.setEnglish();
+                              }
                             },
                             onExpand: () async {
-                              final v = await showLanguagePickerSheet(
+                              final code = await showLanguagePickerSheet(
                                 context,
-                                current: m.language,
+                                current: currentCode,
                               );
-                              if (v != null) {
-                                bloc.add(OptionChanged('language', v));
+                              if (code != null) {
+                                final display = code == 'en' ? s.settings_general_language_english : s.settings_general_language_arabic;
+                                bloc.add(OptionChanged('language', display));
                                 bloc.add(SaveRequested());
+                                if (code == 'ar') {
+                                  await localeCubit.setArabic();
+                                } else {
+                                  await localeCubit.setEnglish();
+                                }
                               }
                             },
                           ),
                           const SizedBox(height: 12),
                           TileChoiceChips(
-                            title: 'المظهر',
+                            title: s.settings_general_label_theme,
                             value: m.theme,
                             options: choiceOptions(const [
                               {
@@ -154,10 +171,10 @@ class _Body extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SectionHeader(title: 'المنطقة والتنسيق'),
+                          SectionHeader(title: s.settings_general_section_region),
                           const SizedBox(height: 12),
                           TileSelect(
-                            title: 'التقويم',
+                            title: s.settings_general_label_calendar,
                             value: m.region.calendar,
                             options: const ['هجري/ميلادي', 'ميلادي فقط'],
                             onChanged: (v) {
@@ -167,7 +184,7 @@ class _Body extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           TileSelect(
-                            title: 'تنسيق الوقت',
+                            title: s.settings_general_label_time_format,
                             value: m.region.timeFormat,
                             options: const ['24 ساعة', '12 ساعة'],
                             onChanged: (v) {
@@ -177,7 +194,7 @@ class _Body extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           TileSelect(
-                            title: 'أول يوم في الأسبوع',
+                            title: s.settings_general_label_week_start,
                             value: m.region.weekStart,
                             options: const ['السبت', 'الأحد', 'الاثنين'],
                             onChanged: (v) {
@@ -194,23 +211,23 @@ class _Body extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SectionHeader(title: 'حول التطبيق'),
+                          SectionHeader(title: s.settings_general_section_about),
                           const SizedBox(height: 12),
-                          InfoRow(label: 'الإصدار', value: m.about.version),
+                          InfoRow(label: s.settings_general_label_version, value: m.about.version),
                           const SizedBox(height: 12),
                           InfoRow(
-                            label: 'رقم البِناء',
+                            label: s.settings_general_label_build_number,
                             value: m.about.build.toString(),
                           ),
                           const SizedBox(height: 12),
                           TileNav(
-                            title: 'اتفاقية الاستخدام',
+                            title: s.settings_general_nav_tos,
                             onTap: () =>
                                 GoRouter.of(context).push('/about/tos'),
                           ),
                           const SizedBox(height: 12),
                           TileNav(
-                            title: 'سياسة الخصوصية',
+                            title: s.settings_general_nav_privacy,
                             onTap: () =>
                                 GoRouter.of(context).push('/about/privacy'),
                           ),
@@ -225,20 +242,20 @@ class _Body extends StatelessWidget {
                           final ok = await showDialog<bool>(
                             context: context,
                             builder: (_) => AlertDialog(
-                              title: const Text('إعادة التعيين'),
-                              content: const Text(
-                                'هل تريد إعادة الإعدادات إلى القيم الافتراضية؟',
+                              title: Text(s.settings_general_dialog_reset_title),
+                              content: Text(
+                                s.settings_general_dialog_reset_message,
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(false),
-                                  child: const Text('إلغاء'),
+                                  child: Text(s.common_cancel),
                                 ).withPressFX(),
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),
-                                  child: const Text('تأكيد'),
+                                  child: Text(s.common_confirm),
                                 ).withPressFX(),
                               ],
                             ),
@@ -246,7 +263,7 @@ class _Body extends StatelessWidget {
                           if (ok == true)
                             context.read<SettingsBloc>().add(ResetRequested());
                         },
-                        child: const Text('إعادة التعيين'),
+                        child: Text(s.settings_general_button_reset),
                       ).withPressFX(),
                     ),
                   ],

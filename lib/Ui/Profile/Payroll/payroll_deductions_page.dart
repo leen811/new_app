@@ -17,6 +17,7 @@ import '_widgets/card_optional.dart';
 import '_widgets/card_breakdown.dart';
 import '_widgets/detail_item_card.dart';
 import '_widgets/history_item_card.dart';
+import '../../../l10n/l10n.dart';
 
 class PayrollDeductionsPage extends StatefulWidget {
   const PayrollDeductionsPage({super.key});
@@ -43,12 +44,13 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Theme(
       data: Theme.of(context).copyWith(useMaterial3: true),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'خصومات الرواتب والأسباب',
+            s.profile_payroll_app_bar_title,
             style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           centerTitle: true,
@@ -82,13 +84,14 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
   }
 
   Widget _buildLoadedContent(BuildContext context, PayrollLoaded state) {
+    final s = S.of(context);
     return CustomScrollView(
       slivers: [
         // 1) صف علوي
         SliverToBoxAdapter(
           child: TopActionsRow(
             monthLabel: _getMonthLabel(state.month, state.year),
-            onExport: () => _showToast(context, "تم تصدير كشف الراتب (PDF)"),
+            onExport: () => _showToast(context, s.profile_payroll_toast_exported_pdf),
             onPickMonth: (month, year) => context.read<PayrollDeductionsBloc>().add(
               PayrollLoad(month: month, year: year),
             ),
@@ -102,7 +105,11 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
         SliverPersistentHeader(
           pinned: true,
           delegate: SegmentedTabsDelegate(
-            tabs: const ["ملخص الراتب", "تفاصيل الخصومات", "السجل التاريخي"],
+            tabs: [
+              s.profile_payroll_tab_summary,
+              s.profile_payroll_tab_details,
+              s.profile_payroll_tab_history,
+            ],
             currentIndex: state.currentTab,
             onChanged: (index) =>
                 context.read<PayrollDeductionsBloc>().add(PayrollChangeTab(index)),
@@ -122,6 +129,7 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
 
   // تبويب الملخص
   List<Widget> _sliversForSummaryTab(BuildContext context, PayrollLoaded state) {
+    final s = S.of(context);
     return [
       // مساحة علوية بسيطة
       const SliverToBoxAdapter(
@@ -146,25 +154,25 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => _showToast(context, "قريبًا: حاسبة الراتب"),
+                  onPressed: () => _showToast(context, s.profile_payroll_toast_salary_calculator_soon),
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text("حاسبة الراتب", style: GoogleFonts.cairo()),
+                  child: Text(s.profile_payroll_button_salary_calculator, style: GoogleFonts.cairo()),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => _showToast(context, "تم طلب كشف راتب مفصل"),
+                  onPressed: () => _showToast(context, s.profile_payroll_toast_detailed_slip_requested),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text("طلب كشف راتب مفصل", style: GoogleFonts.cairo()),
+                  child: Text(s.profile_payroll_button_request_detailed_slip, style: GoogleFonts.cairo()),
                 ),
               ),
             ],
@@ -176,28 +184,29 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
 
   // تبويب التفاصيل (من الـBloc مباشرة)
   List<Widget> _sliversForDetailsTab(BuildContext context, PayrollLoaded state) {
+    final s = S.of(context);
     final details = state.details;
 
     if (details.isEmpty) {
       return [
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(40),
+              padding: const EdgeInsets.all(40),
               child: Column(
                 children: [
-                  Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFF9CA3AF)),
-                  SizedBox(height: 16),
+                  const Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFF9CA3AF)),
+                  const SizedBox(height: 16),
                   Text(
-                    'لا توجد خصومات لهذا الشهر',
-                    style: TextStyle(
+                    s.profile_payroll_empty_details_title,
+                    style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF374151),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'جميع الخصومات ستظهر هنا عند توفرها',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+                    s.profile_payroll_empty_details_subtitle,
+                    style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
                   ),
                 ],
               ),
@@ -218,8 +227,8 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
             final item = details[index];
             return DeductionDetailCard(
               item: item,
-              currencyFmtAr: NumberFormat.decimalPattern("ar"),
-              formatHijri: (date) => "هـ 1445/07/05", // مؤقتًا
+              currencyFmtAr: NumberFormat.decimalPattern(s.localeName),
+              formatHijri: (date) => 'هـ 1445/07/05', // مؤقتًا
             );
           },
           childCount: details.length + 1,
@@ -230,17 +239,18 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
 
   // تبويب السجل التاريخي
   List<Widget> _sliversForHistoryTab(BuildContext context, PayrollLoaded state) {
+    final s = S.of(context);
     final history = state.history;
 
     if (history.isEmpty) {
       return [
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(40),
+            padding: const EdgeInsets.all(40),
             child: Center(
               child: Text(
-                "لا توجد سجلات تاريخية لهذا الشهر",
-                style: TextStyle(
+                s.profile_payroll_empty_history,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF374151),
@@ -273,11 +283,11 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
   }
 
   String _getMonthLabel(int month, int year) {
-    final months = [
-      'يناير','فبراير','مارس','أبريل','مايو','يونيو',
-      'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر',
-    ];
-    return '${months[month - 1]} $year';
+    final s = S.of(context);
+    final locale = s.localeName;
+    final date = DateTime(year, month, 1);
+    final label = DateFormat.yMMMM(locale).format(date);
+    return label;
   }
 
   void _showToast(BuildContext context, String message) {
@@ -292,6 +302,7 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
   }
 
   Widget _buildDetailsSummary(BuildContext context, List details) {
+    final s = S.of(context);
     final total = details
         .map((d) => (d as dynamic).amount as num)
         .fold<num>(0, (sum, v) => sum + v);
@@ -302,7 +313,7 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "الملخص",
+            s.profile_payroll_summary_title,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -321,13 +332,13 @@ class _PayrollDeductionsPageState extends State<PayrollDeductionsPage> {
               child: Column(
                 children: [
                   _summaryRow(
-                    "إجمالي الخصومات",
-                    "ريال ${NumberFormat.decimalPattern('ar').format(total)}",
+                    s.profile_payroll_summary_total_deductions,
+                    '${s.currency_sar} ${NumberFormat.decimalPattern(s.localeName).format(total)}',
                   ),
                   const SizedBox(height: 12),
                   _summaryRow(
-                    "إجمالي الخصومات بعد الخصم",
-                    "ريال ${NumberFormat.decimalPattern('ar').format(total)}",
+                    s.profile_payroll_summary_total_after_deduction,
+                    '${s.currency_sar} ${NumberFormat.decimalPattern(s.localeName).format(total)}',
                   ),
                 ],
               ),
@@ -418,6 +429,7 @@ class _PayrollErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -431,7 +443,7 @@ class _PayrollErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'حدث خطأ',
+              s.common_error_title,
               style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -461,7 +473,7 @@ class _PayrollErrorView extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'إعادة المحاولة',
+                s.common_retry,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

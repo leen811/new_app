@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:new_app/Data/Models/payroll_models.dart';
+import '../../../../l10n/l10n.dart';
 
 class SummaryGradientCard extends StatelessWidget {
   final PayrollSummary summary;
@@ -13,7 +14,8 @@ class SummaryGradientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberFormat = NumberFormat.decimalPattern("ar");
+    final s = S.of(context);
+    final numberFormat = NumberFormat.decimalPattern(s.localeName);
     
     return Container(
       height: 350,
@@ -43,7 +45,7 @@ class SummaryGradientCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'الراتب الإجمالي',
+                  s.profile_payroll_card_gross_salary,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
@@ -53,7 +55,7 @@ class SummaryGradientCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'ريال ${numberFormat.format(summary.grossSalary)}',
+              '${s.currency_sar} ${numberFormat.format(summary.grossSalary)}',
               style: GoogleFonts.cairo(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -67,7 +69,7 @@ class SummaryGradientCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'إجمالي الخصومات',
+                  s.profile_payroll_card_total_deductions,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
@@ -77,7 +79,7 @@ class SummaryGradientCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'ريال ${numberFormat.format(summary.totalDeductions)}-',
+              '${s.currency_sar} ${numberFormat.format(summary.totalDeductions)}-',
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -91,7 +93,7 @@ class SummaryGradientCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'البدلات والمكافآت',
+                  s.profile_payroll_card_allowances,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
@@ -101,7 +103,7 @@ class SummaryGradientCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '+${numberFormat.format(summary.allowances)} ريال',
+              '+${numberFormat.format(summary.allowances)} ${s.currency_sar}',
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -115,7 +117,7 @@ class SummaryGradientCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'صافي الراتب',
+                  s.profile_payroll_card_net_salary,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
@@ -125,7 +127,7 @@ class SummaryGradientCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'ريال ${numberFormat.format(summary.net)}',
+              '${s.currency_sar} ${numberFormat.format(summary.net)}',
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../Data/Models/profile_user.dart';
+import '../../../l10n/l10n.dart';
 
 class GradientHeader extends StatelessWidget {
   const GradientHeader({super.key, required this.user});
   final ProfileUser user;
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       height: 160,
       margin: const EdgeInsets.symmetric(horizontal: 12),
@@ -24,14 +26,14 @@ class GradientHeader extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(user.name, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
               const SizedBox(height: 4),
-              const Text('مطوّر واجهات أمامية', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+              Text(user.role, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              const Text('قسم التكنولوجيا • 2.5 سنة', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              Text(s.profile_header_dept_and_tenure(user.dept, user.tenureYears), style: const TextStyle(color: Colors.white70, fontSize: 12)),
               const SizedBox(height: 8),
-              Row(children: const [
-                _Badge(text: '1250'),
-                SizedBox(width: 8),
-                _Badge(text: 'المستوى 15'),
+              Row(children: [
+                _Badge(text: '${user.coins}'),
+                const SizedBox(width: 8),
+                _Badge(text: s.profile_personal_info_badge_level(user.level)),
               ]),
             ]),
           ),

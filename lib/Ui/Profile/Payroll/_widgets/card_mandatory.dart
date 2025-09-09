@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:new_app/Data/Models/payroll_models.dart';
+import '../../../../l10n/l10n.dart';
 
 class CardMandatory extends StatelessWidget {
   final List<DeductionItem> items;
@@ -15,7 +16,8 @@ class CardMandatory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberFormat = NumberFormat.decimalPattern("ar");
+    final s = S.of(context);
+    final numberFormat = NumberFormat.decimalPattern(s.localeName);
     
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -41,7 +43,7 @@ class CardMandatory extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'الخصومات الإلزامية',
+                  s.profile_payroll_mandatory_deductions_title,
                   style: GoogleFonts.cairo(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -79,7 +81,7 @@ class CardMandatory extends StatelessWidget {
                       ),
                     ),
                     trailing: Text(
-                      'ريال ${numberFormat.format(item.amount)}',
+                      '${s.currency_sar} ${numberFormat.format(item.amount)}',
                       style: GoogleFonts.cairo(
                         fontSize: dense ? 14 : 15,
                         fontWeight: FontWeight.w600,
@@ -88,8 +90,8 @@ class CardMandatory extends StatelessWidget {
                     ),
                   ),
                   if (!isLast)
-                    Divider(
-                      color: const Color(0xFFEEF1F6),
+                    const Divider(
+                      color: Color(0xFFEEF1F6),
                       height: 1,
                     ),
                 ],
